@@ -2,6 +2,7 @@ import {
   type HomeCategoryCard,
   type HomeCategoryFilter,
   type HomeFreelancer,
+  type HomePrimaryCategory,
   type HomeService,
   type HomeStep,
   type HomeTestimonial,
@@ -55,6 +56,147 @@ export const homeCategoryCards: HomeCategoryCard[] = [
     altKey: "home.categories.alts.business",
     image: "https://lh3.googleusercontent.com/aida-public/AB6AXuBmbsmooqtSgsIwvScT2OX4x145RbXv5_fidCwwCa2hAwToNLGpcorREPyyIfQwqzS45f4oKcZh-Q_Z3Z-Ns-vmAkAiOl2JmNCx1B4oeWaf3m60fdowZja2LsJVF076PYWYQT2ScgfWwqGy8PO3FLlfXZMco0GHPFtJ-pJmpyvWbpCZyT-Lm4nq6sFarY5osreTJD31hVFz6SP6o-u2uXr9vdQK_Vvn19XXzyljGXTO4-Ldt-jDt9PlyHZblqqwWcVN9kFF5dvD5LQ",
   },
+  {
+    id: "illustration",
+    labelKey: "home.categories.items.illustration",
+    altKey: "home.categories.alts.illustration",
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCb4Kh3BnWSb3wQd4vWHwZ8Z1S0nZYIPspO2hE7FaQYmGdHSu7GRlBrHSv03eR8WPuIbdXlESMdw3i0w5_m7o1DIhteVQvdZc69nWNCV7QrnHSb1mYhD0R6slgrQnd0OdrVQXz1d3bgmU1cq_aYFmculLwT10X7Ule1ygtI6DiLULa9dU1S7niYk3l6nX1Q2t1F4CQ",
+  },
+  {
+    id: "photography",
+    labelKey: "home.categories.items.photography",
+    altKey: "home.categories.alts.photography",
+    image: "https://lh3.googleusercontent.com/aida-public/AB6AXuCX1P--GcVCWAgpS1ZYH8YpSzpkXfBKYRsXeZPxlnwGSn5g2a8Nn_7UPhgpVlAOZgkFyxZz-5azE13H9oQiU5RQ8m4_Oe-8p6SRhwGZNv1ak0NqCIJTNMcX3X82U2SR7dbINmMcYI7VBSoLhlnVqGmJzr37fgY",
+  },
+];
+
+export const homePrimaryCategories: HomePrimaryCategory[] = [
+  {
+    id: "design-branding",
+    labelKey: "home.primaryCategories.items.designBranding",
+    icon: "palette",
+    gradientFrom: "#E6ECFF",
+    gradientTo: "#D4DBFF",
+    accent: "#8F9CF5",
+    image: "/assets/icons/categories/design-branding.png",
+  },
+  {
+    id: "it-development",
+    labelKey: "home.primaryCategories.items.itDevelopment",
+    icon: "laptopCode",
+    gradientFrom: "#E6F7FF",
+    gradientTo: "#D2EBFF",
+    accent: "#7EC4F8",
+    image: "/assets/icons/categories/IT & Development.png",
+  },
+
+  {    id: "video-photo-audio",
+    labelKey: "home.primaryCategories.items.videoPhotoAudio",
+    icon: "cameraAudio",
+    gradientFrom: "#FFEFF6",
+    gradientTo: "#FFD9EC",
+    accent: "#F59BCF",
+    image: "/assets/icons/categories/video.png",
+  },
+  {
+    id: "marketing-advertising",
+    labelKey: "home.primaryCategories.items.marketingAdvertising",
+    icon: "megaphone",
+    gradientFrom: "#FFF5E5",
+    gradientTo: "#FFE6C7",
+    accent: "#F6C27A",
+    image: "/assets/icons/categories/marketing.png",
+  },
+  {
+    id: "writing-content",
+    labelKey: "home.primaryCategories.items.writingContent",
+    icon: "pencilDocument",
+    gradientFrom: "#F1F5FF",
+    gradientTo: "#E1EAFF",
+    accent: "#A5BAFF",
+    image: "/assets/icons/categories/writing.png",
+  },
+  {
+    id: "startup-business-support",
+    labelKey: "home.primaryCategories.items.startupBusinessSupport",
+    icon: "buildingArrow",
+    gradientFrom: "#EAF8F0",
+    gradientTo: "#D6F0E4",
+    accent: "#89D0B3",
+    image: "/assets/icons/categories/startup.png",
+  },
+  {
+    id: "legal-tax-hr",
+    labelKey: "home.primaryCategories.items.legalTaxHr",
+    icon: "scale",
+    gradientFrom: "#F3F4FD",
+    gradientTo: "#E1E3FB",
+    accent: "#AEB5F3",
+    image: "/assets/icons/categories/legal.png",
+  },
+  {
+    id: "ebooks-learning",
+    labelKey: "home.primaryCategories.items.ebooksLearning",
+    icon: "openBook",
+    gradientFrom: "#F2F6FF",
+    gradientTo: "#E0EBFF",
+    accent: "#9AB8FF",
+    image: "/assets/icons/categories/ebook.png",
+  },
+  {
+    id: "ai-services",
+    labelKey: "home.primaryCategories.items.aiServices",
+    icon: "sparkles",
+    gradientFrom: "#F5F0FF",
+    gradientTo: "#E8DCFF",
+    accent: "#B79EFF",
+    image: "/assets/icons/categories/ai.png",
+  },
+  {
+    id: "translation-interpretation",
+    labelKey: "home.primaryCategories.items.translationInterpretation",
+    icon: "flags",
+    gradientFrom: "#E7F6FF",
+    gradientTo: "#D4ECFF",
+    accent: "#8DC7F9",
+    image: "/assets/icons/categories/translate.png",
+  },
+  {
+    id: "custom-orders",
+    labelKey: "home.primaryCategories.items.customOrders",
+    icon: "gift",
+    gradientFrom: "#FFF2F3",
+    gradientTo: "#FFE0E5",
+    accent: "#FFA6B5",  
+    image: "/assets/icons/categories/custom.png",
+  },
+  {
+    id: "career-exam-prep",
+    labelKey: "home.primaryCategories.items.careerExamPrep",
+    icon: "briefcase",
+    gradientFrom: "#EAF1FF",
+    gradientTo: "#DBE6FF",
+    accent: "#98B6FF",
+    image: "/assets/icons/categories/career.png",
+  },
+  {
+    id: "consulting-coaching",
+    labelKey: "home.primaryCategories.items.consultingCoaching",
+    icon: "lightbulb",
+    gradientFrom: "#FFF8E6",
+    gradientTo: "#FFEFC2",
+    accent: "#F4D27F",
+    image: "/assets/icons/categories/advice.png",
+  },
+  {
+    id: "lifestyle-services",
+    labelKey: "home.primaryCategories.items.lifestyleServices",
+    icon: "house",
+    gradientFrom: "#EFFFF7",
+    gradientTo: "#D9F7E7",
+    accent: "#93DDBE",
+    image: "/assets/icons/categories/IT & Development.png",
+  },
 ];
 
 export const homeTestimonials: HomeTestimonial[] = [
@@ -96,6 +238,7 @@ export const homeServices: HomeService[] = [
     rating: 4.9,
     reviewsKey: "home.services.items.modernLogo.reviews",
     priceKey: "home.services.items.modernLogo.price",
+    category: "design",
   },
   {
     id: "mobile-uiux",
@@ -108,6 +251,7 @@ export const homeServices: HomeService[] = [
     rating: 5,
     reviewsKey: "home.services.items.mobileUiux.reviews",
     priceKey: "home.services.items.mobileUiux.price",
+    category: "design",
   },
   {
     id: "seo-content",
@@ -120,6 +264,7 @@ export const homeServices: HomeService[] = [
     rating: 4.9,
     reviewsKey: "home.services.items.seoContent.reviews",
     priceKey: "home.services.items.seoContent.price",
+    category: "marketing",
   },
   {
     id: "explainer-video",
@@ -132,6 +277,33 @@ export const homeServices: HomeService[] = [
     rating: 5,
     reviewsKey: "home.services.items.explainerVideo.reviews",
     priceKey: "home.services.items.explainerVideo.price",
+    category: "video",
+  },
+  {
+    id: "web-app-development",
+    titleKey: "home.services.items.webAppDevelopment.title",
+    sellerNameKey: "home.services.items.webAppDevelopment.seller",
+    sellerAvatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuA99k2utL6GPB1_dmW0C11b9yxoBwH75f9-CxKMtwBiBwSm0XkbxhPoONkt5gf0DY4UuaWS71bJG8A4H8h0-asv6dKqUq2MWXbgeC5K5oz7mCIuxtqPgVeg2D9JfL3jaf9cOhlm7Owei2xUlw8rrXZPz0kMLY0",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuCzVX9zPJ6u84N5wLlZgkR8T4mL7d_-8mshByd5yzCk-8CSGCX0l9lqiXGL-Qn4h5Gx0bXXqeH2rHbZKdgOc5dQOZ-NPZJz9R8USi7FxHwhPvb5mQtp2zZCMHDGRYz8RHBf19x-pnKZD3YbK4UB2swiZfE3ODzt",
+    rating: 4.8,
+    reviewsKey: "home.services.items.webAppDevelopment.reviews",
+    priceKey: "home.services.items.webAppDevelopment.price",
+    category: "development",
+  },
+  {
+    id: "email-automation",
+    titleKey: "home.services.items.emailAutomation.title",
+    sellerNameKey: "home.services.items.emailAutomation.seller",
+    sellerAvatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuBYDKYD8szh-Okd7qnRJ4yM07yXLlBFsrCVkNN5rPSKkORcUWQX586biqEqIlbEMmdS9Fp-BvJds14wUhZP_JWlP1Jd5bfg-hjh28cF0g8QhPMSSzVKBvGnxaA_m5SapPfYbl9X0U3QLb6VGQm5rNCUSj8g9Hk",
+    image:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuAmjaMyWYMFO375iAkLFnF3vF2OQzK4cblzi6S5nQLQp3sz90WqSGw95ZkMcbppjvZFvdtO2-EzcF6cn1clmGeKqoiMeoakdbPXl5dVABzC9xY-jjgIhnm3nC14zO_4AIypsnFfcqx78koxXV9g8UkuHbwJ6Mni",
+    rating: 4.7,
+    reviewsKey: "home.services.items.emailAutomation.reviews",
+    priceKey: "home.services.items.emailAutomation.price",
+    category: "ai",
   },
 ];
 
@@ -145,6 +317,7 @@ export const homeFreelancers: HomeFreelancer[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuDQaEff0g2V0JD9hj3bhp-1euXu11pM0y9w0dYq0SnGAP2CUgWWZtQcKFm3X9Fo-PbrnsLaryZkVbny9vo22Dx-XIv5j6SvAxiZui5IXF-3M6ZX5-1xwYPse-akcciRAuUfQXvUAxwEFn6UmMsIkMC09jxseo8QJOs3KAbsLT_NYJFMJiI5uym1YuKSwKEWlgvtebfzdJPIsrk2Z1ZmJ6-U17ffMVeXX1TdG9177Vx7scYjEpo7sH7NAKZkXLe4vVJJgD-aoU79UfU",
     rating: 5,
     reviewsKey: "home.freelancers.items.maria.reviews",
+    tag: "topRated",
   },
   {
     id: "david-k",
@@ -155,6 +328,7 @@ export const homeFreelancers: HomeFreelancer[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAee4oFsmj2FRYn8rqTluB0ZJ4S5pWmy6JPd68q-MhwRxx6Z2NtfJ7F16xz5WTxQcaycbikwY6J3bt63inTVuUWVMgl6W22a1Nslo1mNP4v3ekZLZjfrKOhBoo-UZJhQ9VlDTJqpRQn8qF5JVnNwpunpAoS5FVGdqNq9O6kzwn5Vhgah3Gq44IlcpDQjrYBR84fzqeHgACSQcZ7F6kz09yJQslUgu3JFGxxV4fOvi2ILmLjxBESa2Gy8NJCtkbnKfdDWbK1h6BQpDs",
     rating: 4.9,
     reviewsKey: "home.freelancers.items.david.reviews",
+    tag: "topRated",
   },
   {
     id: "olivia-c",
@@ -165,6 +339,7 @@ export const homeFreelancers: HomeFreelancer[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuBO3mnvRE_MHV9zJugPIrl7_XSa1uvfzz6BggZ1suPfPH4xPDL5W2UrUoOHmo_cwu8RJPq43KK7a9nstZfXV1XIysBPFu3PB3cXByu3IFDOJ7qODeULuoCrKQAv9BeCF0XRBrCPlqbFxJiCZfkzjV4WMOn_plOZjbyUgUW1_jdktnIu1JQ1dq8DQlHEWOiQgIooTXN9Y6TRbKrRdjMKu6DzZLkEjKjT3TBxIgROZ8mHcSZAH1IXOiFwApXzasQGdiFsksE_8Svhu8g",
     rating: 5,
     reviewsKey: "home.freelancers.items.olivia.reviews",
+    tag: "newArrivals",
   },
   {
     id: "chen-w",
@@ -175,6 +350,7 @@ export const homeFreelancers: HomeFreelancer[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuCUvUUfDc6Bdi7kT96Fz6JeMq6Q8ngumlii6V-RtJ2PaSY3gWS3N360H7EDoWNkj57X8-bPd99M-RNGeNf3JoCmNlesZDpjiq5URMM2wf19CetG5kfIeOsc2E5l-od0KttMFoZv5Lc4u-VfrQLCY017E3FzVsrWkGBnAnjMw6ZTDHGo6hqUsFV1fxDpobKFPUVwkAds2ywcIEz22yq80gllcOnZ_9ArgqrL_e1N9XLRhvA05Aq897rm_qzST7vMETgvRuLAL7uEaTU",
     rating: 4.9,
     reviewsKey: "home.freelancers.items.chen.reviews",
+    tag: "mostHired",
   },
   {
     id: "alex-p",
@@ -185,6 +361,29 @@ export const homeFreelancers: HomeFreelancer[] = [
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAnNLNyX-xD47kwQxmkHkAY4SfvPOJoJVcCMQvhU-hzFonX3XTIrNnT1pK_19RDZnqT0t-KRDd3zpLVuvgJ-yNY_mKkRT7EemsCZBu7SeRVBUUBAxFxb-5KH1KmOdt3NfoRs8ZCiu2Xz2gLJ5EgF6iJE9UTdgaFwtqUytfeOUSyJxA-P54gpg2Ou34JNhPQQMdCvHX-nm62geX1DF3wtNoAi8AXsCeUCiN5cvUIzHStQvKHnvaei-Q_BkN0CBdT8P4fQtzy6FvpUJg",
     rating: 5,
     reviewsKey: "home.freelancers.items.alex.reviews",
+    tag: "mostHired",
+  },
+  {
+    id: "amelia-r",
+    nameKey: "home.freelancers.items.amelia.name",
+    roleKey: "home.freelancers.items.amelia.role",
+    taglineKey: "home.freelancers.items.amelia.tagline",
+    avatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuB0CRQys25Y6X2gV1bGkFRdHDHG3HjBf32s3zdGkSovEz1Cq9Ct8sE8i220fdjKruUzulHUL-4zFN3UvqThCtetZHSjsaVgLrWWYB-v2waTYjL0sB2r7L6tvEboLE4AQie1apG-PTpAXE2TaIhY0uzuh8WfgZ0",
+    rating: 4.8,
+    reviewsKey: "home.freelancers.items.amelia.reviews",
+    tag: "newArrivals",
+  },
+  {
+    id: "liam-s",
+    nameKey: "home.freelancers.items.liam.name",
+    roleKey: "home.freelancers.items.liam.role",
+    taglineKey: "home.freelancers.items.liam.tagline",
+    avatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuA0g2UXV_aSuYVYeW5MfTk6B05SttIX6jq9GPQCuvapg8x54F-dYZYboEglXgSPyxSl7OkKM0Av0cDmWRg8xV8YvTWKmqd1ZuLJLCikjYvMJ6kqsZdJB-NEUZQdrzrbYpB7l_-X6pPp-O7Ur0ZzMC0C3PIgwRk",
+    rating: 4.7,
+    reviewsKey: "home.freelancers.items.liam.reviews",
+    tag: "topRated",
   },
 ];
 
@@ -208,6 +407,3 @@ export const homeSteps: HomeStep[] = [
     descriptionKey: "home.steps.items.pay.description",
   },
 ];
-
-
-
