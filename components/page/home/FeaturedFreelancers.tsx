@@ -6,6 +6,7 @@ import { Button } from "@/components/shared/common";
 import { homeFreelancers } from "@/entities/home";
 import type { HomeFreelancerTag } from "@/entities/home";
 import Link from "next/link";
+import SectionHeader from "@/components/common/SectionHeader";
 
 const tabs: HomeFreelancerTag[] = ["topRated", "newArrivals", "mostHired"];
 
@@ -31,14 +32,13 @@ export const FeaturedFreelancers = () => {
     <section id="featured-freelancers" className="bg-white pt-20 pb-24">
       <div className="mx-auto w-full max-w-7xl px-6">
         <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
-          <div>
-            <p className="text-sm font-semibold uppercase tracking-wide text-[#2E5E99]">
-              {t("home.sections.freelancers.label", { defaultValue: "Freelancers" })}
-            </p>
-            <h2 className="mt-1 text-3xl font-bold tracking-tight text-[#0F172A]">
-              {t("home.freelancers.title")}
-            </h2>
-          </div>
+          <SectionHeader
+            label={t("home.sections.freelancers.label", { defaultValue: "FREELANCERS" })}
+            title={t("home.freelancers.title")}
+            description={t("home.freelancers.subtitle", {
+              defaultValue: "Top freelancers curated for quality results.",
+            })}
+          />
           <Link
             href="#"
             className="text-sm font-semibold text-[#2E5E99] transition-colors hover:text-[#1d4673] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"

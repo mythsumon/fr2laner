@@ -38,7 +38,8 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
   const [activePromo, setActivePromo] = useState(0);
 
   return (
-    <header className="mx-auto w-full max-w-7xl px-6 pt-12 pb-10">
+    <>
+      <header className="mx-auto w-full max-w-7xl px-6 pt-12 pb-10">
       <nav className="mb-4 text-sm text-[#475569]" aria-label={t("category.design.header.breadcrumb.aria") ?? undefined}>
         <Link href="/" className="text-[#2E5E99] hover:underline">
           {t("category.design.header.breadcrumb.home")}
@@ -64,7 +65,10 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
               ))}
             </div>
           </div>
-          <div className="flex gap-2 overflow-x-auto pb-2" aria-label={t("category.design.header.keywordAria") ?? undefined}>
+          <div
+            className="keyword-scroll flex gap-2 overflow-x-auto pb-2"
+            aria-label={t("category.design.header.keywordAria") ?? undefined}
+          >
             {keywordTags.map((tag) => (
               <button
                 key={tag}
@@ -121,6 +125,16 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
           </div>
         </aside>
       </div>
-    </header>
+      </header>
+      <style jsx>{`
+        .keyword-scroll {
+          scrollbar-width: none;
+          -ms-overflow-style: none;
+        }
+        .keyword-scroll::-webkit-scrollbar {
+          display: none;
+        }
+      `}</style>
+    </>
   );
 };

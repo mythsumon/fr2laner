@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { chunkArray, cn } from "@/components/shared/utils";
 import { homeTestimonials } from "@/entities/home";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
+import SectionHeader from "@/components/common/SectionHeader";
 
 export const Testimonials = () => {
   const { t } = useTranslation();
@@ -59,11 +60,12 @@ export const Testimonials = () => {
     <section id="testimonials" className="bg-[#F8FAFC] pt-20 pb-24">
       <div className="mx-auto w-full max-w-7xl px-6">
         <div className="mb-10 text-center">
-          <p className="text-sm font-semibold uppercase tracking-wide text-[#2E5E99]">
-            {t("home.sections.testimonials.label", { defaultValue: "Testimonials" })}
-          </p>
-          <h2 className="mt-2 text-3xl font-bold tracking-tight text-[#0F172A]">{t("home.testimonials.title")}</h2>
-          <p className="mt-4 text-lg text-[#475569]">{t("home.testimonials.subtitle")}</p>
+          <SectionHeader
+            label={t("home.sections.testimonials.label", { defaultValue: "TESTIMONIALS" })}
+            title={t("home.testimonials.title")}
+            description={t("home.testimonials.subtitle")}
+            align="center"
+          />
         </div>
 
         <div

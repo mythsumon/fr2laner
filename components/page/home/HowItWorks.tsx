@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { Search, Users, CreditCard } from "lucide-react";
 import { homeSteps } from "@/entities/home";
 import { cn } from "@/components/shared/utils";
+import SectionHeader from "@/components/common/SectionHeader";
 
 const iconMap: Record<string, JSX.Element> = {
   browse: <Search className="size-9" />, 
@@ -63,9 +64,7 @@ const HowItWorksCard = ({
         </span>
       </span>
       <div className="space-y-3">
-        <h3 className="text-xl font-semibold text-[#0F172A]">
-          {index + 1}. {title}
-        </h3>
+        <h3 className="text-xl font-semibold text-[#0F172A]">{title}</h3>
         <p className="text-sm leading-6 text-[#475569]">{description}</p>
       </div>
       <span className="pointer-events-none absolute inset-x-6 bottom-3 h-8 rounded-full bg-[#2E5E99]/10 blur-[18px] opacity-70" />
@@ -79,16 +78,13 @@ export const HowItWorks = () => {
   return (
     <section id="how-it-works" className="relative bg-white pt-20 pb-28">
       <div className="mx-auto w-full max-w-7xl px-6">
-        <div className="mb-14 flex flex-col items-center text-center">
-          <p className="text-sm font-semibold uppercase tracking-[0.5rem] text-[#2E5E99]">
-            {t("home.sections.howItWorks.label", { defaultValue: "PROCESS" })}
-          </p>
-          <h2 className="mt-4 text-4xl font-bold tracking-tight text-[#0F172A]">
-            {t("home.steps.title")}
-          </h2>
-          <p className="mt-4 max-w-[720px] text-lg text-[#475569]">
-            {t("home.steps.subtitle")}
-          </p>
+        <div className="mb-14 text-center">
+          <SectionHeader
+            label={t("home.sections.howItWorks.label", { defaultValue: "PROCESS" })}
+            title={t("home.steps.title")}
+            description={t("home.steps.subtitle")}
+            align="center"
+          />
         </div>
         <div className="relative">
           <div className="pointer-events-none absolute inset-0 flex justify-center">

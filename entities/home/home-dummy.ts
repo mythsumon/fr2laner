@@ -195,7 +195,7 @@ export const homePrimaryCategories: HomePrimaryCategory[] = [
     gradientFrom: "#EFFFF7",
     gradientTo: "#D9F7E7",
     accent: "#93DDBE",
-    image: "/assets/icons/categories/IT & Development.png",
+    image: "/assets/icons/categories/lifestyle.png",
   },
 ];
 
