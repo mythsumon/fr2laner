@@ -10,8 +10,8 @@ import { cn } from "../shared/utils";
 import { Menu, X } from "lucide-react";
 
 const menuLinks = [
-  { key: "header.menu.services", href: "#featured-services" },
-  { key: "header.menu.findTalent", href: "#freelancers" },
+  { key: "header.menu.forFreelancers", href: "/for-freelancers" },
+  { key: "header.menu.findTalent", href: "/find-talent" },
   { key: "header.menu.howItWorks", href: "#how-it-works" },
 ];
 
@@ -44,7 +44,7 @@ export const Header = () => {
   const baseContainerStyles = "mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-6 transition-all duration-200";
 
   return (
-    <nav className="sticky top-0 z-50 w-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
+    <nav className="site-header sticky top-0 z-50 w-full bg-white shadow-[0_2px_6px_rgba(0,0,0,0.05)]">
       <div
         className={cn(
           baseContainerStyles,
@@ -95,10 +95,6 @@ export const Header = () => {
               </li>
             ))}
           </ul>
-          {/* Mobile Category Select */}
-          <div className="lg:hidden">
-            <CategorySelect />
-          </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="hidden items-center gap-3 sm:flex">
@@ -121,13 +117,15 @@ export const Header = () => {
                 {t("header.nav.signUp")}
               </Button>
             </Link>
-            <Button
-              type="default"
-              shape="round"
-              className="h-11 border-none bg-[#2E5E99]/10 px-5 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
-            >
-              {t("header.nav.postProject")}
-            </Button>
+            <Link href="/signup" className="inline-flex">
+              <Button
+                type="default"
+                shape="round"
+                className="h-11 border-none bg-[#2E5E99]/10 px-5 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+              >
+                {t("header.nav.postProject")}
+              </Button>
+            </Link>
           </div>
           <button
             type="button"
@@ -167,6 +165,13 @@ export const Header = () => {
                   {t("header.nav.linksTitle", { defaultValue: "Navigation" })}
                 </p>
                 <div className="flex flex-col gap-1">
+                  <Link
+                    href="/"
+                    onClick={closeMobileNav}
+                    className="rounded-xl px-4 py-3 text-sm font-semibold text-[#0F172A] transition-colors hover:bg-[#F1F5F9]"
+                  >
+                    {t("header.nav.home", { defaultValue: "Home" })}
+                  </Link>
                   {menuLinks.map((link) => (
                     <Link
                       key={link.key}

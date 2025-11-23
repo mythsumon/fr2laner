@@ -1,0 +1,514 @@
+{
+  "hello": "Hello",
+  "brand": "FreelanceMarket",
+  "header": {
+    "menu": {
+      "categories": "Categories",
+      "services": "Services",
+      "forFreelancers": "For Freelancers",
+      "findTalent": "Find Talent",
+      "howItWorks": "How It Works"
+    },
+    "nav": {
+      "home": "Home",
+      "login": "Login",
+      "signUp": "Sign Up",
+      "postProject": "Post a Project",
+      "openMenu": "Open menu",
+      "closeMenu": "Close menu"
+    }
+  },
+  "home": {
+    "filters": {
+      "logo": "Logo",
+      "branding": "Branding",
+      "uiux": "UI/UX",
+      "development": "Development",
+      "marketing": "Marketing",
+      "video": "Video",
+      "writing": "Writing",
+      "all": "All"
+    },
+    "sections": {
+      "categories": {
+        "label": "Categories"
+      },
+      "services": {
+        "label": "Services"
+      },
+      "freelancers": {
+        "label": "Freelancers"
+      },
+      "howItWorks": {
+        "label": "Process"
+      },
+      "testimonials": {
+        "label": "Testimonials"
+      }
+    },
+    "hero": {
+      "title": "Find the Perfect Freelancer for Your Next Project",
+      "subtitle": "Explore a world of top-rated professionals for any project, from web design and development to content creation and marketing.",
+      "search": {
+        "categoryLabel": "Categories",
+        "placeholder": "What service are you looking for?",
+        "cta": "Search"
+      },
+      "filters": {
+        "location": "Location",
+        "remote": "Remote"
+      },
+      "trust": "Trusted by 5,000+ businesses"
+    },
+    "slider": {
+      "badge": "Sponsored",
+      "actions": {
+        "previous": "View previous promotion",
+        "next": "View next promotion",
+        "goTo": "Go to slide {{index}}"
+      },
+      "items": {
+        "refer": {
+          "title": "Invite top freelancers & earn bonuses",
+          "description": "Share your unique invite link and unlock 12,000 reward points when your network joins.",
+          "cta": "Invite now"
+        },
+        "talent": {
+          "title": "Verified experts ready to collaborate",
+          "description": "Discover curated professionals with proven track records across every discipline.",
+          "cta": "Browse talent"
+        },
+        "quality": {
+          "title": "Deliver projects on time, every time",
+          "description": "Trusted workflows, milestone tracking, and escrow protection keep work moving smoothly.",
+          "cta": "Explore solutions"
+        }
+      }
+    },
+    "promos": {
+      "cards": {
+        "refer": {
+          "title": "Invite & Earn 12,000P",
+          "description": "Refer a friend and earn rewards!"
+        },
+        "talent": {
+          "title": "Top Talent Awaits",
+          "description": "Find verified experts for any skill."
+        },
+        "quality": {
+          "title": "Projects Done Right",
+          "description": "Quality and satisfaction guaranteed."
+        }
+      }
+    },
+    "categories": {
+      "title": "Explore Categories",
+      "cta": "View all categories",
+      "items": {
+        "graphicsDesign": "Graphics & Design",
+        "developmentIt": "Development & IT",
+        "digitalMarketing": "Digital Marketing",
+        "writingTranslation": "Writing & Translation",
+        "videoAnimation": "Video & Animation",
+        "business": "Business",
+        "illustration": "Illustration",
+        "photography": "Photography"
+      },
+      "alts": {
+        "graphicsDesign": "3D icon for Graphics & Design",
+        "developmentIt": "3D icon for Development & IT",
+        "digitalMarketing": "3D icon for Digital Marketing",
+        "writingTranslation": "3D icon for Writing & Translation",
+        "videoAnimation": "3D icon for Video & Animation",
+        "business": "3D icon for Business",
+        "illustration": "3D icon for Illustration",
+        "photography": "3D icon for Photography"
+      }
+    },
+    "primaryCategories": {
+      "label": "Categories",
+      "title": "Discover premium services",
+      "subtitle": "Browse 14 curated categories to kick-start your next project.",
+      "items": {
+        "designBranding": "Design & Branding",
+        "itDevelopment": "IT & Development",
+        "videoPhotoAudio": "Video / Photo / Audio",
+        "marketingAdvertising": "Marketing & Advertising",
+        "writingContent": "Writing & Content",
+        "startupBusinessSupport": "Startup & Business Support",
+        "legalTaxHr": "Legal / Tax / HR",
+        "ebooksLearning": "E-Books & Learning",
+        "aiServices": "AI Services",
+        "translationInterpretation": "Translation & Interpretation",
+        "customOrders": "Custom Orders",
+        "careerExamPrep": "Career & Exam Prep",
+        "consultingCoaching": "Consulting & Coaching",
+        "lifestyleServices": "Lifestyle Services"
+      }
+    },
+    "services": {
+      "title": "Featured Services",
+      "tabs": {
+        "all": "All",
+        "design": "Design",
+        "development": "Development",
+        "marketing": "Marketing",
+        "writing": "Writing",
+        "video": "Video",
+        "ai": "AI Services"
+      },
+      "items": {
+        "modernLogo": {
+          "title": "I will design a modern minimalist logo for your brand",
+          "seller": "John D.",
+          "reviews": "(1.2k)",
+          "price": "From $150"
+        },
+        "mobileUiux": {
+          "title": "I will create a stunning UI/UX design for your mobile app",
+          "seller": "Sarah L.",
+          "reviews": "(890)",
+          "price": "From $800"
+        },
+        "seoContent": {
+          "title": "I will write engaging SEO content for your website",
+          "seller": "Mike R.",
+          "reviews": "(2.4k)",
+          "price": "From $75"
+        },
+        "explainerVideo": {
+          "title": "I will create a professional animated explainer video",
+          "seller": "Emily C.",
+          "reviews": "(512)",
+          "price": "From $450"
+        },
+        "webAppDevelopment": {
+          "title": "I will build a scalable full-stack web application",
+          "seller": "Liam N.",
+          "reviews": "(640)",
+          "price": "From $1,200"
+        },
+        "emailAutomation": {
+          "title": "I will automate your email marketing with AI workflows",
+          "seller": "Priya S.",
+          "reviews": "(410)",
+          "price": "From $320"
+        }
+      },
+      "actions": {
+        "view": "View Service",
+        "seeMore": "See More →",
+        "prev": "Previous services",
+        "next": "Next services"
+      }
+    },
+    "freelancers": {
+      "title": "Featured Freelancers",
+      "tabs": {
+        "topRated": "Top Rated",
+        "newArrivals": "New Arrivals",
+        "mostHired": "Most Hired"
+      },
+      "items": {
+        "maria": {
+          "name": "Maria G.",
+          "role": "Brand Identity Designer",
+          "tagline": "Crafting memorable brands that tell a story.",
+          "reviews": "(321 reviews)"
+        },
+        "david": {
+          "name": "David K.",
+          "role": "Full-Stack Web Developer",
+          "tagline": "Building fast, responsive, and scalable web apps.",
+          "reviews": "(580 reviews)"
+        },
+        "olivia": {
+          "name": "Olivia C.",
+          "role": "Mobile App UI/UX Specialist",
+          "tagline": "Intuitive interfaces for impactful user experiences.",
+          "reviews": "(412 reviews)"
+        },
+        "chen": {
+          "name": "Chen W.",
+          "role": "SEO & Content Strategist",
+          "tagline": "Driving organic growth through data-driven content.",
+          "reviews": "(1.1k reviews)"
+        },
+        "alex": {
+          "name": "Alex P.",
+          "role": "Video Editor & Animator",
+          "tagline": "Bringing your vision to life with motion.",
+          "reviews": "(675 reviews)"
+        },
+        "amelia": {
+          "name": "Amelia R.",
+          "role": "Product UI Designer",
+          "tagline": "Clean, conversion-led interfaces for SaaS brands.",
+          "reviews": "(210 reviews)"
+        },
+        "liam": {
+          "name": "Liam S.",
+          "role": "DevOps & Cloud Engineer",
+          "tagline": "Keeping your infrastructure secure and scalable.",
+          "reviews": "(189 reviews)"
+        }
+      },
+      "actions": {
+        "viewProfile": "View Profile",
+        "seeMore": "See More →"
+      }
+    },
+    "steps": {
+      "title": "How It Works",
+      "subtitle": "Get your project done in just a few simple steps.",
+      "items": {
+        "browse": {
+          "title": "1. Browse & Find",
+          "description": "Search for the service you need, browse through profiles, and find the perfect freelancer for your job."
+        },
+        "collaborate": {
+          "title": "2. Collaborate & Manage",
+          "description": "Communicate with your freelancer, share files, and track project progress easily on our platform."
+        },
+        "pay": {
+          "title": "3. Pay & Deliver",
+          "description": "Pay securely through our system only when you are 100% satisfied with the work delivered."
+        }
+      }
+    },
+    "testimonials": {
+      "title": "What Our Clients Say",
+      "subtitle": "Hear from businesses who have found success on our platform.",
+      "actions": {
+        "previous": "Show previous testimonial",
+        "next": "Show next testimonial",
+        "goTo": "Go to testimonial {{index}}"
+      },
+      "items": {
+        "sarah": {
+          "quote": "Working with a designer from FreelanceMarket was a game-changer for our rebrand. The quality of work and the speed of delivery were absolutely outstanding. Highly recommended!",
+          "name": "Sarah Johnson",
+          "role": "CEO, Tech Innovators"
+        },
+        "michael": {
+          "quote": "We needed a complex web application built from scratch. The developer we hired was professional, communicative, and delivered a product that exceeded our expectations on all fronts.",
+          "name": "Michael Chen",
+          "role": "Founder, Startup Solutions"
+        },
+        "jessica": {
+          "quote": "The content writers on this platform are top-notch. They quickly understood our brand voice and produced high-quality blog posts that have significantly boosted our organic traffic.",
+          "name": "Jessica Lee",
+          "role": "Marketing Director, Creative Co."
+        }
+      }
+    },
+    "cta": {
+      "title": "Ready to bring your idea to life?",
+      "subtitle": "Post a project today and get proposals from talented freelancers in minutes.",
+      "button": "Start Your Project"
+    }
+  },
+  "category": {
+    "design": {
+      "header": {
+        "breadcrumb": {
+          "aria": "Breadcrumb",
+          "home": "Home",
+          "categories": "Categories"
+        },
+        "title": "Design",
+        "description": "Discover award-winning designers for logos, branding systems, UI/UX, motion, and pitch decks—curated for fast-moving startups and global brands alike.",
+        "stats": {
+          "services": "52,310 services",
+          "rating": "avg ★4.9"
+        },
+        "keywordAria": "Popular design keywords",
+        "tags": {
+          "logo": "Logo",
+          "branding": "Branding",
+          "uiux": "UI/UX",
+          "illustration": "Illustration",
+          "banner": "Banner",
+          "ppt": "PPT",
+          "thumbnail": "Thumbnail",
+          "packaging": "Packaging",
+          "icon": "Icon Set",
+          "web": "Web Design"
+        },
+        "promos": {
+          "dotAria": "Go to promo {{index}}",
+          "deal": {
+            "badge": "Limited offer",
+            "title": "Design Week Savings",
+            "description": "Get 15% off logo and branding packages until Sunday.",
+            "cta": "Explore deals"
+          },
+          "guide": {
+            "badge": "Expert tips",
+            "title": "Design Buyer Guide",
+            "description": "Learn how to brief designers and collaborate effectively.",
+            "cta": "Download guide"
+          }
+        }
+      },
+      "filters": {
+        "mobileBarAria": "Filter and sort tools",
+        "mobileFilters": "Filters ({{count}})",
+        "mobileSort": "Sort",
+        "mobileViewToggle": "Toggle view",
+        "viewAria": "Toggle results view",
+        "viewGrid": "Grid",
+        "viewList": "List",
+        "resultCount": "{{count}} services",
+        "labels": {
+          "budget": "Budget",
+          "delivery": "Delivery Time",
+          "level": "Seller Level",
+          "location": "Location / Remote"
+        },
+        "budgetQuick": ["$0-50", "$50-200", "$200-500", "$500+"],
+        "budgetSlider": "Adjust budget range",
+        "deliveryOptions": ["24h", "3 days", "7 days", "14 days"],
+        "levelOptions": ["Pro", "Level 2", "Level 1", "New"],
+        "locationOptions": ["Any country", "United States", "Korea", "Germany", "Remote only"],
+        "remoteToggle": "Remote friendly",
+        "clearAll": "Clear all",
+        "cancel": "Cancel",
+        "apply": "Apply filters",
+        "reset": "Reset",
+        "close": "Close",
+        "filtersSheetTitle": "Filters",
+        "sortSheetTitle": "Sort by",
+        "sortLabel": "Sort: {{label}}",
+        "sort": {
+          "best": "Best Selling",
+          "newest": "Newest",
+          "priceAsc": "Price ↑",
+          "priceDesc": "Price ↓",
+          "rating": "Rating"
+        }
+      },
+      "cards": {
+        "badges": {
+          "pro": "Pro",
+          "best": "Best",
+          "new": "New"
+        },
+        "sponsored": "Sponsored",
+        "favoriteAria": "Add service to favorites",
+        "reviewCount": "({{count}} reviews)",
+        "price": "From ${{price}}",
+        "cta": "View Service",
+        "listExcerpt": "Elevate your brand with a tailored, research-driven design system that ensures consistency across every touchpoint."
+      },
+      "pagination": {
+        "aria": "Pagination"
+      },
+      "sidebar": {
+        "aria": "Category filters sidebar",
+        "subcategoriesTitle": "Subcategories",
+        "subcategories": ["Logo Design", "Branding", "UI/UX", "Illustration", "Banner", "PPT", "Thumbnail"]
+      },
+      "seoFAQ": {
+        "heading": "Design freelancers for every brand touchpoint",
+        "intro": "FreelanceMarket connects you with verified designers across logo creation, brand identity, UI/UX, motion graphics, and more. Browse curated portfolios, compare fixed-price packages, and collaborate through our secure workspace.",
+        "body1": "Work with specialists who understand your industry, whether you need an e-commerce redesign, Kickstarter campaign visuals, or multilingual presentation decks. Our rating system highlights customer satisfaction with transparent reviews and delivery metrics, so you always know what to expect.",
+        "body2": "Use filters to refine by budget, timeline, and location. Once you place an order, payments are held in escrow until you approve final files. Prefer a tailored proposal? Post a project brief and invite select designers to pitch ideas.",
+        "readMore": "Read more",
+        "showLess": "Show less",
+        "faqTitle": "Design services FAQ",
+        "faq": [
+          {
+            "question": "How much does a designer cost on FreelanceMarket?",
+            "answer": "Pricing varies by expertise and scope. Entry-level designers often start around $50 per project, while brand specialists and design studios can range from $300 to $2,000+. Each service listing outlines deliverables and add-ons so you can compare."
+          },
+          {
+            "question": "What is the typical delivery time for design projects?",
+            "answer": "Logo and branding packages average 5-7 days. UI/UX projects may take 1-4 weeks depending on the number of screens. Use delivery filters to match timelines, and message sellers for rush availability."
+          },
+          {
+            "question": "Can I request revisions?",
+            "answer": "Yes. Every service card displays the number of revisions included. Communicate desired changes through the order workspace, and consider purchasing additional revision add-ons if needed."
+          },
+          {
+            "question": "Is payment secure?",
+            "answer": "All payments are held in escrow until you approve delivery. FreelanceMarket protects both buyers and sellers with dispute resolution, milestone tracking, and secure transactions."
+          },
+          {
+            "question": "Do you support remote collaboration?",
+            "answer": "Absolutely. Most designers collaborate via video calls, shared boards, and project management tools. Use the Remote toggle to prioritise pros comfortable with fully remote workflows."
+          }
+        ],
+        "recentlyTitle": "Recently viewed",
+        "recentlyViewed": [
+          {
+            "id": "rv-1",
+            "title": "Minimalist brand identity refresh",
+            "thumb": "https://lh3.googleusercontent.com/aida-public/AB6AXuBSS1-YKko78pnK_njnMbeiBzFbjjxR0pHDqYXJSp1VTBgaM6T-V5ktBCZlbmPY2-_QdBxKuKe4DkT0qyguOxPoo6WrNvkypDQjdjgAAR5fUogjRrqubSJifRG9WuF6vim7B0RKozDU1qVbDcmzuD49fqGfOp9oUjG-oHHdG5yYsTjlg-tPOq1VK8r31FDl8vFZanMGsyz8co9jRCXCqUqXB9dOYVz7F0ieCob9go5PbIRSEirf-lf5Ug4U8Hh0zJqiYuWlyfcgfhQ"
+          },
+          {
+            "id": "rv-2",
+            "title": "Pitch deck design accelerator",
+            "thumb": "https://lh3.googleusercontent.com/aida-public/AB6AXuDMoRLWdj9FJWjInVDYgEYC7qbP5JTQohS0b1JsjEDSaGQJSZNH4_T_LalbbLvHSLk_XLeV80LwrMweYvG68o-y4wAbhayGBKzWUX6aCW3Y_Mnsf0xWCs3_ethzcfYIl1iYygdUPUQ_NiVAbELpDxpxPXjvA6D7eqQlUxGlGwSBhBwfyH1oFzWbhzkhxgIFEl8cjaRIBwAv9MhjEBtzZTfbwWW7IKOejlQo1jeBWJJtKPV29DT3S7JiiAVapEXsUy2pemUj48gZ2fE"
+          },
+          {
+            "id": "rv-3",
+            "title": "Website UI kit overhaul",
+            "thumb": "https://lh3.googleusercontent.com/aida-public/AB6AXuCnNegvYssHxjP9gReMrkgl7rFmk-RM5eyEeZ-VsQ3OiCCIfspB2SLaYePrct2S47RvIpkuWqJbbhAjNLBx20ZR83cDTrnVq49UwSr73-UclRiHsBxiAjM2LX5lxXCEmNRobD_oQ39IljQrCi9AWjI27Aex552nt1P6pzwFcfVLegAGw-D5yRRDtYLZjPnjPLF2LXua_miW7OJsiR8NwzeIIHSMwscvudLyYoEr4fR6Dgnr3oUxHwb153Kf7aWtH8cHQsVOFuzIQLY"
+          }
+        ]
+      },
+      "emptyState": {
+        "title": "No matches for these filters",
+        "description": "Try removing a filter or explore other subcategories within Design. You can also post a custom project brief to invite designers tailored to your needs.",
+        "clear": "Clear filters",
+        "back": "Back to Design"
+      }
+    }
+  },
+  "footer": {
+    "description": "The world's marketplace for creative & professional services.",
+    "categories": {
+      "title": "Categories",
+      "items": {
+        "logoDesign": "Logo Design",
+        "webDevelopment": "Web Development",
+        "videoEditing": "Video Editing",
+        "contentWriting": "Content Writing"
+      }
+    },
+    "about": {
+      "title": "About",
+      "items": {
+        "aboutUs": "About Us",
+        "careers": "Careers",
+        "press": "Press & News",
+        "partnerships": "Partnerships"
+      }
+    },
+    "support": {
+      "title": "Support",
+      "items": {
+        "help": "Help & Support",
+        "trust": "Trust & Safety",
+        "selling": "Selling on FreelanceMarket",
+        "buying": "Buying on FreelanceMarket"
+      }
+    },
+    "community": {
+      "title": "Community",
+      "items": {
+        "events": "Events",
+        "blog": "Blog",
+        "forum": "Forum",
+        "podcast": "Podcast"
+      }
+    },
+    "legal": {
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "sitemap": "Sitemap"
+    },
+    "copyright": "© 2024 FreelanceMarket Inc. All rights reserved."
+  }
+}

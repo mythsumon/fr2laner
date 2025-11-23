@@ -209,19 +209,19 @@ export const CategorySelect = ({ onSelectCategory, onSelectSubCategory }: Catego
                   {hoveredCategory.subcategories.map((subcategory) => {
                     const destination = getDesignCategoryHref(hoveredCategory.id, subcategory.id);
                     return (
-                    <Link
-                      key={subcategory.id}
-                      href={destination}
-                      onClick={() => {
-                        handleSubCategorySelect(subcategory, hoveredCategory);
-                      }}
-                      className={cn(
-                        "flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition-colors",
-                        "hover:bg-[#EAF6FF] hover:text-[#3A82D9] cursor-pointer"
-                      )}
-                    >
-                      <span>{subcategory.label}</span>
-                    </Link>
+                      <Link
+                        key={subcategory.id}
+                        href={destination}
+                        onClick={() => {
+                          handleSubCategorySelect(subcategory, hoveredCategory);
+                        }}
+                        className={cn(
+                          "flex w-full items-center gap-2 px-4 py-2.5 text-left text-sm text-slate-700 transition-colors",
+                          "hover:bg-[#EAF6FF] hover:text-[#3A82D9] cursor-pointer"
+                        )}
+                      >
+                        <span>{subcategory.label}</span>
+                      </Link>
                     );
                   })}
                 </div>
@@ -300,22 +300,22 @@ export const CategorySelect = ({ onSelectCategory, onSelectSubCategory }: Catego
                         {category.subcategories?.map((subcategory) => {
                           const destination = getDesignCategoryHref(category.id, subcategory.id);
                           return (
-                          <Link
-                            key={subcategory.id}
-                            href={destination}
-                            onClick={() => {
-                              if (onSelectSubCategory) {
-                                onSelectSubCategory(subcategory, category);
-                              }
-                              close();
-                            }}
-                            className={cn(
-                              "flex w-full items-center gap-2 px-10 py-2.5 text-left text-sm text-slate-600 transition-colors",
-                              "hover:bg-[#EAF6FF] hover:text-[#3A82D9]"
-                            )}
-                          >
-                            <span>{subcategory.label}</span>
-                          </Link>
+                            <Link
+                              key={subcategory.id}
+                              href={destination}
+                              onClick={() => {
+                                if (onSelectSubCategory) {
+                                  onSelectSubCategory(subcategory, category);
+                                }
+                                close();
+                              }}
+                              className={cn(
+                                "flex w-full items-center gap-2 px-10 py-2.5 text-left text-sm text-slate-600 transition-colors",
+                                "hover:bg-[#EAF6FF] hover:text-[#3A82D9]"
+                              )}
+                            >
+                              <span>{subcategory.label}</span>
+                            </Link>
                           );
                         })}
                       </div>
@@ -360,4 +360,11 @@ export const CategorySelect = ({ onSelectCategory, onSelectSubCategory }: Catego
     </div>
   );
 };
+
+
+
+
+
+
+
 

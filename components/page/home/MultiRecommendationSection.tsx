@@ -245,6 +245,7 @@ export const MultiRecommendationSection = () => {
           label="SERVICES"
           title="추천 서비스"
           description="프리미엄 추천 서비스를 한눈에 확인하세요."
+          align="center"
         />
       </div>
       <RecommendationBlock
@@ -267,3 +268,6 @@ export const MultiRecommendationSection = () => {
     </section>
   );
 };
+
+
+

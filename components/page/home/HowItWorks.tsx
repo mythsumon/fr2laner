@@ -1,13 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, type ReactElement } from "react";
 import { useTranslation } from "react-i18next";
 import { Search, Users, CreditCard } from "lucide-react";
 import { homeSteps } from "@/entities/home";
 import { cn } from "@/components/shared/utils";
 import SectionHeader from "@/components/common/SectionHeader";
 
-const iconMap: Record<string, JSX.Element> = {
+const iconMap: Record<string, ReactElement> = {
   browse: <Search className="size-9" />, 
   collaborate: <Users className="size-9" />, 
   pay: <CreditCard className="size-9" />,
@@ -29,7 +29,7 @@ const HowItWorksCard = ({
   index: number;
   title: string;
   description: string;
-  icon: JSX.Element;
+  icon: ReactElement;
 }) => {
   const [offset, setOffset] = useState<CardState>(initialCardState);
 

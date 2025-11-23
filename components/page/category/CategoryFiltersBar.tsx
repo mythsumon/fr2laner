@@ -189,7 +189,7 @@ export const CategoryFiltersBar = ({
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-[#0F172A]">{t("category.design.filters.labels.budget")}</h4>
                 <div className="flex flex-wrap gap-2">
-                  {t("category.design.filters.budgetQuick", { returnObjects: true })
+                  {(t("category.design.filters.budgetQuick", { returnObjects: true }) as string[])
                     .map((label: string) => (
                       <Button key={label} type="default" shape="round" className="border border-[#E2E8F0] bg-white px-4 py-2 text-sm font-semibold text-[#475569] hover:border-[#2E5E99] hover:text-[#2E5E99]">
                         {label}
@@ -203,7 +203,7 @@ export const CategoryFiltersBar = ({
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-[#0F172A]">{t("category.design.filters.labels.delivery")}</h4>
                 <div className="flex flex-wrap gap-2">
-                  {t("category.design.filters.deliveryOptions", { returnObjects: true })
+                  {(t("category.design.filters.deliveryOptions", { returnObjects: true }) as string[])
                     .map((label: string) => (
                       <Button key={label} type="default" shape="round" className="border border-[#E2E8F0] bg-white px-4 py-2 text-sm font-semibold text-[#475569] hover:border-[#2E5E99] hover:text-[#2E5E99]">
                         {label}
@@ -216,7 +216,7 @@ export const CategoryFiltersBar = ({
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-[#0F172A]">{t("category.design.filters.labels.level")}</h4>
                 <div className="flex flex-wrap gap-2">
-                  {t("category.design.filters.levelOptions", { returnObjects: true })
+                  {(t("category.design.filters.levelOptions", { returnObjects: true }) as string[])
                     .map((label: string) => (
                       <Button key={label} type="default" shape="round" className="border border-[#E2E8F0] bg-white px-4 py-2 text-sm font-semibold text-[#475569] hover:border-[#2E5E99] hover:text-[#2E5E99]">
                         {label}
@@ -229,7 +229,7 @@ export const CategoryFiltersBar = ({
               <div className="space-y-3">
                 <h4 className="text-sm font-semibold text-[#0F172A]">{t("category.design.filters.labels.location")}</h4>
                 <select className="w-full rounded-2xl border border-[#E2E8F0] px-4 py-3 text-sm text-[#475569] focus:border-[#2E5E99] focus:outline-none">
-                  {t("category.design.filters.locationOptions", { returnObjects: true })
+                  {(t("category.design.filters.locationOptions", { returnObjects: true }) as string[])
                     .map((label: string) => (
                       <option key={label}>{label}</option>
                     ))}
@@ -305,7 +305,7 @@ export const CategoryFiltersBar = ({
               <section className="space-y-3">
                 <h5 className="text-sm font-semibold text-[#0F172A]">{t("category.design.filters.labels.budget")}</h5>
                 <div className="flex flex-wrap gap-2">
-                  {t("category.design.filters.budgetQuick", { returnObjects: true })
+                  {(t("category.design.filters.budgetQuick", { returnObjects: true }) as string[])
                     .map((label: string) => (
                       <Button key={label} type="default" shape="round" className="border border-[#E2E8F0] bg-white px-4 py-2 text-sm font-semibold text-[#475569]">
                         {label}
@@ -316,7 +316,7 @@ export const CategoryFiltersBar = ({
               <section className="space-y-3">
                 <h5 className="text-sm font-semibold text-[#0F172A]">{t("category.design.filters.labels.delivery")}</h5>
                 <div className="flex flex-wrap gap-2">
-                  {t("category.design.filters.deliveryOptions", { returnObjects: true })
+                  {(t("category.design.filters.deliveryOptions", { returnObjects: true }) as string[])
                     .map((label: string) => (
                       <Button key={label} type="default" shape="round" className="border border-[#E2E8F0] bg-white px-4 py-2 text-sm font-semibold text-[#475569]">
                         {label}
@@ -327,7 +327,7 @@ export const CategoryFiltersBar = ({
               <section className="space-y-3">
                 <h5 className="text-sm font-semibold text-[#0F172A]">{t("category.design.filters.labels.level")}</h5>
                 <div className="flex flex-wrap gap-2">
-                  {t("category.design.filters.levelOptions", { returnObjects: true })
+                  {(t("category.design.filters.levelOptions", { returnObjects: true }) as string[])
                     .map((label: string) => (
                       <Button key={label} type="default" shape="round" className="border border-[#E2E8F0] bg-white px-4 py-2 text-sm font-semibold text-[#475569]">
                         {label}
@@ -338,7 +338,7 @@ export const CategoryFiltersBar = ({
               <section className="space-y-3">
                 <h5 className="text-sm font-semibold text-[#0F172A]">{t("category.design.filters.labels.location")}</h5>
                 <select className="w-full rounded-2xl border border-[#E2E8F0] px-4 py-3 text-sm text-[#475569] focus:border-[#2E5E99] focus:outline-none">
-                  {t("category.design.filters.locationOptions", { returnObjects: true })
+                  {(t("category.design.filters.locationOptions", { returnObjects: true }) as string[])
                     .map((label: string) => (
                       <option key={label}>{label}</option>
                     ))}

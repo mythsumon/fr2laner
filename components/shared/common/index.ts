@@ -2,7 +2,7 @@ export { default as Button } from "./Button";
 export { default as Card } from "./Card";
 export { default as CheckBox } from "./CheckBox";
 export { default as DatePicker } from "./DatePicker";
-export { default as FileUploadArea } from "./FileUploadArea";
+// export { default as FileUploadArea } from "./FileUploadArea"; // Commented out - file is not a module
 export { default as Form } from "./Form";
 export { default as Input } from "./Input";
 export { default as InputNumber } from "./InputNumber";

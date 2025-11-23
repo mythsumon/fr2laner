@@ -5,4 +5,5 @@ export type { LoginMode } from "./LoginModeSelector";
 export { SignupForm } from "./SignupForm";
 export { SignupModeSelector } from "./SignupModeSelector";
 export type { SignupMode } from "./SignupModeSelector";
-
+export { RoleSelector } from "./RoleSelector";
+export type { RoleMode } from "./RoleSelector";

@@ -31,41 +31,44 @@ export const FeaturedFreelancers = () => {
   return (
     <section id="featured-freelancers" className="bg-white pt-20 pb-24">
       <div className="mx-auto w-full max-w-7xl px-6">
-        <div className="mb-6 flex flex-col gap-3 lg:flex-row lg:items-end lg:justify-between">
+        <div className="mb-6">
           <SectionHeader
             label={t("home.sections.freelancers.label", { defaultValue: "FREELANCERS" })}
             title={t("home.freelancers.title")}
             description={t("home.freelancers.subtitle", {
               defaultValue: "Top freelancers curated for quality results.",
             })}
+            align="center"
           />
+        </div>
+
+        <div className="mb-8 flex flex-wrap items-center justify-between gap-2">
+          <div className="flex flex-wrap items-center gap-2">
+            {tabItems.map((tab) => {
+              const isActive = tab.value === activeTab;
+              return (
+                <Button
+                  key={tab.value}
+                  type={isActive ? "primary" : "default"}
+                  shape="round"
+                  className={
+                    isActive
+                      ? "border-none bg-[#2E5E99] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1d4673]"
+                      : "border border-[#E2E8F0] bg-white px-5 py-2 text-sm font-semibold text-[#475569] hover:bg-[#F1F5F9]"
+                  }
+                  onClick={() => setActiveTab(tab.value)}
+                >
+                  {tab.label}
+                </Button>
+              );
+            })}
+          </div>
           <Link
             href="#"
             className="text-sm font-semibold text-[#2E5E99] transition-colors hover:text-[#1d4673] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
           >
             {t("home.freelancers.actions.seeMore", { defaultValue: "See More →" })}
           </Link>
-        </div>
-
-        <div className="mb-8 flex flex-wrap items-center gap-2">
-          {tabItems.map((tab) => {
-            const isActive = tab.value === activeTab;
-            return (
-              <Button
-                key={tab.value}
-                type={isActive ? "primary" : "default"}
-                shape="round"
-                className={
-                  isActive
-                    ? "border-none bg-[#2E5E99] px-5 py-2 text-sm font-semibold text-white hover:bg-[#1d4673]"
-                    : "border border-[#E2E8F0] bg-white px-5 py-2 text-sm font-semibold text-[#475569] hover:bg-[#F1F5F9]"
-                }
-                onClick={() => setActiveTab(tab.value)}
-              >
-                {tab.label}
-              </Button>
-            );
-          })}
         </div>
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">

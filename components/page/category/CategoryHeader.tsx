@@ -39,7 +39,7 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
 
   return (
     <>
-      <header className="mx-auto w-full max-w-7xl px-6 pt-12 pb-10">
+    <header className="mx-auto w-full max-w-7xl px-6 pt-12 pb-10">
       <nav className="mb-4 text-sm text-[#475569]" aria-label={t("category.design.header.breadcrumb.aria") ?? undefined}>
         <Link href="/" className="text-[#2E5E99] hover:underline">
           {t("category.design.header.breadcrumb.home")}
@@ -125,7 +125,7 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
           </div>
         </aside>
       </div>
-      </header>
+    </header>
       <style jsx>{`
         .keyword-scroll {
           scrollbar-width: none;

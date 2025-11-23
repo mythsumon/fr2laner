@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { Button } from "@/components/shared/common";
 
@@ -12,6 +13,7 @@ type SignupFormProps = {
 };
 
 export const SignupForm = ({ mode, onResetMode }: SignupFormProps) => {
+  const router = useRouter();
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -40,6 +42,13 @@ export const SignupForm = ({ mode, onResetMode }: SignupFormProps) => {
     setIsSubmitting(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
     setIsSubmitting(false);
+    
+    // Redirect based on selected mode
+    if (mode === "client") {
+      router.push("/buyer-dashboard");
+    } else if (mode === "expert") {
+      router.push("/dashboard");
+    }
   };
 
   return (
@@ -175,15 +184,6 @@ export const SignupForm = ({ mode, onResetMode }: SignupFormProps) => {
           ))}
         </div>
       </div>
-
-      <p className="text-center text-sm text-slate-500">
-        이미 계정이 있나요?{" "}
-        <Link href="/login" className="font-semibold text-sky-600 hover:text-sky-700">
-          로그인
-        </Link>
-      </p>
     </div>
   );
 };
-
-

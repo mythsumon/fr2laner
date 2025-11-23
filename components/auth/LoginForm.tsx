@@ -1,7 +1,9 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/shared/common";
 
 export type LoginMode = "client" | "expert";
@@ -11,11 +13,27 @@ type LoginFormProps = {
   onResetMode?: () => void;
 };
 
+// Sample accounts for demo
+const sampleAccounts = {
+  client: {
+    email: "client@demo.com",
+    password: "demo1234",
+    label: "의뢰인 샘플 계정",
+  },
+  expert: {
+    email: "expert@demo.com",
+    password: "demo1234",
+    label: "전문가 샘플 계정",
+  },
+};
+
 export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
+  const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [copiedField, setCopiedField] = useState<string | null>(null);
 
   const modeLabel = mode === "client" ? "의뢰인으로 로그인" : mode === "expert" ? "전문가로 로그인" : undefined;
   const subtitle =
@@ -30,7 +48,32 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
     setIsSubmitting(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
     setIsSubmitting(false);
+    
+    // Redirect based on selected mode
+    if (mode === "client") {
+      router.push("/buyer-dashboard");
+    } else if (mode === "expert") {
+      router.push("/dashboard");
+    }
   };
+
+  const handleUseSampleAccount = () => {
+    const account = mode ? sampleAccounts[mode] : sampleAccounts.client;
+    setEmail(account.email);
+    setPassword(account.password);
+  };
+
+  const handleCopy = async (text: string, field: string) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      setCopiedField(field);
+      setTimeout(() => setCopiedField(null), 2000);
+    } catch (err) {
+      console.error("Failed to copy:", err);
+    }
+  };
+
+  const currentSampleAccount = mode ? sampleAccounts[mode] : null;
 
   return (
     <div className="space-y-6">
@@ -54,6 +97,59 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
           )}
         </div>
       </div>
+
+      {/* Sample Account Display */}
+      {currentSampleAccount && (
+        <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-4">
+          <div className="mb-3 flex items-center justify-between">
+            <div>
+              <h3 className="text-sm font-semibold text-sky-900">✨ {currentSampleAccount.label}</h3>
+              <p className="mt-0.5 text-xs text-sky-700">데모용 샘플 계정으로 빠르게 로그인하세요</p>
+            </div>
+            <button
+              type="button"
+              onClick={handleUseSampleAccount}
+              className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-sky-700"
+            >
+              사용하기
+            </button>
+          </div>
+          <div className="space-y-2">
+            <div className="flex items-center gap-2 rounded-lg bg-white/80 px-3 py-2 text-xs">
+              <span className="w-16 shrink-0 font-medium text-sky-700">이메일:</span>
+              <span className="flex-1 font-mono text-sky-900">{currentSampleAccount.email}</span>
+              <button
+                type="button"
+                onClick={() => handleCopy(currentSampleAccount.email, "email")}
+                className="flex size-6 items-center justify-center rounded text-sky-600 transition-colors hover:bg-sky-100"
+                title="복사"
+              >
+                {copiedField === "email" ? (
+                  <Check className="size-3.5 text-green-600" />
+                ) : (
+                  <Copy className="size-3.5" />
+                )}
+              </button>
+            </div>
+            <div className="flex items-center gap-2 rounded-lg bg-white/80 px-3 py-2 text-xs">
+              <span className="w-16 shrink-0 font-medium text-sky-700">비밀번호:</span>
+              <span className="flex-1 font-mono text-sky-900">{currentSampleAccount.password}</span>
+              <button
+                type="button"
+                onClick={() => handleCopy(currentSampleAccount.password, "password")}
+                className="flex size-6 items-center justify-center rounded text-sky-600 transition-colors hover:bg-sky-100"
+                title="복사"
+              >
+                {copiedField === "password" ? (
+                  <Check className="size-3.5 text-green-600" />
+                ) : (
+                  <Copy className="size-3.5" />
+                )}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-1">
@@ -137,4 +233,3 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
     </div>
   );
 };
-
