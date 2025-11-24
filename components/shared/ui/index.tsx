@@ -1,1 +1,2 @@
-export { default as LanguageSelector } from "./language-selector";
+// LanguageSelector component not yet implemented
+export const LanguageSelector = () => null;

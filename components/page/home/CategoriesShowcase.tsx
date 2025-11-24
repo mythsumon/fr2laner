@@ -21,7 +21,6 @@ import {
 } from "lucide-react";
 import { homePrimaryCategories, type HomePrimaryCategoryIcon } from "@/entities/home";
 import { cn } from "@/components/shared/utils";
-import { CategoryIconMotion } from "./CategoryIconMotion";
 
 const iconMap: Record<HomePrimaryCategoryIcon, LucideIcon> = {
   palette: Palette,
@@ -52,45 +51,38 @@ const hexToRgba = (hex: string, alpha = 0.24) => {
 export const CategoriesShowcase = () => {
   const { t } = useTranslation();
 
-  // Duplicate categories for infinite loop (3x for smoother seamless loop)
-  const duplicatedCategories = [
-    ...homePrimaryCategories,
-    ...homePrimaryCategories,
-    ...homePrimaryCategories,
-  ];
+  // Duplicate categories for infinite loop (2x for seamless loop)
+  const duplicatedCategories = [...homePrimaryCategories, ...homePrimaryCategories];
 
-  const renderCategory = (category: typeof homePrimaryCategories[0], index: number, originalIndex: number) => {
+  const renderCategory = (category: typeof homePrimaryCategories[0], index: number) => {
     const Icon = iconMap[category.icon] ?? Palette;
     const hasImage = Boolean(category.image);
     return (
-      <CategoryIconMotion key={`${category.id}-${index}`} index={originalIndex}>
-        <article
-          tabIndex={0}
-          aria-label={t(category.labelKey)}
-          className={cn(
-            "group flex min-w-[140px] flex-shrink-0 flex-col items-center gap-3 text-center transition-transform duration-200 ease-out",
-            "hover:-translate-y-1"
-          )}
-        >
-          {hasImage ? (
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#E9EEF8] to-[#F0F7FF] p-3 transition-transform duration-200 ease-out group-hover:scale-105">
-              <Image
-                src={category.image!}
-                alt={t(category.labelKey)}
-                width={80}
-                height={80}
-                className="h-full w-full object-contain"
-                priority={false}
-              />
-            </div>
-          ) : (
-            <div className="flex h-20 w-20 items-center justify-center rounded-2xl bg-gradient-to-br from-[#E9EEF8] to-[#F0F7FF] transition-transform duration-200 ease-out group-hover:scale-105">
-              <Icon className="size-10 text-[#2E5E99]" strokeWidth={1.6} />
-            </div>
-          )}
-          <h3 className="text-xs font-semibold text-[#0F172A] sm:text-sm">{t(category.labelKey)}</h3>
-        </article>
-      </CategoryIconMotion>
+      <article
+        key={`${category.id}-${index}`}
+        tabIndex={0}
+        aria-label={t(category.labelKey)}
+        className={cn(
+          "group flex min-w-[120px] flex-shrink-0 flex-col items-center gap-4 text-center transition-transform duration-200 ease-out",
+          "hover:-translate-y-1 md:min-w-0"
+        )}
+      >
+        {hasImage ? (
+          <Image
+            src={category.image!}
+            alt={t(category.labelKey)}
+            width={112}
+            height={112}
+            className="h-[5.5rem] w-[5.5rem] object-contain transition-transform duration-200 ease-out group-hover:scale-105"
+            priority={false}
+          />
+        ) : (
+          <span className="flex h-[5.5rem] w-[5.5rem] items-center justify-center">
+            <Icon className="size-16 text-[#2E5E99]" strokeWidth={1.6} />
+          </span>
+        )}
+        <h3 className="text-xs font-medium text-[#0F172A] sm:text-sm">{t(category.labelKey)}</h3>
+      </article>
     );
   };
 
@@ -111,14 +103,15 @@ export const CategoriesShowcase = () => {
           </p>
         </div>
 
-        {/* Infinite Loop Horizontal Carousel - All Screen Sizes */}
-        <div className="relative overflow-hidden">
+        {/* Desktop: Grid Layout */}
+        <div className="hidden grid-cols-4 gap-6 md:grid xl:grid-cols-7">
+          {homePrimaryCategories.map((category, index) => renderCategory(category, index))}
+        </div>
+
+        {/* Mobile: Infinite Loop Horizontal Scroll */}
+        <div className="relative overflow-hidden md:hidden">
           <div className="category-slide-container flex gap-6">
-            {duplicatedCategories.map((category, index) => {
-              // Calculate original index for animation delay
-              const originalIndex = index % homePrimaryCategories.length;
-              return renderCategory(category, index, originalIndex);
-            })}
+            {duplicatedCategories.map((category, index) => renderCategory(category, index))}
           </div>
         </div>
       </div>
@@ -129,18 +122,23 @@ export const CategoriesShowcase = () => {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-33.333%);
+            transform: translateX(-50%);
           }
         }
 
         .category-slide-container {
-          animation: slide 40s linear infinite;
+          animation: slide 30s linear infinite;
           width: fit-content;
-          will-change: transform;
         }
 
         .category-slide-container:hover {
           animation-play-state: paused;
+        }
+
+        @media (max-width: 768px) {
+          .category-slide-container {
+            will-change: transform;
+          }
         }
       `}</style>
     </section>

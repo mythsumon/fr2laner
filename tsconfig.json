@@ -17,25 +17,10 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "jsx": "react-jsx",
-<<<<<<< HEAD
-=======
-    "incremental": true,
->>>>>>> a07890e (Fix build errors, add buyer/seller dashboards, implement infinite carousel for categories, and add account settings UI)
     "plugins": [
       {
         "name": "next"
       }
-<<<<<<< HEAD
-    ]
-  },
-  "include": [
-    "next-env.d.ts",
-    ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts",
-    "**/*.mts",
-    "**/*.ts",
-    "**/*.tsx"
-=======
     ],
     "paths": {
       "@/*": [
@@ -45,11 +30,11 @@
   },
   "include": [
     "next-env.d.ts",
-    "**/*.ts",
-    "**/*.tsx",
     ".next/types/**/*.ts",
-    ".next/dev/types/**/*.ts"
->>>>>>> a07890e (Fix build errors, add buyer/seller dashboards, implement infinite carousel for categories, and add account settings UI)
+    ".next/dev/types/**/*.ts",
+    "**/*.mts",
+    "**/*.ts",
+    "**/*.tsx"
   ],
   "exclude": [
     "node_modules"

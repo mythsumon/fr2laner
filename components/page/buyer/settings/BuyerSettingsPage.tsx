@@ -1,12 +1,10 @@
 "use client";
 
-import { useRouter } from "next/navigation";
+import Link from "next/link";
 import { Bell, CreditCard, ShieldCheck } from "lucide-react";
 import { BuyerBottomNav } from "@/components/page/buyer/BuyerBottomNav";
 
 export const BuyerSettingsPage = () => {
-  const router = useRouter();
-
   const accountSettings = [
     {
       id: "notifications",
@@ -28,10 +26,6 @@ export const BuyerSettingsPage = () => {
     },
   ];
 
-  const handleRowClick = (href: string) => {
-    router.push(href);
-  };
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-[#F0F7FF] pb-24">
       <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
@@ -42,11 +36,10 @@ export const BuyerSettingsPage = () => {
             {accountSettings.map((item) => {
               const Icon = item.icon;
               return (
-                <button
+                <Link
                   key={item.id}
-                  type="button"
-                  onClick={() => handleRowClick(item.href)}
-                  className="flex w-full cursor-pointer items-center justify-between rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 text-left transition-all hover:bg-[#F8FAFC] hover:shadow-sm active:bg-[#F1F5F9] focus:outline-none focus:ring-2 focus:ring-[#2E5E99] focus:ring-offset-2"
+                  href={item.href}
+                  className="flex w-full cursor-pointer items-center justify-between rounded-2xl border border-[#E2E8F0] bg-white px-4 py-3 text-left transition-all hover:bg-[#F8FAFC] hover:shadow-sm active:bg-[#F1F5F9]"
                 >
                   <div className="flex items-center gap-3">
                     <div className="rounded-xl bg-[#E9EEF8] p-2.5 text-[#2E5E99]">
@@ -55,7 +48,7 @@ export const BuyerSettingsPage = () => {
                     <span className="text-sm font-semibold text-[#0F172A]">{item.label}</span>
                   </div>
                   <span className="text-sm font-medium text-[#2E5E99]">관리</span>
-                </button>
+                </Link>
               );
             })}
           </div>
