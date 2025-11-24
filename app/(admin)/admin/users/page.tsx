@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { Suspense, useState } from "react";
 import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import {
@@ -26,7 +26,7 @@ import { Toast } from "@/components/page/admin/shared/Toast";
 import { BackToHomeButton } from "@/components/page/admin/shared/BackToHomeButton";
 import { useToast } from "@/hooks/useToast";
 
-type UserStatus = "active" | "banned" | "pending";
+type UserStatus = "active" | "banned" | "pending" | "verified";
 type VerificationStatus = "approved" | "pending" | "rejected";
 
 interface Buyer {
@@ -164,7 +164,7 @@ const initialAdmins: Admin[] = [
   },
 ];
 
-export default function UsersManagementPage() {
+function UsersManagementContent() {
   const searchParams = useSearchParams();
   const type = searchParams.get("type") || "buyer";
   const [searchQuery, setSearchQuery] = useState("");
@@ -760,5 +760,13 @@ export default function UsersManagementPage() {
         onClose={hideToast}
       />
     </div>
+  );
+}
+
+export default function UsersManagementPage() {
+  return (
+    <Suspense fallback={<div className="p-6 text-sm text-[#64748B]">사용자 데이터를 불러오는 중입니다...</div>}>
+      <UsersManagementContent />
+    </Suspense>
   );
 }

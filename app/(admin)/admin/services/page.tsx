@@ -1114,8 +1114,8 @@ export default function ServicesManagementPage() {
                   >
                     <option value="">선택하세요</option>
                     {categories.map((cat) => (
-                      <option key={cat} value={cat}>
-                        {cat}
+                      <option key={cat.id} value={cat.name}>
+                        {cat.name}
                       </option>
                     ))}
                   </select>

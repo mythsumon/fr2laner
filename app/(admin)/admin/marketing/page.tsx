@@ -213,7 +213,7 @@ export default function MarketingManagementPage() {
   };
 
   const handleToggleFeaturedStatus = (service: FeaturedService) => {
-    const updatedServices = featuredServices.map((s) =>
+    const updatedServices: FeaturedService[] = featuredServices.map((s) =>
       s.id === service.id ? { ...s, status: s.status === "active" ? "pending" : "active" } : s
     );
     setFeaturedServices(updatedServices);
