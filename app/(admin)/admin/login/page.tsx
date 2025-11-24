@@ -166,16 +166,15 @@ export default function SuperAdminLoginPage() {
               </Link>
             </div>
 
-            {/* Submit Button */}
-            <Button
-              type="submit"
-              htmlType="submit"
-              className="w-full"
-              loading={isLoading}
-              disabled={isLoading}
-            >
-              로그인
-            </Button>
+          {/* Submit Button */}
+          <Button
+            htmlType="submit"
+            className="w-full"
+            loading={isLoading}
+            disabled={isLoading}
+          >
+            로그인
+          </Button>
           </form>
 
           {/* Security Notice */}
