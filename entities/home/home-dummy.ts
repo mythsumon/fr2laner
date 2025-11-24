@@ -224,6 +224,54 @@ export const homeTestimonials: HomeTestimonial[] = [
     avatar:
       "https://lh3.googleusercontent.com/aida-public/AB6AXuAY3ZhTdF6zx7tthrM461Nx7rFmk-RM5eyEeZ-VsQ3OiCCIfspB2SLaYePrct2S47RvIpkuWqJbbhAjNLBx20ZR83cDTrnVq49UwSr73-UclRiHsBxiAjM2LX5lxXCEmNRobD_oQ39IljQrCi9AWjI27Aex552nt1P6pzwFcfVLegAGw-D5yRRDtYLZjPnjPLF2LXua_miW7OJsiR8NwzeIIHSMwscvudLyYoEr4fR6Dgnr3oUxHwb153Kf7aWtH8cHQsVOFuzIQLY",
   },
+  {
+    id: "david-kim",
+    quoteKey: "home.testimonials.items.david.quote",
+    nameKey: "home.testimonials.items.david.name",
+    roleKey: "home.testimonials.items.david.role",
+    avatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuB07jKR091KENUBAHWEcLsCBFH4yT-JB94YRH9PvqZisw1s6aHxROhuaWT1WJStxpRbjSEReSmzFod1uOhzMFI9F5AtkuDO5dMRXoaIl6u0u92sfI_8mBww06BSC3cmuSEDZUPbivEzIqeGRBV0RYJqIhjFiPOSNeVwIJ9SzCiv7lLOoCLzFeT0O7bRsXNl7W-9quCvjFUCUh1IMNzLYTYjizaJ-7qR78pTwM6D7FLPjmebHOz2hGLHMdrhFT2u1COq2HiRYf3hmvg",
+  },
+  {
+    id: "emily-park",
+    quoteKey: "home.testimonials.items.emily.quote",
+    nameKey: "home.testimonials.items.emily.name",
+    roleKey: "home.testimonials.items.emily.role",
+    avatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuCiUbx8X0S95qNpyenE4vJZitJ3u1kzuR2s9zdXCjRkQ6aRM1GbDf4yTHECcucxT5-tDJ5UyX0aI-gQWIkZoAwwu0Yn7DYmMxOz4Laj44b-RNiDVjfG9BsmQn5ajl2JrrD5C708vLSzElcS6esbgsl8VT77fMBP_TucLBml_F9gLzLFGvD5HgAenvF4CL0oTjOgLjcJaYJxGM__yAVXowTUApAR_vFcBTNUeIPJsJIRfCweGYV_9tmbUAeaHkcBZAojqv8Eu_2-qUM",
+  },
+  {
+    id: "james-wilson",
+    quoteKey: "home.testimonials.items.james.quote",
+    nameKey: "home.testimonials.items.james.name",
+    roleKey: "home.testimonials.items.james.role",
+    avatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuB_FKhIQKokNqOg9HECJ6QTjhBysweZFQ1n-eL5WCxDP_IFUpE5ZWy7F6Tih4_AG0ZkCEGzR7SdobyqJOGfS-z8R4zEzCHcKIO0cIVze6XZeqk_iU9MNwG6Nrr9feLMZLBSDlViHwtsQYwIy-cojNIYgK46EN58zvq2gno-k2zJvoTIvds8sAKvAaBLwI26eFXk81o3HAXdklCXM1xXUfo4a6Dsa8_apjMpjvxuWAvb9CukFQamsuR4B_AHQwU-8GL1_NwdMEA1KTY",
+  },
+  {
+    id: "lisa-anderson",
+    quoteKey: "home.testimonials.items.lisa.quote",
+    nameKey: "home.testimonials.items.lisa.name",
+    roleKey: "home.testimonials.items.lisa.role",
+    avatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuA7S1UOblJR2cx4JR39YixpEGU1UHui-W6K5kBdV85e76LIcmyTE3BeCcYGa4R4cK59DG7eLmT8zVfyxZ8S2WnPFRgDrmJfESgK0ZXdmLgCKbe7uu4voBOeYYQitTabm9CCRsWS5plwGzHa9jPp6blda4FLhJIS8NGIA_f--lbM_42vO-5QEeNJgs8xKMyHjMw2U6bGuDGJ7N9EIXZU-4Wp7FmYji3ZkER4Ao5ej1MnPXZCgaT2wE7A0Mu-u5vdgxAKUUD1aifcK0c",
+  },
+  {
+    id: "robert-martinez",
+    quoteKey: "home.testimonials.items.robert.quote",
+    nameKey: "home.testimonials.items.robert.name",
+    roleKey: "home.testimonials.items.robert.role",
+    avatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuB-i-z6mtQkgVAzR5G5hrEsbJm2UOK1319U0kW9hmubFqa7ec4dgK8Z67oGLwOY3QLQOdonQfobJRp2X7G7pC-L5ocrNhBsYhJpRsl6KvLH_Qe54NzBEunRnXMzDMupz8oRDH1U1BFhrlDTwGOPJRm_iP7aPofqcs68A5_X1v_R3eduxN_-h0wcYVuvh201MgTFyZ3Ri1Cf1v_xB9zK1R8ewvsMBh6XVV2K39C29p-St-mya0RrgJk1OaGfBtniQwF8vmA1oG2Vvxk",
+  },
+  {
+    id: "sophia-brown",
+    quoteKey: "home.testimonials.items.sophia.quote",
+    nameKey: "home.testimonials.items.sophia.name",
+    roleKey: "home.testimonials.items.sophia.role",
+    avatar:
+      "https://lh3.googleusercontent.com/aida-public/AB6AXuDMoRLWdj9FJWjInVDYgEYC7qbP5JTQohS0b1JsjEDSaGQJSZNH4_T_LalbbLvHSLk_XLeV80LwrMweYvG68o-y4wAbhayGBKzWUX6aCW3Y_Mnsf0xWCs3_ethzcfYIl1iYygdUPUQ_NiVAbELpDxpxPXjvA6D7eqQlUxGlGwSBhBwfyH1oFzWbhzkhxgIFEl8cjaRIBwAv9MhjEBtzZTfbwWW7IKOejlQo1jeBWJJtKPV29DT3S7JiiAVapEXsUy2pemUj48gZ2fE",
+  },
 ];
 
 export const homeServices: HomeService[] = [

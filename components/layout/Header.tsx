@@ -7,7 +7,7 @@ import { Button } from "../shared/common";
 import { LanguageSelector } from "../shared/ui";
 import { CategorySelect } from "../nav/CategorySelect";
 import { cn } from "../shared/utils";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Shield } from "lucide-react";
 
 const menuLinks = [
   { key: "header.menu.forFreelancers", href: "/for-freelancers" },
@@ -99,6 +99,15 @@ export const Header = () => {
         <div className="flex items-center gap-3">
           <div className="hidden items-center gap-3 sm:flex">
             <LanguageSelector />
+            <Link href="/admin/login" className="inline-flex" title="관리자 로그인">
+              <Button
+                type="text"
+                shape="round"
+                className="h-11 px-3 text-sm font-semibold text-[#64748B] hover:bg-[#E9EEF8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+              >
+                <Shield className="size-4" />
+              </Button>
+            </Link>
             <Link href="/login" className="inline-flex">
               <Button
                 type="text"
@@ -186,6 +195,16 @@ export const Header = () => {
               </div>
               <div className="space-y-3">
                 <LanguageSelector />
+                <Link href="/admin/login" onClick={closeMobileNav} className="w-full">
+                  <Button
+                    type="text"
+                    shape="round"
+                    className="w-full border border-[#E2E8F0] px-5 py-2 text-sm font-semibold text-[#64748B] flex items-center justify-center gap-2"
+                  >
+                    <Shield className="size-4" />
+                    관리자
+                  </Button>
+                </Link>
                 <Link href="/login" onClick={closeMobileNav} className="w-full">
                   <Button
                     type="text"

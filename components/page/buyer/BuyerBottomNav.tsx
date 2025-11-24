@@ -16,7 +16,7 @@ export const BuyerBottomNav = () => {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#E2E8F0] bg-white/95 backdrop-blur">
+    <nav className="fixed inset-x-0 bottom-0 z-50 border-t border-[#E2E8F0] bg-white/95 backdrop-blur md:hidden">
       <div className="mx-auto flex max-w-2xl items-center justify-around py-3 text-xs font-semibold text-[#94A3B8]">
         {navItems.map((item) => {
           const Icon = item.icon;

@@ -42,16 +42,22 @@ const footerSections = [
   },
 ];
 
+const legalLinks = [
+  { labelKey: "footer.legal.terms", href: "#" },
+  { labelKey: "footer.legal.privacy", href: "#" },
+  { labelKey: "footer.legal.sitemap", href: "#" },
+];
+
 export const Footer = () => {
   const { t } = useTranslation();
 
   return (
     <footer className="site-footer border-t border-[#E0E0E0] bg-white">
-      <div className="mx-auto w-full max-w-7xl px-6 py-16">
-        <div className="grid grid-cols-1 gap-10 md:grid-cols-5">
-          <div className="md:col-span-2">
+      <div className="mx-auto w-full max-w-7xl px-6 py-14 lg:py-20">
+        <div className="grid gap-10 lg:grid-cols-12">
+          <div className="lg:col-span-4">
             <div className="flex items-center gap-3">
-              <span className="flex size-10 items-center justify-center rounded-full bg-[#2E5E99]/10 text-[#2E5E99]">
+              <span className="flex size-12 items-center justify-center rounded-2xl bg-[#2E5E99]/10 text-[#2E5E99]">
                 <svg
                   width="28"
                   height="28"
@@ -71,41 +77,44 @@ export const Footer = () => {
                   />
                 </svg>
               </span>
-              <Link href="/" className="text-xl font-bold text-[#1A202C]">
-                {t("brand")}
-              </Link>
+              <div className="flex flex-col">
+                <Link href="/" className="text-2xl font-bold text-[#1A202C]">
+                  {t("brand")}
+                </Link>
+                <span className="text-sm font-medium text-[#6B7280]">{t("footer.tagline", { defaultValue: "FreelanceMarket" })}</span>
+              </div>
             </div>
-            <p className="mt-4 text-sm text-[#6B7280]">{t("footer.description")}</p>
+            <p className="mt-6 text-sm leading-relaxed text-[#6B7280]">{t("footer.description")}</p>
           </div>
 
-          {footerSections.map((section) => (
-            <div key={section.titleKey}>
-              <h3 className="text-lg font-semibold text-[#1A202C]">{t(section.titleKey)}</h3>
-              <ul className="mt-4 space-y-3">
-                {section.itemKeys.map((itemKey) => (
-                  <li key={itemKey}>
-                    <Link href="#" className="text-sm text-[#6B7280] transition-colors hover:text-[#2E5E99]">
-                      {t(itemKey)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ))}
+          <div className="lg:col-span-8 grid grid-cols-2 gap-8 sm:grid-cols-4">
+            {footerSections.map((section) => (
+              <div key={section.titleKey}>
+                <h3 className="text-base font-semibold text-[#1A202C]">{t(section.titleKey)}</h3>
+                <ul className="mt-5 space-y-3 text-sm text-[#6B7280]">
+                  {section.itemKeys.map((itemKey) => (
+                    <li key={itemKey}>
+                      <Link href="#" className="transition-colors hover:text-[#2E5E99]">
+                        {t(itemKey)}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
         </div>
 
-        <div className="mt-16 flex flex-col items-center justify-between gap-4 border-t border-[#E0E0E0] pt-8 text-sm text-[#6B7280] sm:flex-row">
-          <p>{t("footer.copyright")}</p>
-          <div className="flex items-center gap-4">
-            <Link href="#" className="transition-colors hover:text-[#2E5E99]">
-              {t("footer.legal.terms")}
-            </Link>
-            <Link href="#" className="transition-colors hover:text-[#2E5E99]">
-              {t("footer.legal.privacy")}
-            </Link>
-            <Link href="#" className="transition-colors hover:text-[#2E5E99]">
-              {t("footer.legal.sitemap")}
-            </Link>
+        <div className="mt-12 border-t border-[#E0E0E0] pt-8">
+          <div className="flex flex-col gap-4 text-sm text-[#6B7280] md:flex-row md:items-center md:justify-between">
+            <p className="order-2 md:order-1">{t("footer.copyright")}</p>
+            <div className="order-1 flex flex-wrap items-center gap-4 md:order-2">
+              {legalLinks.map((link) => (
+                <Link key={link.labelKey} href={link.href} className="transition-colors hover:text-[#2E5E99]">
+                  {t(link.labelKey)}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
       </div>

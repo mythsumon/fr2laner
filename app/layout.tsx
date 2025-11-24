@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { LangProvider } from "@/providers/LangProvider";
-import { Header } from "@/components/layout/Header";
-import { Footer } from "@/components/layout/Footer";
+import { QueryProvider } from "@/providers/QueryProvider";
+import { HomeDataProvider } from "@/contexts/HomeDataContext";
+import { ConditionalLayout } from "@/components/layout/ConditionalLayout";
 import "@/app/globals.css";
 
 export const metadata: Metadata = {
@@ -15,15 +16,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
-      <body>
-        <LangProvider>
-          <Header />
-          {children}
-          <Footer />
-        </LangProvider>
-      </body>
-    </html>
+      <html lang="en">
+        <body>
+          <QueryProvider>
+            <LangProvider>
+              <HomeDataProvider>
+                <ConditionalLayout>
+                  {children}
+                </ConditionalLayout>
+              </HomeDataProvider>
+            </LangProvider>
+          </QueryProvider>
+        </body>
+      </html>
   );
 }
-

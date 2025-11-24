@@ -1,9 +1,11 @@
 "use client";
 
+import { useMemo } from "react";
 import Link from "next/link";
 import Image from "next/image";
 import { Star } from "lucide-react";
 import SectionHeader from "@/components/common/SectionHeader";
+import { useHomeData } from "@/contexts/HomeDataContext";
 
 // ===========================================
 // 📦 DATA MODELS
@@ -238,6 +240,54 @@ const RecommendationBlock = ({
 // ===========================================
 
 export const MultiRecommendationSection = () => {
+  const { services } = useHomeData();
+
+  // Convert admin services to ServiceCard format
+  const adminServices: ServiceCard[] = useMemo(() => {
+    return services
+      .filter((s) => s.status === "approved")
+      .slice(0, 9) // Limit to 9 services
+      .map((s) => ({
+        id: `admin-${s.id}`,
+        category: s.category,
+        title: s.title,
+        imageUrl:
+          s.imageUrl ||
+          "https://images.unsplash.com/photo-1561070791-2526d30994b5?w=400&h=250&fit=crop",
+        rating: s.rating || 4.5,
+        reviewCount: s.orders || 0,
+        priceLabel: s.price || "₩0",
+        seller: {
+          name: s.seller,
+          avatarUrl:
+            s.sellerAvatar ||
+            "https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop",
+        },
+      }));
+  }, [services]);
+
+  // Use admin services if available, otherwise use default data
+  const startupServices = useMemo(() => {
+    if (adminServices.length > 0) {
+      return adminServices.filter((s) => s.category.includes("디자인") || s.category.includes("로고")).slice(0, 3);
+    }
+    return RECO_STARTUP;
+  }, [adminServices]);
+
+  const designerServices = useMemo(() => {
+    if (adminServices.length > 0) {
+      return adminServices.filter((s) => s.category.includes("디자인") || s.category.includes("브랜드")).slice(0, 3);
+    }
+    return RECO_DESIGNERS;
+  }, [adminServices]);
+
+  const developerServices = useMemo(() => {
+    if (adminServices.length > 0) {
+      return adminServices.filter((s) => s.category.includes("개발") || s.category.includes("웹")).slice(0, 3);
+    }
+    return RECO_DEVELOPERS;
+  }, [adminServices]);
+
   return (
     <section className="max-w-7xl mx-auto px-6 py-20 space-y-28 bg-gradient-to-b from-white to-sky-50/30">
       <div className="mb-12">
@@ -251,19 +301,19 @@ export const MultiRecommendationSection = () => {
       <RecommendationBlock
         title="예비창업가들을 위한 추천 서비스"
         subtitle="브랜딩부터 홈페이지까지 필수 서비스만 골랐어요."
-        data={RECO_STARTUP}
+        data={startupServices.length > 0 ? startupServices : RECO_STARTUP}
       />
 
       <RecommendationBlock
         title="디자이너들이 자주 찾는 서비스"
         subtitle="브랜드를 돋보이게 만드는 전문 디자인 작업을 모았어요."
-        data={RECO_DESIGNERS}
+        data={designerServices.length > 0 ? designerServices : RECO_DESIGNERS}
       />
 
       <RecommendationBlock
         title="개발자들이 많이 구매한 서비스"
         subtitle="웹/앱 개발에 필요한 인기 서비스들을 확인해보세요."
-        data={RECO_DEVELOPERS}
+        data={developerServices.length > 0 ? developerServices : RECO_DEVELOPERS}
       />
     </section>
   );

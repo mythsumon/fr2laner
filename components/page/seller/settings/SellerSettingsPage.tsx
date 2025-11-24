@@ -2,8 +2,10 @@
 
 import { useState } from "react";
 import Image from "next/image";
-import { Upload, Save } from "lucide-react";
+import Link from "next/link";
+import { Upload, Save, Bell, CreditCard, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { cn } from "@/components/shared/utils";
 
 export const SellerSettingsPage = () => {
   const [formData, setFormData] = useState({
@@ -20,11 +22,62 @@ export const SellerSettingsPage = () => {
     console.log("Save settings:", formData);
   };
 
+  const accountSettings = [
+    {
+      id: "notifications",
+      label: "알림 설정",
+      icon: Bell,
+      href: "/dashboard/settings/notifications",
+    },
+    {
+      id: "payment",
+      label: "결제 수단",
+      icon: CreditCard,
+      href: "/dashboard/settings/payment",
+    },
+    {
+      id: "security",
+      label: "보안 및 인증",
+      icon: ShieldCheck,
+      href: "/dashboard/settings/security",
+    },
+  ];
+
   return (
-    <div className="min-h-screen bg-[#F8FAFC] p-4 pb-24 md:p-6 lg:p-8">
-      <div className="mx-auto max-w-4xl">
+    <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-[#EEF2FF] p-4 pb-24 md:p-6 lg:p-8">
+      <div className="mx-auto max-w-4xl space-y-6">
+        {/* Account Settings Section */}
+        <section className="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+          <h2 className="mb-6 text-xl font-bold text-[#0F172A]">계정 설정</h2>
+          <div className="space-y-3">
+            {accountSettings.map((item) => {
+              const Icon = item.icon;
+              return (
+                <Link
+                  key={item.id}
+                  href={item.href}
+                  className={cn(
+                    "group flex w-full items-center justify-between rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] px-4 py-4 text-left transition-all",
+                    "hover:border-[#2E5E99]/30 hover:bg-white hover:shadow-sm"
+                  )}
+                >
+                  <div className="flex items-center gap-4">
+                    <div className="flex size-12 items-center justify-center rounded-xl bg-[#E9EEF8] text-[#2E5E99] transition-colors group-hover:bg-[#2E5E99]/10">
+                      <Icon className="size-6" strokeWidth={2} />
+                    </div>
+                    <span className="text-base font-semibold text-[#0F172A]">{item.label}</span>
+                  </div>
+                  <span className="text-sm font-medium text-[#2E5E99] transition-colors group-hover:text-[#1d4673]">
+                    관리
+                  </span>
+                </Link>
+              );
+            })}
+          </div>
+        </section>
+
         {/* Header */}
-        <div className="mb-6">
+        <div>
           <h1 className="text-2xl font-bold text-[#0F172A] sm:text-3xl">프로필 설정</h1>
           <p className="mt-1 text-sm text-[#475569]">프로필 정보를 관리하세요</p>
         </div>

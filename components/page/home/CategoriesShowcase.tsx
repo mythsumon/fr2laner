@@ -18,11 +18,14 @@ import {
   Scale,
   Sparkles,
   FileText,
+  Tag,
 } from "lucide-react";
 import { homePrimaryCategories, type HomePrimaryCategoryIcon } from "@/entities/home";
 import { cn } from "@/components/shared/utils";
+import { useHomeData } from "@/contexts/HomeDataContext";
+import { useMemo } from "react";
 
-const iconMap: Record<HomePrimaryCategoryIcon, LucideIcon> = {
+const iconMap: Record<HomePrimaryCategoryIcon | string, LucideIcon> = {
   palette: Palette,
   laptopCode: Laptop,
   cameraAudio: Camera,
@@ -37,51 +40,75 @@ const iconMap: Record<HomePrimaryCategoryIcon, LucideIcon> = {
   briefcase: Briefcase,
   lightbulb: Lightbulb,
   house: HomeIcon,
-};
-
-const hexToRgba = (hex: string, alpha = 0.24) => {
-  const normalized = hex.replace("#", "");
-  const bigint = parseInt(normalized, 16);
-  const r = (bigint >> 16) & 255;
-  const g = (bigint >> 8) & 255;
-  const b = bigint & 255;
-  return `rgba(${r}, ${g}, ${b}, ${alpha})`;
+  default: Tag,
 };
 
 export const CategoriesShowcase = () => {
   const { t } = useTranslation();
+  const { categories: adminCategories } = useHomeData();
 
-  // Duplicate categories for infinite loop (2x for seamless loop)
-  const duplicatedCategories = [...homePrimaryCategories, ...homePrimaryCategories];
+  // Convert admin categories to display format
+  const adminCategoriesForDisplay = useMemo(() => {
+    return adminCategories.map((cat) => ({
+      id: cat.id,
+      labelKey: cat.name,
+      icon: (cat.icon as HomePrimaryCategoryIcon) || "default",
+      gradientFrom: "#E6ECFF",
+      gradientTo: "#D4DBFF",
+      accent: "#8F9CF5",
+      image: cat.image,
+    }));
+  }, [adminCategories]);
 
-  const renderCategory = (category: typeof homePrimaryCategories[0], index: number) => {
-    const Icon = iconMap[category.icon] ?? Palette;
+  // Use admin categories if available, otherwise fallback to static data
+  const categoriesToDisplay = adminCategoriesForDisplay.length > 0 
+    ? adminCategoriesForDisplay 
+    : homePrimaryCategories;
+
+  // Duplicate categories multiple times for seamless infinite loop
+  // Using 3 copies to ensure smooth looping on all screen sizes
+  const duplicatedCategories = [
+    ...categoriesToDisplay,
+    ...categoriesToDisplay,
+    ...categoriesToDisplay,
+  ];
+
+  const renderCategory = (category: typeof categoriesToDisplay[0], index: number) => {
+    const Icon = iconMap[category.icon] ?? Tag;
     const hasImage = Boolean(category.image);
+    const displayName = typeof category.labelKey === "string" && !category.labelKey.includes(".") 
+      ? category.labelKey 
+      : t(category.labelKey);
+    
     return (
       <article
         key={`${category.id}-${index}`}
         tabIndex={0}
-        aria-label={t(category.labelKey)}
+        aria-label={displayName}
         className={cn(
-          "group flex min-w-[120px] flex-shrink-0 flex-col items-center gap-4 text-center transition-transform duration-200 ease-out",
-          "hover:-translate-y-1 md:min-w-0"
+          "group flex min-w-[140px] flex-shrink-0 flex-col items-center gap-4 text-center transition-all duration-300 ease-out",
+          "hover:-translate-y-2 hover:scale-105"
         )}
       >
-        {hasImage ? (
-          <Image
-            src={category.image!}
-            alt={t(category.labelKey)}
-            width={112}
-            height={112}
-            className="h-[5.5rem] w-[5.5rem] object-contain transition-transform duration-200 ease-out group-hover:scale-105"
-            priority={false}
-          />
-        ) : (
-          <span className="flex h-[5.5rem] w-[5.5rem] items-center justify-center">
-            <Icon className="size-16 text-[#2E5E99]" strokeWidth={1.6} />
-          </span>
-        )}
-        <h3 className="text-xs font-medium text-[#0F172A] sm:text-sm">{t(category.labelKey)}</h3>
+        <div className="relative">
+          {hasImage ? (
+            <Image
+              src={category.image!}
+              alt={displayName}
+              width={112}
+              height={112}
+              className="h-[5.5rem] w-[5.5rem] object-contain transition-transform duration-300 ease-out group-hover:scale-110 rounded-2xl"
+              priority={false}
+            />
+          ) : (
+            <span className="flex h-[5.5rem] w-[5.5rem] items-center justify-center rounded-2xl bg-gradient-to-br from-[#2E5E99]/10 to-[#2E5E99]/5 transition-all duration-300 group-hover:from-[#2E5E99]/20 group-hover:to-[#2E5E99]/10">
+              <Icon className="size-16 text-[#2E5E99] transition-transform duration-300 group-hover:scale-110" strokeWidth={1.6} />
+            </span>
+          )}
+        </div>
+        <h3 className="text-xs font-medium text-[#0F172A] transition-colors duration-300 group-hover:text-[#2E5E99] sm:text-sm">
+          {displayName}
+        </h3>
       </article>
     );
   };
@@ -94,23 +121,22 @@ export const CategoriesShowcase = () => {
             {t("home.primaryCategories.label", { defaultValue: "Categories" })}
           </p>
           <h2 className="mt-4 text-3xl font-bold tracking-tight text-[#0F172A] md:text-4xl">
-            {t("home.primaryCategories.title", { defaultValue: "Find your perfect match" })}
+            {t("home.primaryCategories.title", { defaultValue: "프리미엄 서비스를 살펴보세요" })}
           </h2>
           <p className="mt-4 text-lg text-[#475569]">
             {t("home.primaryCategories.subtitle", {
-              defaultValue: "Explore 14 curated service areas inspired by Kmong's premium marketplace.",
+              defaultValue: "프로젝트를 시작할 때 도움이 되는 14개의 핵심 카테고리를 한눈에 확인하세요.",
             })}
           </p>
         </div>
 
-        {/* Desktop: Grid Layout */}
-        <div className="hidden grid-cols-4 gap-6 md:grid xl:grid-cols-7">
-          {homePrimaryCategories.map((category, index) => renderCategory(category, index))}
-        </div>
-
-        {/* Mobile: Infinite Loop Horizontal Scroll */}
-        <div className="relative overflow-hidden md:hidden">
-          <div className="category-slide-container flex gap-6">
+        {/* Infinite Loop Carousel - Single Row for All Screen Sizes */}
+        <div className="relative overflow-hidden">
+          {/* Gradient overlays for fade effect */}
+          <div className="pointer-events-none absolute left-0 top-0 z-10 h-full w-24 bg-gradient-to-r from-white to-transparent" />
+          <div className="pointer-events-none absolute right-0 top-0 z-10 h-full w-24 bg-gradient-to-l from-white to-transparent" />
+          
+          <div className="category-carousel flex gap-8">
             {duplicatedCategories.map((category, index) => renderCategory(category, index))}
           </div>
         </div>
@@ -122,22 +148,31 @@ export const CategoriesShowcase = () => {
             transform: translateX(0);
           }
           100% {
-            transform: translateX(-50%);
+            transform: translateX(calc(-100% / 3));
           }
         }
 
-        .category-slide-container {
-          animation: slide 30s linear infinite;
+        .category-carousel {
+          animation: slide 60s linear infinite;
           width: fit-content;
+          will-change: transform;
         }
 
-        .category-slide-container:hover {
+        .category-carousel:hover {
           animation-play-state: paused;
         }
 
-        @media (max-width: 768px) {
-          .category-slide-container {
-            will-change: transform;
+        /* Smooth animation on all devices */
+        @media (prefers-reduced-motion: no-preference) {
+          .category-carousel {
+            animation: slide 60s linear infinite;
+          }
+        }
+
+        /* Respect user's motion preferences */
+        @media (prefers-reduced-motion: reduce) {
+          .category-carousel {
+            animation: none;
           }
         }
       `}</style>

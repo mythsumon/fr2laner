@@ -7,3 +7,4 @@ export { HowItWorks } from "./HowItWorks";
 export { Testimonials } from "./Testimonials";
 export { FinalCallToAction } from "./FinalCallToAction";
 export { MultiRecommendationSection } from "./MultiRecommendationSection";
+export { AdminQuickLinks } from "./AdminQuickLinks";

@@ -299,6 +299,36 @@
           "quote": "The content writers on this platform are top-notch. They quickly understood our brand voice and produced high-quality blog posts that have significantly boosted our organic traffic.",
           "name": "Jessica Lee",
           "role": "Marketing Director, Creative Co."
+        },
+        "david": {
+          "quote": "We needed an AI service expert and found one here. The project was completed much faster than expected, and both technical skills and communication were excellent.",
+          "name": "David Kim",
+          "role": "CTO, AI Solutions Inc."
+        },
+        "emily": {
+          "quote": "We hired a video editing specialist for our marketing campaign, and the results were truly impressive. Our views and conversion rates increased significantly!",
+          "name": "Emily Park",
+          "role": "Brand Manager, Digital Media Co."
+        },
+        "james": {
+          "quote": "The translation service was truly professional. They translated our technical documents into multiple languages with perfect accuracy and quality. It was a huge help for our global expansion.",
+          "name": "James Wilson",
+          "role": "International Business Director"
+        },
+        "lisa": {
+          "quote": "We requested a logo design and received a creative and professional result. Our brand identity has been completely transformed. We're really satisfied!",
+          "name": "Lisa Anderson",
+          "role": "Founder, GreenTech Startup"
+        },
+        "robert": {
+          "quote": "We worked on a website development project, and the developer's expertise and sense of responsibility were impressive. The timeline was met and the quality was excellent.",
+          "name": "Robert Martinez",
+          "role": "Product Manager, E-commerce Platform"
+        },
+        "sophia": {
+          "quote": "We received SEO optimization services, and our search engine rankings improved significantly. The expert's advice was really helpful and contributed greatly to our business growth.",
+          "name": "Sophia Brown",
+          "role": "Digital Marketing Lead, Retail Brand"
         }
       }
     },

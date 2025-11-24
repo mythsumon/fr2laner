@@ -301,6 +301,36 @@
           "quote": "이 플랫폼의 콘텐츠 라이터는 정말 뛰어납니다. 브랜드 보이스를 빠르게 이해하고 고품질 블로그 글로 유입을 크게 높여줬어요.",
           "name": "Jessica Lee",
           "role": "Marketing Director, Creative Co."
+        },
+        "david": {
+          "quote": "AI 서비스 개발을 위해 전문가를 찾았는데, 예상보다 훨씬 빠르게 프로젝트가 완료되었습니다. 기술력과 커뮤니케이션이 모두 훌륭했어요.",
+          "name": "David Kim",
+          "role": "CTO, AI Solutions Inc."
+        },
+        "emily": {
+          "quote": "비디오 마케팅 캠페인을 위해 영상 편집 전문가를 고용했는데, 결과물이 정말 인상적이었습니다. 조회수와 전환율이 크게 증가했어요!",
+          "name": "Emily Park",
+          "role": "Brand Manager, Digital Media Co."
+        },
+        "james": {
+          "quote": "번역 서비스가 정말 전문적이었습니다. 기술 문서를 여러 언어로 번역해주셨는데, 정확도와 품질이 완벽했습니다. 글로벌 진출에 큰 도움이 되었어요.",
+          "name": "James Wilson",
+          "role": "International Business Director"
+        },
+        "lisa": {
+          "quote": "로고 디자인을 의뢰했는데, 창의적이고 전문적인 결과물을 받았습니다. 브랜드 아이덴티티가 완전히 새로워졌어요. 정말 만족합니다!",
+          "name": "Lisa Anderson",
+          "role": "Founder, GreenTech Startup"
+        },
+        "robert": {
+          "quote": "웹사이트 개발 프로젝트를 진행했는데, 개발자의 전문성과 책임감이 인상적이었습니다. 일정도 지켜지고 품질도 훌륭했어요.",
+          "name": "Robert Martinez",
+          "role": "Product Manager, E-commerce Platform"
+        },
+        "sophia": {
+          "quote": "SEO 최적화 서비스를 받았는데, 검색 엔진 순위가 크게 개선되었습니다. 전문가의 조언이 정말 도움이 되었고, 비즈니스 성장에 큰 기여를 했어요.",
+          "name": "Sophia Brown",
+          "role": "Digital Marketing Lead, Retail Brand"
         }
       }
     },

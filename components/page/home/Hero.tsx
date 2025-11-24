@@ -9,7 +9,7 @@ export const Hero = () => {
 
   return (
     <section className="relative bg-white" aria-labelledby="home-hero-heading">
-      <div className="mx-auto grid min-h-[820px] w-full max-w-7xl grid-cols-1 items-center gap-y-16 px-6 pb-12 pt-12 lg:grid-cols-12 lg:gap-x-12">
+      <div className="mx-auto grid min-h-[820px] w-full max-w-7xl grid-cols-1 items-center gap-y-16 px-6 pb-12 lg:grid-cols-12 lg:gap-x-12">
         <div className="lg:col-span-7">
           <div className="flex flex-col items-center text-center lg:items-start lg:text-left">
             <div className="space-y-6">
