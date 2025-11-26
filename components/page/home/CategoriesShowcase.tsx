@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import type { LucideIcon } from "lucide-react";
 import {
@@ -21,7 +22,7 @@ import {
   Tag,
 } from "lucide-react";
 import { homePrimaryCategories, type HomePrimaryCategoryIcon } from "@/entities/home";
-import { cn } from "@/components/shared/utils";
+import { cn, getCategoryUrl } from "@/components/shared/utils";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import { useMemo } from "react";
 
@@ -79,16 +80,17 @@ export const CategoriesShowcase = () => {
     const displayName = typeof category.labelKey === "string" && !category.labelKey.includes(".") 
       ? category.labelKey 
       : t(category.labelKey);
+    const categoryUrl = getCategoryUrl(displayName);
     
     return (
-      <article
+      <Link
+        href={categoryUrl}
         key={`${category.id}-${index}`}
-        tabIndex={0}
-        aria-label={displayName}
         className={cn(
-          "group flex min-w-[140px] flex-shrink-0 flex-col items-center gap-4 text-center transition-all duration-300 ease-out",
+          "group flex min-w-[140px] flex-shrink-0 flex-col items-center gap-4 text-center transition-all duration-300 ease-out cursor-pointer",
           "hover:-translate-y-2 hover:scale-105"
         )}
+        aria-label={displayName}
       >
         <div className="relative">
           {hasImage ? (
@@ -109,7 +111,7 @@ export const CategoriesShowcase = () => {
         <h3 className="text-xs font-medium text-[#0F172A] transition-colors duration-300 group-hover:text-[#2E5E99] sm:text-sm">
           {displayName}
         </h3>
-      </article>
+      </Link>
     );
   };
 

@@ -14,8 +14,111 @@
       "login": "Login",
       "signUp": "Sign Up",
       "postProject": "Post a Project",
+      "sellerDashboard": "Seller Dashboard",
       "openMenu": "Open menu",
       "closeMenu": "Close menu"
+    }
+  },
+  "adminLogin": {
+    "title": "Super Admin",
+    "subtitle": "System administrator sign-in",
+    "emailLabel": "Email",
+    "emailPlaceholder": "admin@example.com",
+    "passwordLabel": "Password",
+    "passwordPlaceholder": "Enter your password",
+    "twoFactorLabel": "Two-factor code (optional)",
+    "twoFactorPlaceholder": "6-digit code",
+    "enable2fa": "Use 2FA",
+    "forgotPassword": "Forgot password?",
+    "loginButton": "Sign in",
+    "securityNotice": "Security",
+    "securityDetail": "All sign-in attempts are logged with IP address and device information.",
+    "sampleAccountsTitle": "Demo Accounts",
+    "sampleAccountsDescription": "Click an account to auto-fill or copy the credentials.",
+    "useAccount": "Use account",
+    "copyEmail": "Copy email",
+    "copyPassword": "Copy password",
+    "sampleWarning": "Demo account notice",
+    "sampleWarningDetail": "These accounts are for demo/testing only. Replace them in production.",
+    "errors": {
+      "invalid": "Invalid email or password.",
+      "generic": "An error occurred while signing in."
+    },
+    "sampleAccounts": {
+      "roles": {
+        "superAdmin": "Super Admin",
+        "moderator": "Moderator"
+      },
+      "permissions": {
+        "full": "All permissions",
+        "moderator": "Manage users, reviews, disputes"
+      }
+    }
+  },
+  "auth": {
+    "roleSelector": {
+      "badge": "FREELANCER HUB",
+      "description": "Meet verified experts in minutes.",
+      "label": "Choose usage type",
+      "title": "How would you like to use FreelanceMarket?",
+      "subtitle": "Select a mode to continue. You can switch anytime after joining.",
+      "backHome": "Back home",
+      "cards": {
+        "client": {
+          "title": "Hire as a client",
+          "description": "Find trusted specialists, post requests, and manage projects effortlessly."
+        },
+        "expert": {
+          "title": "Work as an expert",
+          "description": "Offer your skills, build your reputation, and get paid securely."
+        }
+      },
+      "footer": "You can switch roles anytime after signing up."
+    },
+    "login": {
+      "heading": "Sign in",
+      "chooseAnother": "← Choose a different mode",
+      "modes": {
+        "client": {
+          "label": "Sign in as a client",
+          "description": "Hire trusted experts for your next project."
+        },
+        "expert": {
+          "label": "Sign in as an expert",
+          "description": "Offer your services and earn from global clients."
+        },
+        "default": {
+          "description": "Use your FreelanceMarket account to access every service."
+        }
+      },
+      "sample": {
+        "description": "Use the demo credentials below to sign in instantly.",
+        "use": "Fill automatically",
+        "emailLabel": "Email",
+        "passwordLabel": "Password",
+        "copy": "Copy",
+        "accounts": {
+          "client": "Client demo account",
+          "expert": "Expert demo account"
+        }
+      },
+      "fields": {
+        "email": "Email",
+        "emailPlaceholder": "name@example.com",
+        "password": "Password",
+        "passwordPlaceholder": "Enter your password"
+      },
+      "remember": "Stay signed in",
+      "forgot": "Forgot password?",
+      "submit": "Sign in",
+      "socialDivider": "or continue with",
+      "social": {
+        "kakao": "Kakao",
+        "naver": "Naver",
+        "google": "Google"
+      },
+      "noAccount": "Don't have an account?",
+      "signUp": "Create account"
     }
   },
   "home": {

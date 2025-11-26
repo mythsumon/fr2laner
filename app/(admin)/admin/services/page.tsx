@@ -75,6 +75,42 @@ const initialServices: Service[] = [
     featured: false,
     createdAt: "2023-12-20",
   },
+  {
+    id: 4,
+    title: "Next.js 웹 개발",
+    seller: "Next.js전문가",
+    category: "웹 개발",
+    price: "₩1,200,000부터",
+    orders: 412,
+    rating: 5.0,
+    status: "approved",
+    featured: true,
+    createdAt: "2024-01-20",
+  },
+  {
+    id: 5,
+    title: "iOS/Android 앱 개발",
+    seller: "모바일개발자",
+    category: "모바일",
+    price: "₩2,800,000부터",
+    orders: 287,
+    rating: 4.9,
+    status: "approved",
+    featured: true,
+    createdAt: "2024-02-15",
+  },
+  {
+    id: 6,
+    title: "백엔드 API & 서버 구축",
+    seller: "백엔드마스터",
+    category: "백엔드",
+    price: "₩1,800,000부터",
+    orders: 156,
+    rating: 4.8,
+    status: "approved",
+    featured: true,
+    createdAt: "2024-02-20",
+  },
 ];
 
 interface Category {
@@ -91,6 +127,8 @@ const initialCategories: Category[] = [
   { id: "4", name: "마케팅", image: "/assets/icons/categories/marketing.png" },
   { id: "5", name: "영상 편집", image: "/assets/icons/categories/video.png" },
   { id: "6", name: "글쓰기", image: "/assets/icons/categories/writing.png" },
+  { id: "7", name: "모바일", image: "/assets/icons/categories/IT & Development.png" },
+  { id: "8", name: "백엔드", image: "/assets/icons/categories/IT & Development.png" },
 ];
 const initialTags = ["React", "Vue", "Angular", "Node.js", "Python", "Java", "Figma", "Photoshop", "Illustrator"];
 
@@ -264,7 +302,7 @@ export default function ServicesManagementPage() {
     const updatedServices = [...services, newService];
     setServices(updatedServices);
     syncServicesToHomepage(updatedServices);
-    showToast("서비스가 추가되었습니다. 홈페이지에 반영되었습니다.", "success");
+    showToast("Service has been added. Reflected on homepage.", "success");
     setAddServiceModal(false);
   };
 
@@ -296,7 +334,7 @@ export default function ServicesManagementPage() {
       );
       setServices(updatedServices);
       syncServicesToHomepage(updatedServices);
-      showToast("서비스가 업데이트되었습니다. 홈페이지에 반영되었습니다.", "success");
+      showToast("Service has been updated. Reflected on homepage.", "success");
       setEditServiceModal({ isOpen: false, service: null });
     }
   };
@@ -311,7 +349,7 @@ export default function ServicesManagementPage() {
       setServices(updatedServices);
       // Sync approved services with homepage
       syncServicesToHomepage(updatedServices);
-      showToast("서비스가 승인되었습니다. 홈페이지에 반영되었습니다.", "success");
+      showToast("Service has been approved. Reflected on homepage.", "success");
     }
     setApproveModal({ isOpen: false, service: null });
   };
@@ -326,7 +364,7 @@ export default function ServicesManagementPage() {
       setServices(updatedServices);
       // Sync services with homepage (remove rejected ones)
       syncServicesToHomepage(updatedServices);
-      showToast("서비스가 거부되었습니다. 홈페이지에서 제거되었습니다.", "success");
+      showToast("Service has been rejected. Removed from homepage.", "success");
     }
     setRejectModal({ isOpen: false, service: null });
   };
@@ -343,8 +381,8 @@ export default function ServicesManagementPage() {
       syncServicesToHomepage(updatedServices);
       showToast(
         featureModal.service.featured
-          ? "서비스가 추천에서 제거되었습니다. 홈페이지에 반영되었습니다."
-          : "서비스가 추천되었습니다. 홈페이지에 반영되었습니다.",
+          ? "Service has been removed from featured. Reflected on homepage."
+          : "Service has been featured. Reflected on homepage.",
         "success"
       );
     }
@@ -356,7 +394,7 @@ export default function ServicesManagementPage() {
     setServices(updatedServices);
     // Sync services with homepage (remove hidden ones)
     syncServicesToHomepage(updatedServices);
-    showToast("서비스가 숨겨졌습니다. 홈페이지에서 제거되었습니다.", "success");
+    showToast("Service has been hidden. Removed from homepage.", "success");
   };
 
   // Sync approved and featured services to homepage
@@ -407,11 +445,11 @@ export default function ServicesManagementPage() {
         icon: icon || undefined,
       };
       setCategories([...categories, newCategory]);
-      showToast("카테고리가 추가되었습니다. 홈페이지에 반영되었습니다.", "success");
+      showToast("Category has been added. Reflected on homepage.", "success");
       setAddCategoryModal(false);
       setNewCategoryImage("");
     } else if (categories.some((c) => c.name === name)) {
-      showToast("이미 존재하는 카테고리입니다.", "error");
+      showToast("Category already exists.", "error");
     }
   };
 
@@ -431,7 +469,7 @@ export default function ServicesManagementPage() {
 
     if (newName && newName !== oldName) {
       if (categories.some((c) => c.name === newName && c.id !== categories.find((cat) => cat.name === oldName)?.id)) {
-        showToast("이미 존재하는 카테고리 이름입니다.", "error");
+        showToast("Category name already exists.", "error");
         return;
       }
       // Update category in categories list
@@ -449,7 +487,7 @@ export default function ServicesManagementPage() {
       setServices(updatedServices);
       syncServicesToHomepage(updatedServices);
 
-      showToast("카테고리가 수정되었습니다. 홈페이지에 반영되었습니다.", "success");
+      showToast("Category has been updated. Reflected on homepage.", "success");
       setEditCategoryModal({ isOpen: false, category: "", newName: undefined });
       setEditCategoryImage("");
     } else if (newName === oldName) {
@@ -458,7 +496,7 @@ export default function ServicesManagementPage() {
         cat.name === oldName ? { ...cat, image: image || cat.image, icon: icon || cat.icon } : cat
       );
       setCategories(updatedCategories);
-      showToast("카테고리 이미지/아이콘이 업데이트되었습니다. 홈페이지에 반영되었습니다.", "success");
+      showToast("Category image/icon has been updated. Reflected on homepage.", "success");
       setEditCategoryModal({ isOpen: false, category: "", newName: undefined });
       setEditCategoryImage("");
     }
@@ -470,7 +508,7 @@ export default function ServicesManagementPage() {
 
   const confirmDeleteCategory = () => {
     setCategories(categories.filter((c) => c.name !== deleteCategoryModal.category));
-    showToast("카테고리가 삭제되었습니다. 홈페이지에서 제거되었습니다.", "success");
+    showToast("Category has been deleted. Removed from homepage.", "success");
     setDeleteCategoryModal({ isOpen: false, category: "" });
   };
 
@@ -481,10 +519,10 @@ export default function ServicesManagementPage() {
     const tag = formData.get("tag") as string;
     if (tag && !tags.includes(tag)) {
       setTags([...tags, tag]);
-      showToast("태그가 추가되었습니다.", "success");
+      showToast("Tag has been added.", "success");
       setAddTagModal(false);
     } else if (tags.includes(tag)) {
-      showToast("이미 존재하는 태그입니다.", "error");
+      showToast("Tag already exists.", "error");
     }
   };
 
@@ -500,12 +538,12 @@ export default function ServicesManagementPage() {
 
     if (newName && newName !== oldName) {
       if (tags.includes(newName)) {
-        showToast("이미 존재하는 태그 이름입니다.", "error");
+        showToast("Tag name already exists.", "error");
         return;
       }
       const updatedTags = tags.map((t) => (t === oldName ? newName : t));
       setTags(updatedTags);
-      showToast("태그가 수정되었습니다.", "success");
+      showToast("Tag has been updated.", "success");
       setEditTagModal({ isOpen: false, tag: "", newName: undefined });
     }
   };
@@ -516,7 +554,7 @@ export default function ServicesManagementPage() {
 
   const confirmDeleteTag = () => {
     setTags(tags.filter((t) => t !== deleteTagModal.tag));
-    showToast("태그가 삭제되었습니다.", "success");
+    showToast("Tag has been deleted.", "success");
     setDeleteTagModal({ isOpen: false, tag: "" });
   };
 
@@ -526,10 +564,10 @@ export default function ServicesManagementPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
-          <h1 className="text-2xl font-bold text-[#0F172A]">서비스 관리</h1>
+          <h1 className="text-2xl font-bold text-[#0F172A]">Services Management</h1>
             <BackToHomeButton />
           </div>
-          <p className="text-sm text-[#64748B] mt-1">모든 서비스를 검토하고 관리하세요</p>
+          <p className="text-sm text-[#64748B] mt-1">Review and manage all services</p>
         </div>
       </div>
 
@@ -537,9 +575,9 @@ export default function ServicesManagementPage() {
       <div className="bg-white rounded-xl border border-[#E2E8F0] p-1">
         <div className="flex gap-1">
           {[
-            { id: "services", label: "모든 서비스", icon: Package },
-            { id: "categories", label: "카테고리", icon: Tag },
-            { id: "tags", label: "태그/스킬", icon: Tag },
+            { id: "services", label: "All Services", icon: Package },
+            { id: "categories", label: "Categories", icon: Tag },
+            { id: "tags", label: "Tags/Skills", icon: Tag },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -566,7 +604,7 @@ export default function ServicesManagementPage() {
           <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#64748B] mb-1">전체 서비스</p>
+                <p className="text-sm text-[#64748B] mb-1">All Services</p>
                 <p className="text-2xl font-bold text-[#0F172A]">{stats.total}</p>
               </div>
               <div className="p-3 rounded-lg bg-blue-100">
@@ -577,7 +615,7 @@ export default function ServicesManagementPage() {
           <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#64748B] mb-1">승인됨</p>
+                <p className="text-sm text-[#64748B] mb-1">Approved</p>
                 <p className="text-2xl font-bold text-green-600">{stats.approved}</p>
               </div>
               <div className="p-3 rounded-lg bg-green-100">
@@ -588,7 +626,7 @@ export default function ServicesManagementPage() {
           <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#64748B] mb-1">대기 중</p>
+                <p className="text-sm text-[#64748B] mb-1">Pending</p>
                 <p className="text-2xl font-bold text-yellow-600">{stats.pending}</p>
               </div>
               <div className="p-3 rounded-lg bg-yellow-100">
@@ -599,7 +637,7 @@ export default function ServicesManagementPage() {
           <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-[#64748B] mb-1">추천 서비스</p>
+                <p className="text-sm text-[#64748B] mb-1">Featured</p>
                 <p className="text-2xl font-bold text-purple-600">{stats.featured}</p>
               </div>
               <div className="p-3 rounded-lg bg-purple-100">
@@ -618,7 +656,7 @@ export default function ServicesManagementPage() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-[#64748B]" />
             <input
               type="text"
-                placeholder="서비스 제목, 판매자, 카테고리로 검색..."
+                placeholder="Search by service title, seller, category..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
@@ -629,7 +667,7 @@ export default function ServicesManagementPage() {
             onChange={(e) => setSelectedCategory(e.target.value)}
             className="px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
           >
-            <option value="all">모든 카테고리</option>
+            <option value="all">All Categories</option>
               {categories.map((cat) => (
                 <option key={cat.id} value={cat.name}>
                   {cat.name}
@@ -641,11 +679,11 @@ export default function ServicesManagementPage() {
             onChange={(e) => setSelectedStatus(e.target.value)}
             className="px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
           >
-            <option value="all">모든 상태</option>
-            <option value="approved">승인됨</option>
-            <option value="pending">대기 중</option>
-            <option value="rejected">거부됨</option>
-            <option value="hidden">숨김</option>
+            <option value="all">All Status</option>
+            <option value="approved">Approved</option>
+            <option value="pending">Pending</option>
+            <option value="rejected">Rejected</option>
+            <option value="hidden">Hidden</option>
           </select>
             <div className="flex gap-2">
               <Button
@@ -665,7 +703,7 @@ export default function ServicesManagementPage() {
         </div>
             <Button type="primary" onClick={() => setAddServiceModal(true)}>
               <Plus className="size-4 mr-2" />
-              서비스 추가
+              Add Service
             </Button>
       </div>
         </div>
@@ -695,20 +733,20 @@ export default function ServicesManagementPage() {
                         />
                       </th>
                   <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">서비스</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">판매자</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">카테고리</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">가격</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">주문</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">평점</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">상태</th>
-                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">작업</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">Seller</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">Category</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">Price</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">Orders</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">Rating</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">Status</th>
+                  <th className="px-4 py-3 text-left text-sm font-semibold text-[#0F172A]">Actions</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">
                     {filteredServices.length === 0 ? (
                       <tr>
                         <td colSpan={9} className="px-4 py-8 text-center text-[#64748B]">
-                          검색 결과가 없습니다.
+                          No search results found.
                         </td>
                       </tr>
                     ) : (
@@ -771,14 +809,14 @@ export default function ServicesManagementPage() {
                         <button
                           onClick={() => setViewModal({ isOpen: true, service })}
                           className="p-2 rounded-lg hover:bg-[#F8FAFC] text-[#64748B]"
-                          title="보기"
+                          title="View"
                         >
                           <Eye className="size-4" />
                         </button>
                         <button
                           onClick={() => handleEditService(service)}
                           className="p-2 rounded-lg hover:bg-[#F8FAFC] text-[#64748B]"
-                          title="수정"
+                          title="Edit"
                         >
                           <Edit className="size-4" />
                         </button>
@@ -787,14 +825,14 @@ export default function ServicesManagementPage() {
                             <button
                               onClick={() => handleApprove(service)}
                               className="p-2 rounded-lg hover:bg-green-50 text-green-600"
-                              title="승인"
+                              title="Approve"
                             >
                               <CheckCircle2 className="size-4" />
                             </button>
                             <button
                               onClick={() => handleReject(service)}
                               className="p-2 rounded-lg hover:bg-red-50 text-red-600"
-                              title="거부"
+                              title="Reject"
                             >
                               <X className="size-4" />
                             </button>
@@ -807,7 +845,7 @@ export default function ServicesManagementPage() {
                               ? "bg-yellow-50 text-yellow-600"
                               : "hover:bg-yellow-50 text-yellow-600"
                           }`}
-                          title={service.featured ? "추천 해제" : "추천"}
+                          title={service.featured ? "Unfeature" : "Feature"}
                         >
                           <Star className={`size-4 ${service.featured ? "fill-yellow-500" : ""}`} />
                         </button>
@@ -815,7 +853,7 @@ export default function ServicesManagementPage() {
                           <button
                             onClick={() => handleHide(service)}
                             className="p-2 rounded-lg hover:bg-gray-50 text-gray-600"
-                            title="숨기기"
+                            title="Hide"
                           >
                             <X className="size-4" />
                           </button>
@@ -830,7 +868,7 @@ export default function ServicesManagementPage() {
               </div>
               {selectedServices.length > 0 && (
                 <div className="px-4 py-3 bg-[#F8FAFC] border-t border-[#E2E8F0] flex items-center justify-between">
-                  <span className="text-sm text-[#64748B]">{selectedServices.length}개 선택됨</span>
+                  <span className="text-sm text-[#64748B]">{selectedServices.length} selected</span>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
@@ -842,10 +880,10 @@ export default function ServicesManagementPage() {
                         setServices(updatedServices);
                         syncServicesToHomepage(updatedServices);
                         setSelectedServices([]);
-                        showToast(`${selectedServices.length}개 서비스가 승인되었습니다.`, "success");
+                        showToast(`${selectedServices.length} services have been approved.`, "success");
                       }}
                     >
-                      일괄 승인
+                      Approve All
                     </Button>
                     <Button
                       size="sm"
@@ -857,10 +895,10 @@ export default function ServicesManagementPage() {
                         setServices(updatedServices);
                         syncServicesToHomepage(updatedServices);
                         setSelectedServices([]);
-                        showToast(`${selectedServices.length}개 서비스가 추천되었습니다.`, "success");
+                        showToast(`${selectedServices.length} services have been featured.`, "success");
                       }}
                     >
-                      일괄 추천
+                      Feature All
                     </Button>
           </div>
         </div>

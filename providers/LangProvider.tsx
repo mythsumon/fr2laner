@@ -14,11 +14,11 @@ const LangContext = createContext<LangContextType | undefined>(undefined);
 
 export const LangProvider = ({ children }: { children: ReactNode }) => {
   const { i18n } = useTranslation();
-  const [currentLanguage, setCurrentLanguage] = useState<string>(i18n.language || "kr");
+  const [currentLanguage, setCurrentLanguage] = useState<string>(i18n.language || "en");
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
-    setCurrentLanguage(i18n.language || "kr");
+    setCurrentLanguage(i18n.language || "en");
   }, [i18n.language]);
 
   const changeLanguage = async (lang: string) => {

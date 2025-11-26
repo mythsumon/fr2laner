@@ -1,8 +1,9 @@
 "use client";
 
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/shared/common";
 
@@ -18,36 +19,44 @@ const sampleAccounts = {
   client: {
     email: "client@demo.com",
     password: "demo1234",
-    label: "의뢰인 샘플 계정",
+    labelKey: "auth.login.sample.accounts.client",
   },
   expert: {
     email: "expert@demo.com",
     password: "demo1234",
-    label: "전문가 샘플 계정",
+    labelKey: "auth.login.sample.accounts.expert",
   },
-};
+} as const;
 
 export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
   const router = useRouter();
+  const { t } = useTranslation();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [copiedField, setCopiedField] = useState<string | null>(null);
 
-  const modeLabel = mode === "client" ? "의뢰인으로 로그인" : mode === "expert" ? "전문가로 로그인" : undefined;
-  const subtitle =
-    mode === "client"
-      ? "프로젝트를 의뢰하고 전문가를 찾아보세요."
-      : mode === "expert"
-        ? "전문가로 활동하고 수익을 창출해보세요."
-        : "프리랜서마켓 계정으로 다양한 서비스를 이용해보세요.";
+  const modeLabel = mode ? t(`auth.login.modes.${mode}.label`) : undefined;
+  const subtitle = t(`auth.login.modes.${mode ?? "default"}.description`);
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
     await new Promise((resolve) => setTimeout(resolve, 800));
     setIsSubmitting(false);
+    
+    // Save user data to localStorage
+    const userData = {
+      id: mode === "client" ? "buyer-1" : "seller-1",
+      email: email || (mode === "client" ? "client@demo.com" : "expert@demo.com"),
+      name: modeLabel ?? "User",
+      role: mode === "client" ? "buyer" : ("seller" as "buyer" | "seller"),
+    };
+    const token = `token-${Date.now()}`;
+    
+    localStorage.setItem("token", token);
+    localStorage.setItem("user", JSON.stringify(userData));
     
     // Redirect based on selected mode
     if (mode === "client") {
@@ -74,6 +83,14 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
   };
 
   const currentSampleAccount = mode ? sampleAccounts[mode] : null;
+  const socialProviders = useMemo(
+    () => [
+      { key: "kakao", label: t("auth.login.social.kakao") },
+      { key: "naver", label: t("auth.login.social.naver") },
+      { key: "google", label: t("auth.login.social.google") },
+    ],
+    [t]
+  );
 
   return (
     <div className="space-y-6">
@@ -83,7 +100,7 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
             {modeLabel && (
               <p className="mb-1 text-[11px] font-semibold uppercase tracking-[0.28em] text-sky-600">{modeLabel}</p>
             )}
-            <h1 className="text-2xl font-semibold text-slate-900">로그인</h1>
+            <h1 className="text-2xl font-semibold text-slate-900">{t("auth.login.heading")}</h1>
             <p className="mt-1 text-sm text-slate-500">{subtitle}</p>
           </div>
           {mode && onResetMode && (
@@ -92,7 +109,7 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
               onClick={onResetMode}
               className="text-xs font-medium text-slate-400 underline-offset-4 transition-colors hover:text-sky-600"
             >
-              ← 이용 방식 다시 선택하기
+              {t("auth.login.chooseAnother")}
             </button>
           )}
         </div>
@@ -103,26 +120,26 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
         <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-4">
           <div className="mb-3 flex items-center justify-between">
             <div>
-              <h3 className="text-sm font-semibold text-sky-900">✨ {currentSampleAccount.label}</h3>
-              <p className="mt-0.5 text-xs text-sky-700">데모용 샘플 계정으로 빠르게 로그인하세요</p>
+              <h3 className="text-sm font-semibold text-sky-900">✨ {t(currentSampleAccount.labelKey)}</h3>
+              <p className="mt-0.5 text-xs text-sky-700">{t("auth.login.sample.description")}</p>
             </div>
             <button
               type="button"
               onClick={handleUseSampleAccount}
               className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-sky-700"
             >
-              사용하기
+              {t("auth.login.sample.use")}
             </button>
           </div>
           <div className="space-y-2">
             <div className="flex items-center gap-2 rounded-lg bg-white/80 px-3 py-2 text-xs">
-              <span className="w-16 shrink-0 font-medium text-sky-700">이메일:</span>
+              <span className="w-16 shrink-0 font-medium text-sky-700">{t("auth.login.sample.emailLabel")}:</span>
               <span className="flex-1 font-mono text-sky-900">{currentSampleAccount.email}</span>
               <button
                 type="button"
                 onClick={() => handleCopy(currentSampleAccount.email, "email")}
                 className="flex size-6 items-center justify-center rounded text-sky-600 transition-colors hover:bg-sky-100"
-                title="복사"
+                title={t("auth.login.sample.copy")}
               >
                 {copiedField === "email" ? (
                   <Check className="size-3.5 text-green-600" />
@@ -132,13 +149,13 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
               </button>
             </div>
             <div className="flex items-center gap-2 rounded-lg bg-white/80 px-3 py-2 text-xs">
-              <span className="w-16 shrink-0 font-medium text-sky-700">비밀번호:</span>
+              <span className="w-16 shrink-0 font-medium text-sky-700">{t("auth.login.sample.passwordLabel")}:</span>
               <span className="flex-1 font-mono text-sky-900">{currentSampleAccount.password}</span>
               <button
                 type="button"
                 onClick={() => handleCopy(currentSampleAccount.password, "password")}
                 className="flex size-6 items-center justify-center rounded text-sky-600 transition-colors hover:bg-sky-100"
-                title="복사"
+                title={t("auth.login.sample.copy")}
               >
                 {copiedField === "password" ? (
                   <Check className="size-3.5 text-green-600" />
@@ -154,7 +171,7 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
       <form className="space-y-4" onSubmit={handleSubmit}>
         <div className="space-y-1">
           <label htmlFor="email" className="text-sm font-semibold text-slate-700">
-            이메일
+            {t("auth.login.fields.email")}
           </label>
           <input
             id="email"
@@ -162,13 +179,13 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
             value={email}
             onChange={(event) => setEmail(event.target.value)}
             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            placeholder="name@example.com"
+            placeholder={t("auth.login.fields.emailPlaceholder")}
             required
           />
         </div>
         <div className="space-y-1">
           <label htmlFor="password" className="text-sm font-semibold text-slate-700">
-            비밀번호
+            {t("auth.login.fields.password")}
           </label>
           <input
             id="password"
@@ -176,7 +193,7 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
             value={password}
             onChange={(event) => setPassword(event.target.value)}
             className="w-full rounded-xl border border-slate-200 px-4 py-3 text-sm text-slate-900 outline-none transition-colors focus:border-sky-400 focus:ring-2 focus:ring-sky-100"
-            placeholder="••••••••"
+            placeholder={t("auth.login.fields.passwordPlaceholder")}
             required
           />
         </div>
@@ -188,10 +205,10 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
               checked={remember}
               onChange={(event) => setRemember(event.target.checked)}
             />
-            로그인 상태 유지
+            {t("auth.login.remember")}
           </label>
           <Link href="/auth/reset" className="text-sm font-semibold text-sky-600 hover:text-sky-700">
-            비밀번호를 잊으셨나요?
+            {t("auth.login.forgot")}
           </Link>
         </div>
         <Button
@@ -201,33 +218,33 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
           loading={isSubmitting}
           disabled={isSubmitting}
         >
-          로그인
+          {t("auth.login.submit")}
         </Button>
       </form>
 
       <div className="space-y-3">
         <div className="flex items-center gap-3 text-xs uppercase tracking-[0.2em] text-slate-400">
           <span className="h-px flex-1 bg-slate-200" />
-          or continue with
+          {t("auth.login.socialDivider")}
           <span className="h-px flex-1 bg-slate-200" />
         </div>
         <div className="grid gap-3 sm:grid-cols-3">
-          {["카카오", "네이버", "Google"].map((provider) => (
+          {socialProviders.map((provider) => (
             <button
-              key={provider}
+              key={provider.key}
               type="button"
               className="flex items-center justify-center rounded-xl border border-slate-200 px-4 py-3 text-sm font-medium text-slate-700 transition-colors hover:border-sky-400 hover:text-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
             >
-              {provider}
+              {provider.label}
             </button>
           ))}
         </div>
       </div>
 
       <p className="text-center text-sm text-slate-500">
-        계정이 없나요?{" "}
+        {t("auth.login.noAccount")}{" "}
         <Link href="/signup" className="font-semibold text-sky-600 hover:text-sky-700">
-          회원가입
+          {t("auth.login.signUp")}
         </Link>
       </p>
     </div>

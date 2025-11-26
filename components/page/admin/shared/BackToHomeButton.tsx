@@ -13,7 +13,7 @@ export const BackToHomeButton = () => {
         className="flex items-center gap-2 text-[#64748B] hover:text-[#2E5E99] hover:border-[#2E5E99]"
       >
         <Home className="size-4" />
-        홈페이지로
+        Homepage
       </Button>
     </Link>
   );

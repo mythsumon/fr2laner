@@ -1,0 +1,1174 @@
+# Website, Buyer & Seller User Guide for Developers
+
+## Table of Contents
+1. [Website/Public User Guide](#websitepublic-user-guide)
+2. [Buyer User Guide](#buyer-user-guide)
+3. [Seller User Guide](#seller-user-guide)
+4. [Common Features](#common-features)
+5. [Authentication & Authorization](#authentication--authorization)
+6. [Technical Implementation](#technical-implementation)
+
+---
+
+# Website/Public User Guide
+
+## Overview
+
+The public-facing website allows users to browse services, search for freelancers, view profiles, and explore categories without authentication. All content is dynamically managed through the admin dashboard and synced via `HomeDataContext`.
+
+## Public Pages
+
+### 1. Homepage (`/`)
+
+**URL:** `/`
+
+**Components:**
+- **Hero Section**: Main landing area with CTA
+- **HomeBannerSlider**: Auto-sliding banners (managed by admin)
+- **CategoriesShowcase**: Infinite loop carousel of categories
+- **MultiRecommendationSection**: Recommended services
+- **FeaturedFreelancers**: Top freelancer profiles
+- **AdminFeaturedServices**: Featured services (admin-managed)
+- **HowItWorks**: Platform explanation
+- **Testimonials**: Customer reviews
+- **FinalCallToAction**: Conversion section
+
+**Features:**
+- Responsive design (mobile, tablet, desktop)
+- Auto-sliding banners with pause on hover
+- Clickable category cards that navigate to `/design?category={category}&subcategory={subcategory}`
+- Dynamic content from `HomeDataContext`
+
+**Implementation:**
+- File: `app/page.tsx`
+- Uses `HomeDataContext` for dynamic content
+- All components in `components/page/home/`
+
+---
+
+### 2. Search Page (`/search`)
+
+**URL:** `/search?q={query}`
+
+**Features:**
+- Search services and sellers
+- Filter by category, price range, rating
+- Sort by relevance, price, rating, newest
+- View results in grid or list mode
+- Click service to view details
+
+**Implementation:**
+- File: `app/search/page.tsx`
+- Component: `components/page/search/SearchResultsContent.tsx`
+- Uses `useSearchParams` for query parameters
+
+---
+
+### 3. Service Detail Page (`/services/[id]`)
+
+**URL:** `/services/{service-id}`
+
+**Features:**
+- View complete service information
+- Service images gallery
+- Seller profile preview
+- Pricing and packages
+- Reviews and ratings
+- "뒤로가기" (Back) button - navigates to previous page using `router.back()`
+- Add to wishlist
+- Contact seller
+- Order service
+
+**Navigation:**
+- Back button uses `router.back()` to return to previous page
+- Links to seller profile: `/freelancer/{seller-slug}`
+
+**Implementation:**
+- File: `app/services/[id]/page.tsx`
+- Component: `components/page/buyer/services/ServiceDetailPage.tsx`
+
+---
+
+### 4. Freelancer Profile Page (`/freelancer/[slug]`)
+
+**URL:** `/freelancer/{freelancer-slug}`
+
+**Example:** `/freelancer/maria-g`
+
+**Features:**
+- **Profile Header:**
+  - Profile image and name
+  - Location, member since, languages
+  - Response time, delivery time
+  - Statistics (completed orders, active clients, total earnings)
+  - Skills tags
+
+- **Action Buttons:**
+  - **Contact Me**: Opens messaging interface
+  - **View Services**: Links to `/freelancer/{slug}/services`
+  - **Share**: Copies profile URL to clipboard
+  - **Save**: Adds to favorites (localStorage)
+
+- **Portfolio Section:**
+  - Image gallery of past work
+  - Project categories
+
+- **Services Section:**
+  - List of services offered
+  - Each service links to `/services/{service-id}`
+
+- **Reviews Section:**
+  - Client reviews with ratings
+  - Review details and dates
+
+- **Related Freelancers:**
+  - Similar freelancer recommendations
+
+**Implementation:**
+- File: `app/freelancer/[slug]/page.tsx`
+- Uses mock data (can be replaced with API)
+- Favorites stored in localStorage
+
+---
+
+### 5. Freelancer Services Page (`/freelancer/[slug]/services`)
+
+**URL:** `/freelancer/{freelancer-slug}/services`
+
+**Features:**
+- List all services by the freelancer
+- Search within freelancer's services
+- Grid and list view modes
+- Filter by category, price, rating
+- Each service card links to `/services/{service-id}`
+- "View Details" button on each service
+
+**Implementation:**
+- File: `app/freelancer/[slug]/services/page.tsx`
+- Layout: `app/freelancer/[slug]/services/layout.tsx`
+
+---
+
+### 6. Category Page (`/design`)
+
+**URL:** `/design?category={category}&subcategory={subcategory}`
+
+**Example:** `/design?category=it-programming&subcategory=ai-development`
+
+**Features:**
+- **Category Header:**
+  - Category title and description
+  - Keyword tags
+  - Service count
+
+- **Filters Sidebar:**
+  - Price range slider
+  - Delivery time
+  - Seller level (Basic, Pro, Top)
+  - Rating filter
+  - Sort options (Best Match, Price, Rating, Newest)
+
+- **Results:**
+  - Grid or list view
+  - Service cards with:
+    - Service image
+    - Title and seller info
+    - Rating and reviews
+    - Price
+    - Favorite button
+    - "View Service" CTA
+  - Each card links to `/services/{service-id}`
+
+**Category Navigation:**
+- Category cards on homepage link to this page
+- URL generated by `getCategoryUrl()` utility function
+- Maps category names to URL parameters
+
+**Implementation:**
+- File: `app/design/page.tsx`
+- Components: `components/page/category/`
+- Utility: `components/shared/utils.ts` - `getCategoryUrl()`
+
+---
+
+### 7. Find Talent Page (`/find-talent`)
+
+**URL:** `/find-talent`
+
+**Purpose:** Landing page for buyers/clients
+
+**Features:**
+- Platform benefits for buyers
+- How to find talent
+- Success stories
+- CTA to sign up as buyer
+
+**Implementation:**
+- File: `app/find-talent/page.tsx`
+- Component: `components/page/find-talent/FindTalentPage.tsx`
+
+---
+
+### 8. For Freelancers Page (`/for-freelancers`)
+
+**URL:** `/for-freelancers`
+
+**Purpose:** Landing page for sellers/freelancers
+
+**Features:**
+- Platform benefits for sellers
+- How to get started
+- Success stories
+- CTA to sign up as seller
+
+**Implementation:**
+- File: `app/for-freelancers/page.tsx`
+- Component: `components/page/for-freelancers/ForFreelancersPage.tsx`
+
+---
+
+## Public Features
+
+### Navigation
+
+**Header:**
+- Logo (links to homepage)
+- Navigation menu
+- Search bar
+- Language selector
+- Login/Signup buttons
+
+**Footer:**
+- Brand information
+- Link columns (About, Services, Support, Legal)
+- Social media links
+- Copyright information
+
+**Implementation:**
+- Header: `components/layout/Header.tsx`
+- Footer: `components/layout/Footer.tsx`
+- Conditional rendering: `components/layout/ConditionalLayout.tsx`
+  - Hides header/footer on admin and security pages
+
+---
+
+### Authentication Pages
+
+#### Login (`/login`)
+
+**URL:** `/login?mode={client|expert}`
+
+**Features:**
+- Mode selector (Client/Expert)
+- Email and password login
+- Remember me option
+- Forgot password link
+- Sign up link
+
+**Modes:**
+- **Client (Buyer)**: `mode=client` → redirects to `/buyer-dashboard`
+- **Expert (Seller)**: `mode=expert` → redirects to `/dashboard`
+
+**Implementation:**
+- File: `app/(auth)/login/page.tsx`
+- Components: `components/auth/`
+- Saves user data to localStorage on successful login
+
+#### Signup (`/signup`)
+
+**URL:** `/signup`
+
+**Features:**
+- Account type selection (Buyer/Seller)
+- Registration form
+- Terms acceptance
+- Email verification
+
+**Implementation:**
+- File: `app/(auth)/signup/page.tsx`
+
+---
+
+# Buyer User Guide
+
+## Overview
+
+Buyers (clients) can browse services, place orders, manage their account, and communicate with sellers. All buyer routes are protected and require authentication.
+
+## Authentication
+
+**Login:** `/login?mode=client`
+
+**Default Credentials (for testing):**
+- Email: Any email
+- Password: Any password (minimum 6 characters)
+
+**After Login:**
+- User data saved to localStorage
+- Redirected to `/buyer-dashboard`
+- Role: `"buyer"`
+
+## Buyer Routes
+
+All routes under `/buyer-*` are protected by `app/(buyer)/layout.tsx`
+
+### 1. Buyer Dashboard (`/buyer-dashboard`)
+
+**URL:** `/buyer-dashboard`
+
+**Features:**
+- Overview of buyer account
+- Recent orders
+- Recommended services
+- Quick actions
+- Statistics (total orders, active orders, wishlist items)
+
+**Implementation:**
+- File: `app/(buyer)/buyer-dashboard/page.tsx`
+- Component: `components/page/buyer/dashboard/BuyerDashboardPage.tsx`
+- Layout: `components/page/buyer/layout/BuyerDashboardLayout.tsx`
+
+---
+
+### 2. Orders (`/buyer-dashboard/orders`)
+
+**URL:** `/buyer-dashboard/orders`
+
+**Features:**
+- View all orders
+- Filter by status (All, Pending, In Progress, Completed, Cancelled)
+- Search orders
+- View order details
+- Track order progress
+- Request revisions
+- Mark as complete
+- Leave reviews
+
+**Order Detail Page:** `/buyer-dashboard/orders/[id]`
+
+**Features:**
+- Complete order information
+- Order timeline
+- Deliverables
+- Communication with seller
+- Request revision button
+- Approve and complete button
+- Dispute button
+
+**Implementation:**
+- List: `app/(buyer)/orders/page.tsx`
+- Detail: `app/(buyer)/orders/[id]/page.tsx`
+- Components: `components/page/buyer/orders/`
+
+---
+
+### 3. Messages (`/buyer-dashboard/messages`)
+
+**URL:** `/buyer-dashboard/messages`
+
+**Features:**
+- View all conversations
+- Search conversations
+- Filter by unread/read
+- Real-time messaging
+- File attachments
+- Message notifications
+
+**Implementation:**
+- File: `app/(buyer)/messages/page.tsx`
+- Component: `components/page/buyer/messages/BuyerMessagesPage.tsx`
+
+---
+
+### 4. Custom Requests (`/buyer-dashboard/custom-requests`)
+
+**URL:** `/buyer-dashboard/custom-requests`
+
+**Features:**
+- View all custom requests
+- Create new custom request
+- Track request status
+- Receive quotes from sellers
+- Accept/reject quotes
+
+**Create Request:** `/buyer-dashboard/custom-requests/new`
+
+**Features:**
+- Request form
+- Upload reference files
+- Set budget range
+- Set deadline
+- Describe requirements
+
+**Implementation:**
+- List: `app/(buyer)/custom-requests/page.tsx`
+- Create: `app/(buyer)/custom-requests/new/page.tsx`
+- Components: `components/page/buyer/custom-requests/`
+
+---
+
+### 5. Wishlist (`/buyer-dashboard/wishlist`)
+
+**URL:** `/buyer-dashboard/wishlist`
+
+**Features:**
+- View saved services
+- Remove from wishlist
+- Quick order from wishlist
+- Share wishlist
+- Organize by categories
+
+**Implementation:**
+- File: `app/(buyer)/wishlist/page.tsx`
+- Component: `components/page/buyer/wishlist/WishlistPage.tsx`
+- Uses localStorage for persistence
+
+---
+
+### 6. Profile (`/buyer-dashboard/profile`)
+
+**URL:** `/buyer-dashboard/profile`
+
+**Features:**
+- View and edit profile
+- Profile picture upload
+- Bio and description
+- Social media links
+- Public profile preview
+
+**Implementation:**
+- File: `app/(buyer)/profile/page.tsx`
+- Component: `components/page/buyer/profile/BuyerProfilePage.tsx`
+
+---
+
+### 7. Settings (`/buyer-dashboard/settings`)
+
+**URL:** `/buyer-dashboard/settings`
+
+**Features:**
+
+#### General Settings
+- Edit profile information
+- Change email
+- Change password
+- Account preferences
+
+#### Notifications (`/buyer-dashboard/settings/notifications`)
+- Email notifications
+- Push notifications
+- SMS notifications
+- Notification preferences
+
+#### Payment (`/buyer-dashboard/settings/payment`)
+- Payment methods
+- Add credit card
+- Billing address
+- Payment history
+
+#### Security (`/buyer-dashboard/settings/security`)
+- Two-factor authentication
+- Login history
+- Active sessions
+- Change password
+
+**Implementation:**
+- Main: `app/(buyer)/settings/page.tsx`
+- Notifications: `app/(buyer)/settings/notifications/page.tsx`
+- Payment: `app/(buyer)/settings/payment/page.tsx`
+- Security: `app/(buyer)/settings/security/page.tsx`
+- Component: `components/page/buyer/settings/BuyerSettingsPage.tsx`
+
+---
+
+### 8. Logout (`/buyer-dashboard/logout`)
+
+**URL:** `/buyer-dashboard/logout`
+
+**Features:**
+- Confirmation page
+- Clears localStorage
+- Redirects to homepage
+
+**Implementation:**
+- File: `app/(buyer)/logout/page.tsx`
+- Component: `components/page/buyer/logout/BuyerLogoutPage.tsx`
+
+---
+
+## Buyer Layout
+
+**Layout Component:** `components/page/buyer/layout/BuyerDashboardLayout.tsx`
+
+**Features:**
+- Sidebar navigation
+- Header with user info
+- Bottom navigation (mobile)
+- Responsive design
+
+**Navigation Items:**
+- Dashboard
+- Orders
+- Messages
+- Custom Requests
+- Wishlist
+- Profile
+- Settings
+
+**Bottom Navigation (Mobile):**
+- Component: `components/page/buyer/BuyerBottomNav.tsx`
+- Quick access to main sections
+
+---
+
+# Seller User Guide
+
+## Overview
+
+Sellers (freelancers) can create and manage services, handle orders, track earnings, and grow their business. All seller routes are protected and require authentication.
+
+## Authentication
+
+**Login:** `/login?mode=expert`
+
+**Default Credentials (for testing):**
+- Email: Any email
+- Password: Any password (minimum 6 characters)
+
+**After Login:**
+- User data saved to localStorage
+- Redirected to `/dashboard`
+- Role: `"seller"`
+
+## Seller Routes
+
+All routes under `/dashboard` are protected by `app/(seller)/dashboard/layout.tsx`
+
+### 1. Seller Dashboard (`/dashboard`)
+
+**URL:** `/dashboard`
+
+**Features:**
+- Overview of seller account
+- Earnings summary
+- Recent orders
+- Service performance
+- Quick stats (total orders, active orders, earnings, rating)
+- Quick actions
+
+**Implementation:**
+- File: `app/(seller)/dashboard/page.tsx`
+- Component: `components/page/seller/dashboard/SellerDashboardPage.tsx`
+- Layout: `components/page/seller/layout/SellerDashboardLayout.tsx`
+
+---
+
+### 2. Services (`/dashboard/services`)
+
+**URL:** `/dashboard/services`
+
+**Features:**
+- View all services
+- Service statistics (views, orders, earnings)
+- Filter by status (Active, Pending, Paused, Rejected)
+- Search services
+- Quick actions (edit, pause, delete)
+
+**Create Service:** `/dashboard/services/new`
+
+**Features:**
+- Service creation form
+- Title and description
+- Category selection
+- Pricing (basic, standard, premium packages)
+- Delivery time
+- Revisions included
+- Service images upload
+- FAQ section
+- Publish or save as draft
+
+**Edit Service:** `/dashboard/services/[id]/edit`
+
+**Features:**
+- Edit all service details
+- Update images
+- Modify pricing
+- Change status
+
+**Implementation:**
+- List: `app/(seller)/dashboard/services/page.tsx`
+- Create: `app/(seller)/dashboard/services/new/page.tsx`
+- Edit: `app/(seller)/dashboard/services/[id]/edit/page.tsx`
+- Components: `components/page/seller/services/`
+
+---
+
+### 3. Orders (`/dashboard/orders`)
+
+**URL:** `/dashboard/orders`
+
+**Features:**
+- View all orders
+- Filter by status (All, Pending, In Progress, Delivered, Completed, Cancelled)
+- Search orders
+- Sort by date, price, status
+- View order details
+
+**Order Detail Page:** `/dashboard/orders/[id]`
+
+**Features:**
+- Complete order information
+- Buyer details
+- Order requirements
+- Deliverables upload
+- Communication with buyer
+- Mark as delivered
+- Request completion
+- Handle revision requests
+
+**Implementation:**
+- List: `app/(seller)/dashboard/orders/page.tsx`
+- Detail: `app/(seller)/dashboard/orders/[id]/page.tsx`
+- Components: `components/page/seller/orders/`
+
+---
+
+### 4. Earnings (`/dashboard/earnings`)
+
+**URL:** `/dashboard/earnings`
+
+**Features:**
+- Earnings overview
+- Revenue charts (daily, weekly, monthly)
+- Pending earnings
+- Available balance
+- Withdrawal history
+- Transaction details
+
+**Withdraw:** `/dashboard/earnings/withdraw`
+
+**Features:**
+- Withdrawal form
+- Select withdrawal method (bank transfer, PayPal, etc.)
+- Enter amount
+- View withdrawal fees
+- Submit withdrawal request
+- View withdrawal status
+
+**Implementation:**
+- Main: `app/(seller)/dashboard/earnings/page.tsx`
+- Withdraw: `app/(seller)/dashboard/earnings/withdraw/page.tsx`
+- Components: `components/page/seller/earnings/`
+
+---
+
+### 5. Messages (`/dashboard/messages`)
+
+**URL:** `/dashboard/messages`
+
+**Features:**
+- View all conversations
+- Search conversations
+- Filter by unread/read
+- Real-time messaging
+- File attachments
+- Quick responses
+- Message templates
+
+**Implementation:**
+- File: `app/(seller)/dashboard/messages/page.tsx`
+- Component: `components/page/seller/messages/MessagesPage.tsx`
+
+---
+
+### 6. Reviews (`/dashboard/reviews`)
+
+**URL:** `/dashboard/reviews`
+
+**Features:**
+- View all reviews
+- Filter by rating (1-5 stars)
+- Respond to reviews
+- Review statistics
+- Average rating
+- Review breakdown
+
+**Implementation:**
+- File: `app/(seller)/dashboard/reviews/page.tsx`
+- Component: `components/page/seller/reviews/ReviewsPage.tsx`
+
+---
+
+### 7. Analytics (`/dashboard/analytics`)
+
+**URL:** `/dashboard/analytics`
+
+**Features:**
+- Performance metrics
+- Views and clicks
+- Conversion rates
+- Revenue trends
+- Popular services
+- Geographic data
+- Time-based reports
+
+**Implementation:**
+- File: `app/(seller)/dashboard/analytics/page.tsx`
+- Component: `components/page/seller/analytics/AnalyticsPage.tsx`
+
+---
+
+### 8. Notifications (`/dashboard/notifications`)
+
+**URL:** `/dashboard/notifications`
+
+**Features:**
+- View all notifications
+- Filter by type (orders, messages, reviews, system)
+- Mark as read/unread
+- Notification settings
+- Email preferences
+
+**Implementation:**
+- File: `app/(seller)/dashboard/notifications/page.tsx`
+- Component: `components/page/seller/notifications/NotificationsPage.tsx`
+
+---
+
+### 9. Settings (`/dashboard/settings`)
+
+**URL:** `/dashboard/settings`
+
+**Features:**
+
+#### General Settings
+- Profile information
+- Bio and description
+- Skills and expertise
+- Portfolio
+- Social media links
+
+#### Notifications (`/dashboard/settings/notifications`)
+- Email notifications
+- Push notifications
+- Notification preferences
+
+#### Payment (`/dashboard/settings/payment`)
+- Payment methods
+- Bank account details
+- Tax information
+- Payment history
+
+#### Security (`/dashboard/settings/security`)
+- Two-factor authentication
+- Login history
+- Active sessions
+- Change password
+
+**Implementation:**
+- Main: `app/(seller)/dashboard/settings/page.tsx`
+- Notifications: `app/(seller)/dashboard/settings/notifications/page.tsx`
+- Payment: `app/(seller)/dashboard/settings/payment/page.tsx`
+- Security: `app/(seller)/dashboard/settings/security/page.tsx`
+- Component: `components/page/seller/settings/SellerSettingsPage.tsx`
+
+---
+
+### 10. Help (`/dashboard/help`)
+
+**URL:** `/dashboard/help`
+
+**Features:**
+- Help center
+- FAQ
+- Contact support
+- Video tutorials
+- Seller resources
+- Community forum
+
+**Implementation:**
+- File: `app/(seller)/dashboard/help/page.tsx`
+- Component: `components/page/seller/help/HelpPage.tsx`
+
+---
+
+## Seller Layout
+
+**Layout Component:** `components/page/seller/layout/SellerDashboardLayout.tsx`
+
+**Features:**
+- Sidebar navigation
+- Header with user info and notifications
+- Bottom navigation (mobile)
+- Responsive design
+
+**Navigation Items:**
+- Dashboard
+- Services
+- Orders
+- Earnings
+- Messages
+- Reviews
+- Analytics
+- Notifications
+- Settings
+- Help
+
+**Bottom Navigation (Mobile):**
+- Component: `components/page/seller/layout/SellerBottomNav.tsx`
+- Quick access to main sections
+
+---
+
+# Common Features
+
+## Authentication & Authorization
+
+### useAuth Hook
+
+**Location:** `hooks/useAuth.ts`
+
+**Features:**
+- User state management
+- Login/logout functions
+- Role-based access control
+- Automatic redirects
+
+**Usage:**
+```typescript
+const { user, isLoading, isAuthenticated, login, logout, requireAuth } = useAuth();
+
+// Check authentication
+if (!isAuthenticated) {
+  router.push("/login");
+}
+
+// Require specific role
+requireAuth("buyer"); // Redirects if not buyer
+requireAuth("seller"); // Redirects if not seller
+requireAuth("admin"); // Redirects if not admin
+```
+
+### Route Protection
+
+**Buyer Routes:**
+- Protected by: `app/(buyer)/layout.tsx`
+- Requires: `role === "buyer"`
+- Redirects to: `/login?mode=client`
+
+**Seller Routes:**
+- Protected by: `app/(seller)/dashboard/layout.tsx`
+- Requires: `role === "seller"`
+- Redirects to: `/login?mode=expert`
+
+**Admin Routes:**
+- Protected by: `app/(admin)/layout.tsx`
+- Requires: `role === "admin"`
+- Redirects to: `/admin/login`
+
+---
+
+## Data Persistence
+
+### Current Implementation
+
+**localStorage:**
+- User authentication data
+- Token storage
+- User preferences
+- Wishlist items
+- Favorites
+
+**HomeDataContext:**
+- Homepage content (banners, services, categories)
+- Synced from admin dashboard
+- Persisted in localStorage
+
+### Future Enhancement
+
+Replace localStorage with:
+- Backend API calls
+- Database storage
+- React Query for server state
+- Proper session management
+
+---
+
+## Navigation Patterns
+
+### Back Navigation
+
+**Service Detail Page:**
+```typescript
+// Uses router.back() to return to previous page
+<button onClick={() => router.back()}>
+  뒤로가기
+</button>
+```
+
+### Category Navigation
+
+**Homepage to Category:**
+```typescript
+// Uses getCategoryUrl() utility
+import { getCategoryUrl } from "@/components/shared/utils";
+
+<Link href={getCategoryUrl(categoryName)}>
+  {categoryName}
+</Link>
+```
+
+### Dynamic Routes
+
+**Service Detail:**
+- Route: `/services/[id]`
+- Access: `useParams()` hook
+
+**Freelancer Profile:**
+- Route: `/freelancer/[slug]`
+- Access: `useParams()` hook
+
+---
+
+## Responsive Design
+
+### Breakpoints
+
+- **Mobile:** < 768px
+- **Tablet:** 768px - 1024px
+- **Desktop:** > 1024px
+
+### Mobile Features
+
+- Bottom navigation bars
+- Collapsible sidebars
+- Touch-friendly buttons
+- Swipe gestures
+- Mobile-optimized forms
+
+---
+
+## File Structure
+
+### Buyer Components
+```
+components/page/buyer/
+├── dashboard/
+├── orders/
+├── messages/
+├── custom-requests/
+├── wishlist/
+├── profile/
+├── settings/
+├── services/
+└── layout/
+```
+
+### Seller Components
+```
+components/page/seller/
+├── dashboard/
+├── services/
+├── orders/
+├── earnings/
+├── messages/
+├── reviews/
+├── analytics/
+├── notifications/
+├── settings/
+├── help/
+└── layout/
+```
+
+### Public/Home Components
+```
+components/page/home/
+├── Hero.tsx
+├── HomeBannerSlider.tsx
+├── CategoriesShowcase.tsx
+├── MultiRecommendationSection.tsx
+├── FeaturedFreelancers.tsx
+├── AdminFeaturedServices.tsx
+├── HowItWorks.tsx
+├── Testimonials.tsx
+└── FinalCallToAction.tsx
+```
+
+---
+
+## Best Practices
+
+### 1. Authentication Checks
+
+Always check authentication before accessing protected routes:
+```typescript
+useEffect(() => {
+  if (!isLoading && !user) {
+    requireAuth("buyer");
+  }
+}, [isLoading, user, requireAuth]);
+```
+
+### 2. Loading States
+
+Show loading indicators during async operations:
+```typescript
+if (isLoading) {
+  return <LoadingSpinner />;
+}
+```
+
+### 3. Error Handling
+
+Handle errors gracefully:
+```typescript
+try {
+  await operation();
+} catch (error) {
+  showToast(error.message, "error");
+}
+```
+
+### 4. User Feedback
+
+Provide feedback for all user actions:
+```typescript
+showToast("주문이 완료되었습니다.", "success");
+showToast("오류가 발생했습니다.", "error");
+```
+
+### 5. Responsive Design
+
+Always test on multiple screen sizes:
+- Use Tailwind responsive classes
+- Test mobile navigation
+- Verify touch targets
+
+---
+
+## Troubleshooting
+
+### Issue: Cannot Access Buyer/Seller Dashboard
+
+**Solutions:**
+1. Verify user is logged in
+2. Check user role in localStorage
+3. Verify route protection in layout file
+4. Check authentication redirect logic
+
+### Issue: Navigation Not Working
+
+**Solutions:**
+1. Verify Link components from Next.js
+2. Check route paths are correct
+3. Verify useRouter hook is imported
+4. Check for route conflicts
+
+### Issue: Data Not Persisting
+
+**Solutions:**
+1. Check localStorage is enabled
+2. Verify data is being saved
+3. Check browser console for errors
+4. Implement proper API integration
+
+### Issue: Responsive Layout Issues
+
+**Solutions:**
+1. Check Tailwind breakpoints
+2. Verify mobile navigation components
+3. Test on actual devices
+4. Check viewport meta tag
+
+---
+
+## Development Tips
+
+### Adding a New Buyer Page
+
+1. Create page: `app/(buyer)/{page-name}/page.tsx`
+2. Create component: `components/page/buyer/{page-name}/`
+3. Add to buyer layout navigation
+4. Implement authentication check
+5. Add to mobile bottom nav if needed
+
+### Adding a New Seller Page
+
+1. Create page: `app/(seller)/dashboard/{page-name}/page.tsx`
+2. Create component: `components/page/seller/{page-name}/`
+3. Add to seller layout navigation
+4. Implement authentication check
+5. Add to mobile bottom nav if needed
+
+### Adding a New Public Page
+
+1. Create page: `app/{page-name}/page.tsx`
+2. Create component: `components/page/{page-name}/`
+3. Add to header navigation if needed
+4. No authentication required
+
+---
+
+## API Integration (Future)
+
+When integrating with backend API:
+
+### Replace Mock Data
+
+```typescript
+// Instead of:
+const services = mockServices;
+
+// Use:
+const { data: services } = useQuery({
+  queryKey: ['services'],
+  queryFn: () => fetch('/api/services').then(res => res.json())
+});
+```
+
+### Implement Real Authentication
+
+```typescript
+// Instead of localStorage:
+const login = async (email, password) => {
+  const response = await fetch('/api/auth/login', {
+    method: 'POST',
+    body: JSON.stringify({ email, password })
+  });
+  const { token, user } = await response.json();
+  // Store token securely
+};
+```
+
+### Real-time Updates
+
+```typescript
+// Use WebSockets or Server-Sent Events
+const socket = new WebSocket('ws://api.example.com');
+socket.onmessage = (event) => {
+  const data = JSON.parse(event.data);
+  updateState(data);
+};
+```
+
+---
+
+## Conclusion
+
+This guide covers all public, buyer, and seller features of the FreelanceMarket platform. All sections are fully functional with authentication, responsive design, and proper navigation.
+
+**Key Points:**
+- Public pages are accessible without authentication
+- Buyer and seller dashboards require authentication
+- All content is managed through admin dashboard
+- Data flows through `HomeDataContext` for homepage
+- Responsive design for all devices
+- Ready for API integration
+
+For more information, refer to:
+- `ADMIN_USER_GUIDE.md` for admin features
+- `DEVELOPER_DOCUMENTATION.md` for technical details
+
+**Last Updated:** 2024
+
+

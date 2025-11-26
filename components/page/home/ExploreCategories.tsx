@@ -6,6 +6,7 @@ import { useTranslation } from "react-i18next";
 import { homeCategoryCards } from "@/entities/home";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import { useMemo } from "react";
+import { getCategoryUrl } from "@/components/shared/utils";
 
 export const ExploreCategories = () => {
   const { t } = useTranslation();
@@ -52,11 +53,13 @@ export const ExploreCategories = () => {
             const altText = typeof card.altKey === "string" && !card.altKey.includes(".")
               ? card.altKey
               : t(card.altKey);
+            const categoryUrl = getCategoryUrl(displayName);
             
             return (
-              <article
+              <Link
+                href={categoryUrl}
                 key={card.id}
-                className="flex h-full flex-col items-center gap-4 rounded-2xl bg-white p-6 text-center shadow-[0_12px_32px_rgba(46,94,153,0.08)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(46,94,153,0.12)]"
+                className="flex h-full flex-col items-center gap-4 rounded-2xl bg-white p-6 text-center shadow-[0_12px_32px_rgba(46,94,153,0.08)] transition-all duration-200 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(46,94,153,0.12)] cursor-pointer"
               >
                 <Image
                   src={card.image}
@@ -67,7 +70,7 @@ export const ExploreCategories = () => {
                   loading="lazy"
                 />
                 <h3 className="text-base font-semibold text-[#0F172A]">{displayName}</h3>
-              </article>
+              </Link>
             );
           })}
         </div>
@@ -77,14 +80,16 @@ export const ExploreCategories = () => {
             const displayName = typeof card.labelKey === "string" && !card.labelKey.includes(".")
               ? card.labelKey
               : t(card.labelKey);
+            const categoryUrl = getCategoryUrl(displayName);
             
             return (
-              <span
+              <Link
+                href={categoryUrl}
                 key={card.id}
-                className="flex min-w-[160px] items-center justify-center rounded-full border border-[#E2E8F0] bg-white px-5 py-3 text-sm font-semibold text-[#2E5E99] shadow-[0_6px_16px_rgba(46,94,153,0.08)]"
+                className="flex min-w-[160px] items-center justify-center rounded-full border border-[#E2E8F0] bg-white px-5 py-3 text-sm font-semibold text-[#2E5E99] shadow-[0_6px_16px_rgba(46,94,153,0.08)] transition-all duration-200 hover:bg-[#2E5E99] hover:text-white cursor-pointer"
               >
                 {displayName}
-              </span>
+              </Link>
             );
           })}
         </div>

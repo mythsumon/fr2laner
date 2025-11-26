@@ -138,13 +138,13 @@ export const ServiceDetailPage = () => {
       {/* Header */}
       <div className="sticky top-0 z-20 border-b border-[#E2E8F0] bg-white/80 backdrop-blur">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-4 py-4 sm:px-6 lg:px-8">
-          <Link
-            href="/buyer-dashboard"
+          <button
+            onClick={() => router.back()}
             className="flex items-center gap-2 text-sm font-medium text-[#475569] transition-colors hover:text-[#2E5E99]"
           >
             <ArrowLeft className="size-4" />
             뒤로가기
-          </Link>
+          </button>
           <div className="flex items-center gap-2">
             <button
               type="button"

@@ -16,18 +16,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-      <html lang="en">
-        <body>
-          <QueryProvider>
-            <LangProvider>
-              <HomeDataProvider>
-                <ConditionalLayout>
-                  {children}
-                </ConditionalLayout>
-              </HomeDataProvider>
-            </LangProvider>
-          </QueryProvider>
-        </body>
-      </html>
+    <html lang="en">
+      <body>
+        <QueryProvider>
+          <LangProvider>
+            <HomeDataProvider>
+              <ConditionalLayout>
+                {children}
+              </ConditionalLayout>
+            </HomeDataProvider>
+          </LangProvider>
+        </QueryProvider>
+      </body>
+    </html>
   );
 }

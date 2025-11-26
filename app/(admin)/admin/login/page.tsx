@@ -3,27 +3,37 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { useTranslation } from "react-i18next";
 import { Eye, EyeOff, Shield, Lock, Mail, AlertCircle, Copy, Check } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { LanguageSelector } from "@/components/shared/ui";
+
+interface SampleAccount {
+  email: string;
+  password: string;
+  roleKey: string;
+  permissionsKey: string;
+}
 
 // Sample admin accounts for demo
-const sampleAccounts = [
+const sampleAccounts: SampleAccount[] = [
   {
     email: "admin@example.com",
     password: "admin1234",
-    role: "Super Admin",
-    permissions: "전체 권한",
+    roleKey: "adminLogin.sampleAccounts.roles.superAdmin",
+    permissionsKey: "adminLogin.sampleAccounts.permissions.full",
   },
   {
     email: "moderator@example.com",
     password: "moderator1234",
-    role: "Moderator",
-    permissions: "사용자, 리뷰, 분쟁 관리",
+    roleKey: "adminLogin.sampleAccounts.roles.moderator",
+    permissionsKey: "adminLogin.sampleAccounts.permissions.moderator",
   },
 ];
 
 export default function SuperAdminLoginPage() {
   const router = useRouter();
+  const { t } = useTranslation();
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -40,14 +50,43 @@ export default function SuperAdminLoginPage() {
     setIsLoading(true);
     setError("");
 
-    // Simulate login
-    setTimeout(() => {
+    try {
+      // Simulate login validation
+      const isValid = 
+        (formData.email === "admin@example.com" && formData.password === "admin1234") ||
+        (formData.email === "moderator@example.com" && formData.password === "moderator1234") ||
+        formData.email.includes("@") && formData.password.length >= 6;
+
+      if (!isValid) {
+        setError(t("adminLogin.errors.invalid"));
+        setIsLoading(false);
+        return;
+      }
+
+      // Simulate login delay
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      
+      // Save admin user data to localStorage
+      const userData = {
+        id: "admin-1",
+        email: formData.email || "admin@example.com",
+        name: formData.email.includes("moderator") ? t("adminLogin.sampleAccounts.roles.moderator") : t("adminLogin.sampleAccounts.roles.superAdmin"),
+        role: "admin" as const,
+      };
+      const token = `admin-token-${Date.now()}`;
+      
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Use window.location for full page reload to ensure auth state is fresh
+      window.location.href = "/admin/dashboard";
+    } catch (err) {
+      setError(t("adminLogin.errors.generic"));
       setIsLoading(false);
-      router.push("/admin/dashboard");
-    }, 1000);
+    }
   };
 
-  const handleUseAccount = (account: typeof sampleAccounts[0]) => {
+  const handleUseAccount = (account: SampleAccount) => {
     setFormData({
       ...formData,
       email: account.email,
@@ -69,16 +108,26 @@ export default function SuperAdminLoginPage() {
     <div className="min-h-screen bg-gradient-to-br from-[#2E5E99] via-[#1e4a7a] to-[#0f2d4a] flex items-center justify-center p-4">
       <div className="w-full max-w-md">
         {/* Logo & Title */}
-        <div className="text-center mb-8">
-          <div className="inline-flex items-center justify-center size-16 rounded-2xl bg-white/10 backdrop-blur-sm mb-4">
-            <Shield className="size-8 text-white" />
+        <div className="mb-8">
+          <div className="flex items-center justify-between">
+            <div className="text-center flex-1">
+              <div className="inline-flex items-center justify-center size-16 rounded-2xl bg-white/10 backdrop-blur-sm mb-4">
+                <Shield className="size-8 text-white" />
+              </div>
+              <h1 className="text-3xl font-bold text-white mb-2">{t("adminLogin.title")}</h1>
+              <p className="text-white/80">{t("adminLogin.subtitle")}</p>
+            </div>
+            <div className="ml-4 hidden sm:block">
+              <LanguageSelector />
+            </div>
           </div>
-          <h1 className="text-3xl font-bold text-white mb-2">Super Admin</h1>
-          <p className="text-white/80">시스템 관리자 로그인</p>
         </div>
 
         {/* Login Card */}
         <div className="bg-white rounded-2xl shadow-2xl p-8">
+          <div className="mb-4 flex justify-end sm:hidden">
+            <LanguageSelector />
+          </div>
           {error && (
             <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2 text-red-700 text-sm">
               <AlertCircle className="size-4" />
@@ -90,7 +139,7 @@ export default function SuperAdminLoginPage() {
             {/* Email */}
             <div>
               <label className="block text-sm font-semibold text-[#0F172A] mb-2">
-                이메일
+                {t("adminLogin.emailLabel")}
               </label>
               <div className="relative">
                 <Mail className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-[#64748B]" />
@@ -99,7 +148,7 @@ export default function SuperAdminLoginPage() {
                   value={formData.email}
                   onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                   className="w-full pl-10 pr-4 py-3 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
-                  placeholder="admin@example.com"
+                  placeholder={t("adminLogin.emailPlaceholder")}
                   required
                 />
               </div>
@@ -108,7 +157,7 @@ export default function SuperAdminLoginPage() {
             {/* Password */}
             <div>
               <label className="block text-sm font-semibold text-[#0F172A] mb-2">
-                비밀번호
+                {t("adminLogin.passwordLabel")}
               </label>
               <div className="relative">
                 <Lock className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-[#64748B]" />
@@ -117,7 +166,7 @@ export default function SuperAdminLoginPage() {
                   value={formData.password}
                   onChange={(e) => setFormData({ ...formData, password: e.target.value })}
                   className="w-full pl-10 pr-12 py-3 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
-                  placeholder="••••••••"
+                  placeholder={t("adminLogin.passwordPlaceholder")}
                   required
                 />
                 <button
@@ -134,14 +183,14 @@ export default function SuperAdminLoginPage() {
             {show2FA && (
               <div>
                 <label className="block text-sm font-semibold text-[#0F172A] mb-2">
-                  2단계 인증 코드 (선택사항)
+                  {t("adminLogin.twoFactorLabel")}
                 </label>
                 <input
                   type="text"
                   value={formData.twoFactorCode}
                   onChange={(e) => setFormData({ ...formData, twoFactorCode: e.target.value })}
                   className="w-full px-4 py-3 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
-                  placeholder="6자리 코드"
+                  placeholder={t("adminLogin.twoFactorPlaceholder")}
                   maxLength={6}
                 />
               </div>
@@ -156,13 +205,13 @@ export default function SuperAdminLoginPage() {
                   onChange={(e) => setShow2FA(e.target.checked)}
                   className="rounded border-[#E2E8F0] text-[#2E5E99] focus:ring-[#2E5E99]"
                 />
-                <span className="text-sm text-[#64748B]">2FA 사용</span>
+                <span className="text-sm text-[#64748B]">{t("adminLogin.enable2fa")}</span>
               </label>
               <Link
                 href="/admin/forgot-password"
                 className="text-sm text-[#2E5E99] hover:underline font-medium"
               >
-                비밀번호 찾기
+                {t("adminLogin.forgotPassword")}
               </Link>
             </div>
 
@@ -173,14 +222,14 @@ export default function SuperAdminLoginPage() {
             loading={isLoading}
             disabled={isLoading}
           >
-            로그인
+            {t("adminLogin.loginButton")}
           </Button>
           </form>
 
           {/* Security Notice */}
           <div className="mt-6 p-4 rounded-lg bg-[#F8FAFC] border border-[#E2E8F0]">
             <p className="text-xs text-[#64748B] text-center">
-              🔒 보안: 모든 로그인 시도는 기록되며 IP 주소와 디바이스 정보가 저장됩니다.
+              🔒 {t("adminLogin.securityNotice")}: {t("adminLogin.securityDetail")}
             </p>
           </div>
         </div>
@@ -189,9 +238,9 @@ export default function SuperAdminLoginPage() {
         <div className="mt-6 bg-white/10 backdrop-blur-sm rounded-2xl border border-white/20 p-6">
           <h3 className="text-lg font-bold text-white mb-4 flex items-center gap-2">
             <Shield className="size-5" />
-            테스트 계정
+            {t("adminLogin.sampleAccountsTitle")}
           </h3>
-          <p className="text-sm text-white/80 mb-4">아래 계정을 클릭하여 자동으로 입력하거나 복사할 수 있습니다.</p>
+          <p className="text-sm text-white/80 mb-4">{t("adminLogin.sampleAccountsDescription")}</p>
           <div className="space-y-3">
             {sampleAccounts.map((account, index) => (
               <div
@@ -201,12 +250,12 @@ export default function SuperAdminLoginPage() {
                 <div className="flex items-start justify-between mb-3">
                   <div>
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="font-semibold text-white">{account.role}</span>
+                      <span className="font-semibold text-white">{t(account.roleKey)}</span>
                       <span className="text-xs px-2 py-0.5 rounded-full bg-white/20 text-white/90">
-                        {account.permissions}
+                        {t(account.permissionsKey)}
                       </span>
                     </div>
-                    <p className="text-xs text-white/70">{account.permissions}</p>
+                    <p className="text-xs text-white/70">{t(account.permissionsKey)}</p>
                   </div>
                   <Button
                     type="ghost"
@@ -214,7 +263,7 @@ export default function SuperAdminLoginPage() {
                     onClick={() => handleUseAccount(account)}
                     className="text-white hover:bg-white/20 border-white/30"
                   >
-                    사용하기
+                    {t("adminLogin.useAccount")}
                   </Button>
                 </div>
                 <div className="space-y-2">
@@ -224,7 +273,7 @@ export default function SuperAdminLoginPage() {
                     <button
                       onClick={() => handleCopy(account.email, `email-${index}`)}
                       className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
-                      title="이메일 복사"
+                      title={t("adminLogin.copyEmail")}
                     >
                       {copiedField === `email-${index}` ? (
                         <Check className="size-4 text-green-300" />
@@ -239,7 +288,7 @@ export default function SuperAdminLoginPage() {
                     <button
                       onClick={() => handleCopy(account.password, `password-${index}`)}
                       className="p-1.5 rounded-lg hover:bg-white/20 transition-colors"
-                      title="비밀번호 복사"
+                      title={t("adminLogin.copyPassword")}
                     >
                       {copiedField === `password-${index}` ? (
                         <Check className="size-4 text-green-300" />
@@ -254,7 +303,7 @@ export default function SuperAdminLoginPage() {
           </div>
           <div className="mt-4 p-3 rounded-lg bg-yellow-500/20 border border-yellow-500/30">
             <p className="text-xs text-yellow-100 text-center">
-              ⚠️ 이 계정들은 데모/테스트 목적으로만 사용됩니다. 프로덕션 환경에서는 반드시 변경하세요.
+              ⚠️ {t("adminLogin.sampleWarningDetail")}
             </p>
           </div>
         </div>

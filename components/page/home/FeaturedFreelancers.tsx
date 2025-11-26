@@ -73,9 +73,10 @@ export const FeaturedFreelancers = () => {
 
         <div className="grid gap-6 md:grid-cols-2 xl:grid-cols-4">
           {filteredFreelancers.map((freelancer) => (
-            <article
+            <Link
               key={freelancer.id}
-              className="group flex h-full flex-col items-center gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-6 text-center transition-transform duration-200 hover:-translate-y-1"
+              href={`/freelancer/${freelancer.id}`}
+              className="group flex h-full flex-col items-center gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-6 text-center transition-transform duration-200 hover:-translate-y-1 hover:shadow-lg cursor-pointer"
             >
               <img
                 src={freelancer.avatar}
@@ -84,7 +85,7 @@ export const FeaturedFreelancers = () => {
                 loading="lazy"
               />
               <div className="space-y-1">
-                <h3 className="text-lg font-bold text-[#0F172A]">{t(freelancer.nameKey)}</h3>
+                <h3 className="text-lg font-bold text-[#0F172A] group-hover:text-[#2E5E99] transition-colors">{t(freelancer.nameKey)}</h3>
                 <span className="inline-flex items-center rounded-full bg-[#E9EEF8] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#2E5E99]">
                   {t(freelancer.roleKey)}
                 </span>
@@ -95,14 +96,12 @@ export const FeaturedFreelancers = () => {
                 <span className="font-semibold text-[#475569]">{freelancer.rating.toFixed(1)}</span>
                 <span className="text-[#94A3B8]">{t(freelancer.reviewsKey)}</span>
               </div>
-              <Button
-                type="default"
-                shape="round"
-                className="w-full border border-[#2E5E99] bg-transparent text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
-              >
-                {t("home.freelancers.actions.viewProfile")}
-              </Button>
-            </article>
+              <div className="w-full">
+                <div className="w-full rounded-lg border border-[#2E5E99] bg-transparent px-4 py-2 text-center text-sm font-semibold text-[#2E5E99] transition-colors group-hover:bg-[#2E5E99] group-hover:text-white">
+                  {t("home.freelancers.actions.viewProfile")}
+                </div>
+              </div>
+            </Link>
           ))}
         </div>
       </div>

@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useMemo } from "react";
 import { useTranslation } from "react-i18next";
 import { Button } from "@/components/shared/common";
@@ -29,7 +30,10 @@ const insertSponsored = (items: CategoryService[]) => {
 const GridCard = ({ service }: { service: CategoryService }) => {
   const { t } = useTranslation();
   return (
-    <article className="group flex h-full flex-col gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-5 transition-transform duration-200 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(46,94,153,0.12)]">
+    <Link
+      href={`/services/${service.id}`}
+      className="group flex h-full flex-col gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-5 transition-transform duration-200 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(46,94,153,0.12)] cursor-pointer"
+    >
       <div className="relative overflow-hidden rounded-[12px]">
         <Image
           src={service.thumb}
@@ -43,7 +47,12 @@ const GridCard = ({ service }: { service: CategoryService }) => {
             {t(`category.design.cards.badges.${service.badge}`)}
           </span>
         )}
-        <button type="button" className="absolute right-3 top-3 rounded-full bg-white/80 p-2 text-[#2E5E99] shadow hover:bg-white" aria-label={t("category.design.cards.favoriteAria") ?? undefined}>
+        <button 
+          type="button" 
+          className="absolute right-3 top-3 rounded-full bg-white/80 p-2 text-[#2E5E99] shadow hover:bg-white z-10" 
+          aria-label={t("category.design.cards.favoriteAria") ?? undefined}
+          onClick={(e) => e.stopPropagation()}
+        >
           ♥
         </button>
         {service.sponsored && (
@@ -52,7 +61,7 @@ const GridCard = ({ service }: { service: CategoryService }) => {
           </span>
         )}
       </div>
-      <h3 className="line-clamp-2 text-base font-semibold text-[#0F172A]">{service.title}</h3>
+      <h3 className="line-clamp-2 text-base font-semibold text-[#0F172A] group-hover:text-[#2E5E99] transition-colors">{service.title}</h3>
       <div className="flex items-center gap-3 text-sm text-[#475569]">
         <Image src={service.sellerAvatar} alt={service.sellerName} width={32} height={32} className="size-8 rounded-full object-cover" />
         <span className="font-semibold text-[#0F172A]">{service.sellerName}</span>
@@ -69,18 +78,21 @@ const GridCard = ({ service }: { service: CategoryService }) => {
       </div>
       <div className="mt-auto flex items-center justify-between">
         <span className="text-lg font-bold text-[#0F172A]">{t("category.design.cards.price", { price: service.price.toLocaleString() })}</span>
-        <Button type="primary" shape="round" className="opacity-0 transition-opacity duration-200 group-hover:opacity-100">
+        <div className="rounded-lg bg-[#2E5E99] px-4 py-2 text-sm font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           {t("category.design.cards.cta")}
-        </Button>
+        </div>
       </div>
-    </article>
+    </Link>
   );
 };
 
 const ListCard = ({ service }: { service: CategoryService }) => {
   const { t } = useTranslation();
   return (
-    <article className="group grid gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-5 transition-transform duration-200 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(46,94,153,0.12)] md:grid-cols-[260px_minmax(0,1fr)]">
+    <Link
+      href={`/services/${service.id}`}
+      className="group grid gap-4 rounded-2xl border border-[#E2E8F0] bg-white p-5 transition-transform duration-200 hover:-translate-y-1 hover:shadow-[0_16px_40px_rgba(46,94,153,0.12)] md:grid-cols-[260px_minmax(0,1fr)] cursor-pointer"
+    >
       <div className="relative overflow-hidden rounded-[12px]">
         <Image
           src={service.thumb}
@@ -102,7 +114,7 @@ const ListCard = ({ service }: { service: CategoryService }) => {
       </div>
       <div className="flex h-full flex-col gap-4">
         <div className="space-y-2">
-          <h3 className="text-lg font-semibold text-[#0F172A]">{service.title}</h3>
+          <h3 className="text-lg font-semibold text-[#0F172A] group-hover:text-[#2E5E99] transition-colors">{service.title}</h3>
           <p className="line-clamp-2 text-sm text-[#475569]">
             {t("category.design.cards.listExcerpt")}
           </p>
@@ -123,12 +135,12 @@ const ListCard = ({ service }: { service: CategoryService }) => {
         </div>
         <div className="mt-auto flex items-center justify-between">
           <span className="text-xl font-bold text-[#0F172A]">{t("category.design.cards.price", { price: service.price.toLocaleString() })}</span>
-          <Button type="primary" shape="round">
+          <div className="rounded-lg bg-[#2E5E99] px-4 py-2 text-sm font-semibold text-white">
             {t("category.design.cards.cta")}
-          </Button>
+          </div>
         </div>
       </div>
-    </article>
+    </Link>
   );
 };
 

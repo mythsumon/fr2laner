@@ -21,8 +21,8 @@ export const ConfirmModal = ({
   onConfirm,
   title,
   message,
-  confirmText = "확인",
-  cancelText = "취소",
+  confirmText = "Confirm",
+  cancelText = "Cancel",
   type = "danger",
   isLoading = false,
 }: ConfirmModalProps) => {

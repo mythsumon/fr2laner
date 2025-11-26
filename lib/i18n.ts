@@ -17,7 +17,7 @@ if (!i18n.isInitialized) {
           translation: krTranslations,
         },
       },
-      lng: "kr", // default language
+      lng: "en", // default language
       fallbackLng: "en",
       interpolation: {
         escapeValue: false, // React already escapes values
