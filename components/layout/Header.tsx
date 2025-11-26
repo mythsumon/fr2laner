@@ -12,7 +12,6 @@ import { Menu, X, Shield } from "lucide-react";
 const menuLinks = [
   { key: "header.menu.forFreelancers", href: "/for-freelancers" },
   { key: "header.menu.findTalent", href: "/find-talent" },
-  { key: "header.menu.howItWorks", href: "#how-it-works" },
 ];
 
 export const Header = () => {
@@ -117,15 +116,6 @@ export const Header = () => {
                 {t("header.nav.login")}
               </Button>
             </Link>
-            <Link href="/dashboard" className="inline-flex">
-              <Button
-                type="text"
-                shape="round"
-                className="h-11 px-5 text-sm font-semibold text-[#0F172A] hover:bg-[#E9EEF8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
-              >
-                {t("header.nav.sellerDashboard", { defaultValue: "Seller Dashboard" })}
-              </Button>
-            </Link>
             <Link href="/signup" className="hidden lg:inline-flex">
               <Button
                 type="default"
@@ -189,13 +179,6 @@ export const Header = () => {
                     className="rounded-xl px-4 py-3 text-sm font-semibold text-[#0F172A] transition-colors hover:bg-[#F1F5F9]"
                   >
                     {t("header.nav.home", { defaultValue: "Home" })}
-                  </Link>
-                  <Link
-                    href="/dashboard"
-                    onClick={closeMobileNav}
-                    className="rounded-xl px-4 py-3 text-sm font-semibold text-[#0F172A] transition-colors hover:bg-[#F1F5F9]"
-                  >
-                    {t("header.nav.sellerDashboard", { defaultValue: "Seller Dashboard" })}
                   </Link>
                   {menuLinks.map((link) => (
                     <Link

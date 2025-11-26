@@ -247,6 +247,15 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
           {t("auth.login.signUp")}
         </Link>
       </p>
+
+      <div className="pt-4 border-t border-slate-200">
+        <Link
+          href="/dashboard"
+          className="flex items-center justify-center w-full rounded-xl border border-slate-200 px-4 py-3 text-sm font-semibold text-slate-700 transition-colors hover:border-sky-400 hover:bg-sky-50 hover:text-sky-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-sky-400"
+        >
+          {t("header.nav.sellerDashboard", { defaultValue: "Seller Dashboard" })}
+        </Link>
+      </div>
     </div>
   );
 };

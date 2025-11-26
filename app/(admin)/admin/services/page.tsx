@@ -566,7 +566,7 @@ export default function ServicesManagementPage() {
           <div className="flex items-center gap-3 mb-2">
           <h1 className="text-2xl font-bold text-[#0F172A]">Services Management</h1>
             <BackToHomeButton />
-          </div>
+        </div>
           <p className="text-sm text-[#64748B] mt-1">Review and manage all services</p>
         </div>
       </div>
