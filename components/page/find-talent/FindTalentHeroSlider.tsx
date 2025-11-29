@@ -4,16 +4,30 @@ import { useState, useEffect } from "react";
 import { useHomeData } from "@/contexts/HomeDataContext";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 
+interface HeroImage {
+  id: number;
+  title: string;
+  image?: string;
+  active: boolean;
+}
+
 export const FindTalentHeroSlider = () => {
-  const { findTalentImages } = useHomeData();
+  const { banners } = useHomeData();
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [activeImages, setActiveImages] = useState<any[]>([]);
+  const [activeImages, setActiveImages] = useState<HeroImage[]>([]);
 
   useEffect(() => {
-    // Filter only active images
-    const active = findTalentImages.filter(img => img.active);
+    // Use banners as hero images, filter only active ones
+    const active = banners
+      .filter((banner) => banner.active)
+      .map((banner) => ({
+        id: banner.id,
+        title: banner.title,
+        image: banner.image,
+        active: banner.active,
+      }));
     setActiveImages(active);
-  }, [findTalentImages]);
+  }, [banners]);
 
   useEffect(() => {
     if (activeImages.length === 0) return;
