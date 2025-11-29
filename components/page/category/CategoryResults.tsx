@@ -2,8 +2,9 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
+import { Heart } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { cn } from "@/components/shared/utils";
 import type { CategoryService, ViewMode } from "./types";
@@ -29,6 +30,33 @@ const insertSponsored = (items: CategoryService[]) => {
 
 const GridCard = ({ service }: { service: CategoryService }) => {
   const { t } = useTranslation();
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const likedServices = JSON.parse(localStorage.getItem("liked_services") || "[]");
+      setIsLiked(likedServices.includes(service.id));
+    }
+  }, [service.id]);
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (typeof window !== "undefined") {
+      const likedServices = JSON.parse(localStorage.getItem("liked_services") || "[]");
+      if (isLiked) {
+        const updated = likedServices.filter((id: string) => id !== service.id);
+        localStorage.setItem("liked_services", JSON.stringify(updated));
+        setIsLiked(false);
+      } else {
+        likedServices.push(service.id);
+        localStorage.setItem("liked_services", JSON.stringify(likedServices));
+        setIsLiked(true);
+      }
+    }
+  };
+
   return (
     <Link
       href={`/services/${service.id}`}
@@ -43,41 +71,59 @@ const GridCard = ({ service }: { service: CategoryService }) => {
           className="aspect-[4/3] w-full rounded-[12px] object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {service.badge && (
-          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#2E5E99]">
+          <span className="absolute left-3 top-3 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#2E5E99] shadow-sm">
             {t(`category.design.cards.badges.${service.badge}`)}
           </span>
         )}
         <button 
           type="button" 
-          className="absolute right-3 top-3 rounded-full bg-white/80 p-2 text-[#2E5E99] shadow hover:bg-white z-10" 
-          aria-label={t("category.design.cards.favoriteAria") ?? undefined}
-          onClick={(e) => e.stopPropagation()}
+          onClick={handleLikeClick}
+          className={`absolute right-3 top-3 z-10 flex items-center justify-center rounded-full p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-110 ${
+            isLiked
+              ? "bg-red-500 text-white hover:bg-red-600"
+              : "bg-white/90 text-[#2E5E99] hover:bg-white"
+          }`}
+          aria-label={t("category.design.cards.favoriteAria") ?? "좋아요"}
         >
-          ♥
+          <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
         </button>
         {service.sponsored && (
-          <span className="absolute left-3 bottom-3 rounded-full bg-[#FFD6E5] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#992E5E]">
+          <span className="absolute left-3 bottom-3 rounded-full bg-[#FFD6E5] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#992E5E] shadow-sm">
             {t("category.design.cards.sponsored")}
           </span>
         )}
       </div>
-      <h3 className="line-clamp-2 text-base font-semibold text-[#0F172A] group-hover:text-[#2E5E99] transition-colors">{service.title}</h3>
-      <div className="flex items-center gap-3 text-sm text-[#475569]">
-        <Image src={service.sellerAvatar} alt={service.sellerName} width={32} height={32} className="size-8 rounded-full object-cover" />
+      <h3 className="line-clamp-2 text-base font-semibold leading-snug text-[#0F172A] group-hover:text-[#2E5E99] transition-colors">
+        {service.title}
+      </h3>
+      <div className="flex items-center gap-2.5 text-sm">
+        <Image 
+          src={service.sellerAvatar} 
+          alt={service.sellerName} 
+          width={32} 
+          height={32} 
+          className="size-8 rounded-full object-cover ring-2 ring-white" 
+        />
         <span className="font-semibold text-[#0F172A]">{service.sellerName}</span>
-        <span className="rounded-full bg-[#E9EEF8] px-2 py-0.5 text-xs font-semibold text-[#2E5E99]">{service.sellerLevel}</span>
+        <span className="rounded-full bg-[#E9EEF8] px-2.5 py-0.5 text-xs font-semibold text-[#2E5E99]">
+          {service.sellerLevel}
+        </span>
       </div>
       <div className="flex items-center gap-2 text-sm text-[#475569]">
         <span className="flex items-center gap-1 text-[#F59E0B]">
-          ★
-          <span className="font-semibold text-[#475569]">{service.rating.toFixed(1)}</span>
+          <span className="text-base">★</span>
+          <span className="font-semibold text-[#0F172A]">{service.rating.toFixed(1)}</span>
         </span>
-        <span className="text-[#94A3B8]">{t("category.design.cards.reviewCount", { count: service.reviews })}</span>
-        <span className="text-[#94A3B8]">• {service.delivery}</span>
-        <span className="text-[#94A3B8]">• {service.revisions}</span>
+        <span className="text-[#94A3B8]">({service.reviews.toLocaleString()})</span>
+        <span className="text-[#94A3B8]">•</span>
+        <span className="text-[#94A3B8]">{service.delivery}</span>
+        <span className="text-[#94A3B8]">•</span>
+        <span className="text-[#94A3B8]">{service.revisions}</span>
       </div>
-      <div className="mt-auto flex items-center justify-between">
-        <span className="text-lg font-bold text-[#0F172A]">{t("category.design.cards.price", { price: service.price.toLocaleString() })}</span>
+      <div className="mt-auto flex items-center justify-between pt-2">
+        <span className="text-lg font-bold text-[#0F172A]">
+          ₩{service.price.toLocaleString()}
+        </span>
         <div className="rounded-lg bg-[#2E5E99] px-4 py-2 text-sm font-semibold text-white opacity-0 transition-opacity duration-200 group-hover:opacity-100">
           {t("category.design.cards.cta")}
         </div>
@@ -88,6 +134,33 @@ const GridCard = ({ service }: { service: CategoryService }) => {
 
 const ListCard = ({ service }: { service: CategoryService }) => {
   const { t } = useTranslation();
+  const [isLiked, setIsLiked] = useState(false);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const likedServices = JSON.parse(localStorage.getItem("liked_services") || "[]");
+      setIsLiked(likedServices.includes(service.id));
+    }
+  }, [service.id]);
+
+  const handleLikeClick = (e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    if (typeof window !== "undefined") {
+      const likedServices = JSON.parse(localStorage.getItem("liked_services") || "[]");
+      if (isLiked) {
+        const updated = likedServices.filter((id: string) => id !== service.id);
+        localStorage.setItem("liked_services", JSON.stringify(updated));
+        setIsLiked(false);
+      } else {
+        likedServices.push(service.id);
+        localStorage.setItem("liked_services", JSON.stringify(likedServices));
+        setIsLiked(true);
+      }
+    }
+  };
+
   return (
     <Link
       href={`/services/${service.id}`}
@@ -102,12 +175,24 @@ const ListCard = ({ service }: { service: CategoryService }) => {
           className="aspect-[16/9] w-full rounded-[12px] object-cover transition-transform duration-300 group-hover:scale-105"
         />
         {service.badge && (
-          <span className="absolute left-3 top-3 rounded-full bg-white/90 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#2E5E99]">
+          <span className="absolute left-3 top-3 rounded-full bg-white/90 backdrop-blur-sm px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#2E5E99] shadow-sm">
             {t(`category.design.cards.badges.${service.badge}`)}
           </span>
         )}
+        <button 
+          type="button" 
+          onClick={handleLikeClick}
+          className={`absolute right-3 top-3 z-10 flex items-center justify-center rounded-full p-2 shadow-lg backdrop-blur-sm transition-all duration-200 hover:scale-110 ${
+            isLiked
+              ? "bg-red-500 text-white hover:bg-red-600"
+              : "bg-white/90 text-[#2E5E99] hover:bg-white"
+          }`}
+          aria-label={t("category.design.cards.favoriteAria") ?? "좋아요"}
+        >
+          <Heart className={`h-4 w-4 ${isLiked ? "fill-current" : ""}`} />
+        </button>
         {service.sponsored && (
-          <span className="absolute left-3 bottom-3 rounded-full bg-[#FFD6E5] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#992E5E]">
+          <span className="absolute left-3 bottom-3 rounded-full bg-[#FFD6E5] px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#992E5E] shadow-sm">
             {t("category.design.cards.sponsored")}
           </span>
         )}
@@ -119,22 +204,34 @@ const ListCard = ({ service }: { service: CategoryService }) => {
             {t("category.design.cards.listExcerpt")}
           </p>
         </div>
-        <div className="flex items-center gap-3 text-sm text-[#475569]">
-          <Image src={service.sellerAvatar} alt={service.sellerName} width={32} height={32} className="size-8 rounded-full object-cover" />
+        <div className="flex items-center gap-2.5 text-sm">
+          <Image 
+            src={service.sellerAvatar} 
+            alt={service.sellerName} 
+            width={32} 
+            height={32} 
+            className="size-8 rounded-full object-cover ring-2 ring-white" 
+          />
           <span className="font-semibold text-[#0F172A]">{service.sellerName}</span>
-          <span className="rounded-full bg-[#E9EEF8] px-2 py-0.5 text-xs font-semibold text-[#2E5E99]">{service.sellerLevel}</span>
-        </div>
-        <div className="flex flex-wrap items-center gap-3 text-sm text-[#475569]">
-          <span className="flex items-center gap-1 text-[#F59E0B]">
-            ★
-            <span className="font-semibold text-[#475569]">{service.rating.toFixed(1)}</span>
+          <span className="rounded-full bg-[#E9EEF8] px-2.5 py-0.5 text-xs font-semibold text-[#2E5E99]">
+            {service.sellerLevel}
           </span>
-          <span className="text-[#94A3B8]">{t("category.design.cards.reviewCount", { count: service.reviews })}</span>
-          <span className="text-[#94A3B8]">• {service.delivery}</span>
-          <span className="text-[#94A3B8]">• {service.revisions}</span>
         </div>
-        <div className="mt-auto flex items-center justify-between">
-          <span className="text-xl font-bold text-[#0F172A]">{t("category.design.cards.price", { price: service.price.toLocaleString() })}</span>
+        <div className="flex flex-wrap items-center gap-2 text-sm text-[#475569]">
+          <span className="flex items-center gap-1 text-[#F59E0B]">
+            <span className="text-base">★</span>
+            <span className="font-semibold text-[#0F172A]">{service.rating.toFixed(1)}</span>
+          </span>
+          <span className="text-[#94A3B8]">({service.reviews.toLocaleString()})</span>
+          <span className="text-[#94A3B8]">•</span>
+          <span className="text-[#94A3B8]">{service.delivery}</span>
+          <span className="text-[#94A3B8]">•</span>
+          <span className="text-[#94A3B8]">{service.revisions}</span>
+        </div>
+        <div className="mt-auto flex items-center justify-between pt-2">
+          <span className="text-xl font-bold text-[#0F172A]">
+            ₩{service.price.toLocaleString()}
+          </span>
           <div className="rounded-lg bg-[#2E5E99] px-4 py-2 text-sm font-semibold text-white">
             {t("category.design.cards.cta")}
           </div>
