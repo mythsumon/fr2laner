@@ -1,23 +1,52 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Upload, X, Save } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
+import { Toast } from "@/components/page/admin/shared/Toast";
+import type { ProjectStatus, ProposalStatus } from "@/types/common";
 
-const mockProject = {
-  id: "PROJ-001",
-  title: "웹사이트 리뉴얼 프로젝트",
-  budget: "500,000 - 1,000,000원",
-};
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  budget: string;
+  deadline: string;
+  status: ProjectStatus;
+  buyerId: string;
+  buyer: string;
+  proposals: number;
+  createdAt: string;
+  attachments?: string[];
+}
+
+interface Proposal {
+  id: string;
+  projectId: string;
+  expertId: string;
+  expertName: string;
+  price: number;
+  deliveryDays: number;
+  message: string;
+  status: ProposalStatus;
+  createdAt: string;
+  attachments?: string[];
+}
 
 export const CreateProposalPage = () => {
   useBodyClass("dashboard-page");
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
+  const { toast, showToast, hideToast } = useToast();
   const projectId = params.id as string;
+  const [project, setProject] = useState<Project | null>(null);
   const [formData, setFormData] = useState({
     price: "",
     deliveryDays: "",
@@ -26,13 +55,75 @@ export const CreateProposalPage = () => {
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProjects = localStorage.getItem("projects");
+      if (storedProjects) {
+        try {
+          const allProjects: Project[] = JSON.parse(storedProjects);
+          const foundProject = allProjects.find((p) => p.id === projectId);
+          if (foundProject) {
+            setProject(foundProject);
+          } else {
+            router.push("/expert/projects");
+          }
+        } catch (e) {
+          console.warn("Failed to parse projects from localStorage", e);
+          router.push("/expert/projects");
+        }
+      } else {
+        router.push("/expert/projects");
+      }
+    }
+  }, [projectId, router]);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (!user || !project) {
+      showToast("로그인이 필요합니다.", "error");
+      return;
+    }
+
     setIsSubmitting(true);
-    // Add proposal creation logic here
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Create proposal
+    const proposalId = `PROP-${Date.now()}`;
+    const newProposal: Proposal = {
+      id: proposalId,
+      projectId: projectId,
+      expertId: user.id,
+      expertName: user.name,
+      price: parseFloat(formData.price.replace(/[^0-9]/g, "")) || 0,
+      deliveryDays: parseInt(formData.deliveryDays) || 0,
+      message: formData.message,
+      status: "sent",
+      createdAt: new Date().toISOString(),
+      attachments: formData.attachments.map((f) => f.name),
+    };
+
+    // Save proposal to localStorage
+    if (typeof window !== "undefined") {
+      const storedProposals = localStorage.getItem("proposals");
+      const existingProposals: Proposal[] = storedProposals ? JSON.parse(storedProposals) : [];
+      existingProposals.push(newProposal);
+      localStorage.setItem("proposals", JSON.stringify(existingProposals));
+
+      // Update project proposals count
+      const storedProjects = localStorage.getItem("projects");
+      if (storedProjects) {
+        const allProjects: Project[] = JSON.parse(storedProjects);
+        const updatedProjects = allProjects.map((p) =>
+          p.id === projectId ? { ...p, proposals: p.proposals + 1 } : p
+        );
+        localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      }
+    }
+
     setIsSubmitting(false);
-    router.push(`/expert/projects/${projectId}`);
+    showToast("제안이 성공적으로 전송되었습니다!", "success");
+    setTimeout(() => {
+      router.push(`/expert/projects/${projectId}`);
+    }, 1000);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -65,7 +156,7 @@ export const CreateProposalPage = () => {
             </button>
           </Link>
           <h1 className="text-2xl font-bold text-[#0F172A] sm:text-3xl">제안 보내기</h1>
-          <p className="mt-1 text-sm text-[#475569]">{mockProject.title}</p>
+          <p className="mt-1 text-sm text-[#475569]">{project?.title || "로딩 중..."}</p>
         </div>
 
         {/* Form */}
@@ -82,7 +173,7 @@ export const CreateProposalPage = () => {
               placeholder="예: 750,000원"
               className="w-full rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-sm focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
             />
-            <p className="mt-2 text-xs text-[#94A3B8]">프로젝트 예산 범위: {mockProject.budget}</p>
+            <p className="mt-2 text-xs text-[#94A3B8]">프로젝트 예산 범위: {project?.budget || ""}</p>
           </div>
 
           <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
@@ -168,6 +259,12 @@ export const CreateProposalPage = () => {
           </div>
         </form>
       </main>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
     </div>
   );
 };

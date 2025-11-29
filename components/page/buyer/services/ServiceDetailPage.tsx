@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
@@ -22,6 +22,22 @@ import {
 import { Button } from "@/components/shared/common";
 import { useAuth } from "@/hooks/useAuth";
 import { ReportModal } from "@/components/shared/ReportModal";
+
+interface Review {
+  id: string;
+  serviceId: string;
+  buyerId: string;
+  buyerName: string;
+  buyerAvatar?: string;
+  sellerId: string;
+  sellerName: string;
+  rating: number;
+  comment: string;
+  status: "visible" | "hidden";
+  createdAt: string;
+  orderId?: string;
+  images?: string[];
+}
 
 // Mock service data
 const mockService = {
@@ -119,6 +135,7 @@ export const ServiceDetailPage = () => {
   const params = useParams();
   const router = useRouter();
   const { user, isAuthenticated } = useAuth();
+  const serviceId = params.id as string;
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
@@ -128,6 +145,49 @@ export const ServiceDetailPage = () => {
     targetId: string;
     targetName: string;
   } | null>(null);
+  const [reviews, setReviews] = useState<Review[]>([]);
+  const [canWriteReview, setCanWriteReview] = useState(false);
+
+  // Load reviews from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedReviews = localStorage.getItem("reviews");
+      if (storedReviews) {
+        try {
+          const allReviews: Review[] = JSON.parse(storedReviews);
+          const serviceReviews = allReviews.filter(
+            (r) => r.serviceId === serviceId && r.status === "visible"
+          );
+          setReviews(serviceReviews);
+        } catch (e) {
+          console.warn("Failed to parse reviews from localStorage", e);
+        }
+      }
+
+      // Check if user can write review (has completed order for this service)
+      if (isAuthenticated && user?.role === "client") {
+        const storedOrders = localStorage.getItem("orders");
+        if (storedOrders) {
+          try {
+            const orders: any[] = JSON.parse(storedOrders);
+            const completedOrder = orders.find(
+              (o) => o.serviceId === serviceId && o.status === "completed" && o.buyerId === user.id
+            );
+            // Check if review already exists
+            const existingReview = reviews.find((r) => r.buyerId === user.id && r.serviceId === serviceId);
+            setCanWriteReview(!!completedOrder && !existingReview);
+          } catch (e) {
+            console.warn("Failed to parse orders from localStorage", e);
+          }
+        }
+      }
+    }
+  }, [serviceId, isAuthenticated, user, reviews.length]);
+
+  // Calculate average rating
+  const averageRating = reviews.length > 0
+    ? reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length
+    : mockService.rating;
 
   // Check if current user is the service owner
   const isServiceOwner = isAuthenticated && user?.role === "expert" && user?.id === mockService.seller.id;
@@ -509,6 +569,100 @@ export const ServiceDetailPage = () => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* Reviews Section */}
+        <div className="mt-8 rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+          <div className="mb-6 flex items-center justify-between">
+            <div>
+              <h2 className="text-xl font-bold text-[#0F172A]">리뷰</h2>
+              <div className="mt-2 flex items-center gap-2">
+                <div className="flex items-center gap-1">
+                  <Star className="size-5 fill-[#F59E0B] text-[#F59E0B]" />
+                  <span className="text-lg font-bold text-[#0F172A]">{averageRating.toFixed(1)}</span>
+                </div>
+                <span className="text-sm text-[#94A3B8]">({reviews.length}개 리뷰)</span>
+              </div>
+            </div>
+            {canWriteReview && (
+              <Link href={`/client/orders/new?service=${serviceId}&review=true`}>
+                <Button
+                  type="primary"
+                  shape="round"
+                  className="gap-2 bg-gradient-to-r from-[#2E5E99] to-[#3B82F6] text-sm font-semibold text-white"
+                >
+                  <Star className="size-4" />
+                  리뷰 작성하기
+                </Button>
+              </Link>
+            )}
+          </div>
+
+          {reviews.length === 0 ? (
+            <div className="py-8 text-center text-[#94A3B8]">
+              <p>아직 리뷰가 없습니다.</p>
+            </div>
+          ) : (
+            <div className="space-y-4">
+              {reviews.map((review) => (
+                <div
+                  key={review.id}
+                  className="rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4"
+                >
+                  <div className="mb-3 flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      {review.buyerAvatar ? (
+                        <Image
+                          src={review.buyerAvatar}
+                          alt={review.buyerName}
+                          width={40}
+                          height={40}
+                          className="size-10 rounded-full object-cover"
+                        />
+                      ) : (
+                        <div className="flex size-10 items-center justify-center rounded-full bg-[#E2E8F0]">
+                          <User className="size-5 text-[#94A3B8]" />
+                        </div>
+                      )}
+                      <div>
+                        <div className="font-semibold text-[#0F172A]">{review.buyerName}</div>
+                        <div className="text-xs text-[#94A3B8]">{review.createdAt}</div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      {Array.from({ length: 5 }).map((_, i) => (
+                        <Star
+                          key={i}
+                          className={`size-4 ${
+                            i < review.rating
+                              ? "fill-[#F59E0B] text-[#F59E0B]"
+                              : "text-[#E2E8F0]"
+                          }`}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                  <p className="text-sm text-[#475569]">{review.comment}</p>
+                  {isAuthenticated && (
+                    <button
+                      onClick={() => {
+                        setReportModalData({
+                          type: "review",
+                          targetId: review.id,
+                          targetName: review.comment.substring(0, 30),
+                        });
+                        setIsReportModalOpen(true);
+                      }}
+                      className="mt-2 flex items-center gap-1 text-xs text-[#94A3B8] hover:text-[#2E5E99]"
+                    >
+                      <Flag className="size-3" />
+                      신고
+                    </button>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </div>
 

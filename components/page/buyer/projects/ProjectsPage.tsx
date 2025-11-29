@@ -1,61 +1,61 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FolderKanban, Plus, Search, Filter, Clock, Users, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
+import { useAuth } from "@/hooks/useAuth";
+import type { ProjectStatus } from "@/types/common";
 
-type ProjectStatus = "all" | "open" | "in-progress" | "closed";
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  budget: string;
+  deadline: string;
+  status: ProjectStatus;
+  buyerId: string;
+  buyer: string;
+  proposals: number;
+  createdAt: string;
+  attachments?: string[];
+}
 
-const mockProjects = [
-  {
-    id: "PROJ-001",
-    title: "웹사이트 리뉴얼 프로젝트",
-    description: "기존 웹사이트를 모던한 디자인으로 리뉴얼하고 싶습니다.",
-    proposals: 5,
-    status: "open",
-    budget: "500,000 - 1,000,000원",
-    deadline: "2024-02-15",
-    createdAt: "2024-01-10",
-  },
-  {
-    id: "PROJ-002",
-    title: "모바일 앱 UI/UX 디자인",
-    description: "iOS/Android 앱의 UI/UX 디자인이 필요합니다.",
-    proposals: 3,
-    status: "in-progress",
-    budget: "1,000,000 - 2,000,000원",
-    deadline: "2024-02-20",
-    createdAt: "2024-01-08",
-  },
-  {
-    id: "PROJ-003",
-    title: "브랜드 아이덴티티 개발",
-    description: "새로운 브랜드의 로고, 컬러, 타이포그래피를 개발하고 싶습니다.",
-    proposals: 8,
-    status: "open",
-    budget: "800,000 - 1,500,000원",
-    deadline: "2024-02-25",
-    createdAt: "2024-01-12",
-  },
-];
-
-const statusTabs: { id: ProjectStatus; label: string }[] = [
+const statusTabs: { id: ProjectStatus | "all"; label: string }[] = [
   { id: "all", label: "전체" },
   { id: "open", label: "제안 대기" },
-  { id: "in-progress", label: "진행 중" },
+  { id: "in_progress", label: "진행 중" },
   { id: "closed", label: "완료" },
 ];
 
 export const ProjectsPage = () => {
   useBodyClass("dashboard-page");
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<ProjectStatus>("all");
+  const { user } = useAuth();
+  const [activeTab, setActiveTab] = useState<ProjectStatus | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
+  const [projects, setProjects] = useState<Project[]>([]);
 
-  const filteredProjects = mockProjects.filter((project) => {
+  useEffect(() => {
+    if (typeof window !== "undefined" && user) {
+      const storedProjects = localStorage.getItem("projects");
+      if (storedProjects) {
+        try {
+          const allProjects: Project[] = JSON.parse(storedProjects);
+          // Filter projects by current user
+          const userProjects = allProjects.filter((p) => p.buyerId === user.id);
+          setProjects(userProjects);
+        } catch (e) {
+          console.warn("Failed to parse projects from localStorage", e);
+        }
+      }
+    }
+  }, [user]);
+
+  const filteredProjects = projects.filter((project) => {
     const matchesTab = activeTab === "all" || project.status === activeTab;
     const matchesSearch = searchQuery === "" || project.title.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesTab && matchesSearch;
@@ -152,12 +152,14 @@ export const ProjectsPage = () => {
                         className={`rounded-full px-3 py-0.5 text-xs font-semibold ${
                           project.status === "open"
                             ? "bg-blue-50 text-blue-700"
-                            : project.status === "in-progress"
+                            : project.status === "in_progress"
                               ? "bg-green-50 text-green-700"
-                              : "bg-gray-50 text-gray-700"
+                              : project.status === "closed"
+                                ? "bg-gray-50 text-gray-700"
+                                : "bg-red-50 text-red-700"
                         }`}
                       >
-                        {statusTabs.find((tab) => tab.id === project.status)?.label}
+                        {statusTabs.find((tab) => tab.id === project.status)?.label || project.status}
                       </span>
                     </div>
                     <h3 className="mb-2 text-lg font-bold text-[#0F172A]">{project.title}</h3>

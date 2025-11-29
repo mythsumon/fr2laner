@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Filter,
@@ -75,7 +75,7 @@ const initialProjects: Project[] = [
 ];
 
 export default function ProjectsManagementPage() {
-  const [projects, setProjects] = useState<Project[]>(initialProjects);
+  const [projects, setProjects] = useState<Project[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
   const [statusFilter, setStatusFilter] = useState<ProjectStatus | "all">("all");
   const { toast, showToast, hideToast } = useToast();
@@ -83,6 +83,24 @@ export default function ProjectsManagementPage() {
     isOpen: false,
     project: null,
   });
+
+  // Load projects from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProjects = localStorage.getItem("projects");
+      if (storedProjects) {
+        try {
+          const allProjects: Project[] = JSON.parse(storedProjects);
+          setProjects(allProjects);
+        } catch (e) {
+          console.warn("Failed to parse projects from localStorage", e);
+          setProjects(initialProjects);
+        }
+      } else {
+        setProjects(initialProjects);
+      }
+    }
+  }, []);
 
   const filteredProjects = projects.filter((project) => {
     const matchesSearch =
@@ -100,11 +118,14 @@ export default function ProjectsManagementPage() {
 
   const confirmCloseProject = () => {
     if (closeModal.project) {
-      setProjects(
-        projects.map((p) =>
-          p.id === closeModal.project!.id ? { ...p, status: "closed" as ProjectStatus, isAbnormal: false } : p
-        )
+      const updatedProjects = projects.map((p) =>
+        p.id === closeModal.project!.id ? { ...p, status: "closed" as ProjectStatus, isAbnormal: false } : p
       );
+      setProjects(updatedProjects);
+      // Save to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("projects", JSON.stringify(updatedProjects));
+      }
       showToast("프로젝트가 닫혔습니다.", "success");
       setCloseModal({ isOpen: false, project: null });
     }
@@ -229,9 +250,15 @@ export default function ProjectsManagementPage() {
                       <td className="px-4 py-4">
                         <div className="flex items-center gap-2">
                           <Link href={`/client/projects/${project.id}`} target="_blank">
-                            <Button type="ghost" size="sm" title="웹에서 보기">
+                            <Button type="ghost" size="sm" title="Buyer 화면에서 보기">
                               <Eye className="size-4 mr-1" />
-                              웹에서 보기
+                              Buyer 화면
+                            </Button>
+                          </Link>
+                          <Link href={`/expert/projects?status=open`} target="_blank">
+                            <Button type="ghost" size="sm" title="Seller 화면(지원 목록) 보기">
+                              <Eye className="size-4 mr-1" />
+                              Seller 화면
                             </Button>
                           </Link>
                           {project.isAbnormal && project.status !== "closed" && (

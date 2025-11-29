@@ -6,6 +6,7 @@ import Link from "next/link";
 import { ArrowLeft, Star, Upload, X, Save, FileText } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
+import { useAuth } from "@/hooks/useAuth";
 
 const mockOrder = {
   id: "ORD-1043",
@@ -26,6 +27,7 @@ export const CreateReviewPage = () => {
   useBodyClass("dashboard-page");
   const params = useParams();
   const router = useRouter();
+  const { user } = useAuth();
   const orderId = params.id as string;
   const [formData, setFormData] = useState({
     rating: 0,
@@ -65,10 +67,52 @@ export const CreateReviewPage = () => {
       return;
     }
     setIsSubmitting(true);
-    // Add review submission logic here
-    await new Promise((resolve) => setTimeout(resolve, 1000));
+
+    // Get order info to extract serviceId
+    let serviceId = "";
+    if (typeof window !== "undefined") {
+      const storedOrders = localStorage.getItem("orders");
+      if (storedOrders) {
+        try {
+          const orders: any[] = JSON.parse(storedOrders);
+          const order = orders.find((o) => o.id === orderId);
+          if (order) {
+            serviceId = order.serviceId || "";
+          }
+        } catch (e) {
+          console.warn("Failed to parse orders", e);
+        }
+      }
+    }
+
+    // Create review
+    const reviewId = `REV-${Date.now()}`;
+    const newReview = {
+      id: reviewId,
+      serviceId: serviceId,
+      buyerId: user?.id || "",
+      buyerName: user?.name || "",
+      buyerAvatar: user?.avatar || "",
+      sellerId: "", // Will be filled from service
+      sellerName: "", // Will be filled from service
+      rating: formData.rating,
+      comment: formData.comment,
+      status: "visible" as const,
+      createdAt: new Date().toISOString().split("T")[0],
+      orderId: orderId,
+      images: formData.images.map((f) => f.name),
+    };
+
+    // Save to localStorage
+    if (typeof window !== "undefined") {
+      const storedReviews = localStorage.getItem("reviews");
+      const existingReviews: any[] = storedReviews ? JSON.parse(storedReviews) : [];
+      existingReviews.push(newReview);
+      localStorage.setItem("reviews", JSON.stringify(existingReviews));
+    }
+
     setIsSubmitting(false);
-    router.push(`/client/orders/${orderId}`);
+    router.push(`/services/${serviceId}`);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {

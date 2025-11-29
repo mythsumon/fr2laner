@@ -1,36 +1,67 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Clock, Users, DollarSign, FileText, CheckCircle2, MessageSquare } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
+import type { ProjectStatus } from "@/types/common";
 
-const mockProject = {
-  id: "PROJ-001",
-  title: "웹사이트 리뉴얼 프로젝트",
-  description: `기존 웹사이트를 모던한 디자인으로 리뉴얼하고 싶습니다. 
-  
-주요 요구사항:
-- 반응형 디자인 (모바일, 태블릿, 데스크톱)
-- 사용자 경험 개선
-- 브랜드 아이덴티티 반영
-- SEO 최적화`,
-  budget: "500,000 - 1,000,000원",
-  deadline: "2024-02-15",
-  createdAt: "2024-01-10",
-  proposals: 5,
-  status: "open",
-  category: "웹 디자인",
-  attachments: ["요구사항_문서.pdf", "참고_사이트.pdf"],
-};
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  budget: string;
+  deadline: string;
+  status: ProjectStatus;
+  buyerId: string;
+  buyer: string;
+  proposals: number;
+  createdAt: string;
+  attachments?: string[];
+}
 
 export const ProjectDetailPage = () => {
   useBodyClass("dashboard-page");
   const params = useParams();
   const router = useRouter();
   const projectId = params.id as string;
+  const [project, setProject] = useState<Project | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProjects = localStorage.getItem("projects");
+      if (storedProjects) {
+        try {
+          const allProjects: Project[] = JSON.parse(storedProjects);
+          const foundProject = allProjects.find((p) => p.id === projectId);
+          if (foundProject) {
+            setProject(foundProject);
+          } else {
+            router.push("/client/projects");
+          }
+        } catch (e) {
+          console.warn("Failed to parse projects from localStorage", e);
+          router.push("/client/projects");
+        }
+      } else {
+        router.push("/client/projects");
+      }
+    }
+  }, [projectId, router]);
+
+  if (!project) {
+    return (
+      <div className="flex min-h-screen items-center justify-center">
+        <div className="text-center">
+          <div className="mb-4 inline-block size-8 animate-spin rounded-full border-4 border-solid border-[#2E5E99] border-r-transparent"></div>
+          <p className="text-sm text-[#94A3B8]">Loading...</p>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] pb-24">
@@ -49,12 +80,28 @@ export const ProjectDetailPage = () => {
           <div className="flex items-start justify-between">
             <div>
               <div className="mb-2 flex items-center gap-2">
-                <span className="text-xs font-semibold text-[#94A3B8]">{mockProject.id}</span>
-                <span className="rounded-full bg-blue-50 px-3 py-0.5 text-xs font-semibold text-blue-700">
-                  {mockProject.status === "open" ? "제안 대기" : "진행 중"}
+                <span className="text-xs font-semibold text-[#94A3B8]">{project.id}</span>
+                <span
+                  className={`rounded-full px-3 py-0.5 text-xs font-semibold ${
+                    project.status === "open"
+                      ? "bg-blue-50 text-blue-700"
+                      : project.status === "in_progress"
+                        ? "bg-green-50 text-green-700"
+                        : project.status === "closed"
+                          ? "bg-gray-50 text-gray-700"
+                          : "bg-red-50 text-red-700"
+                  }`}
+                >
+                  {project.status === "open"
+                    ? "제안 대기"
+                    : project.status === "in_progress"
+                      ? "진행 중"
+                      : project.status === "closed"
+                        ? "완료"
+                        : "취소"}
                 </span>
               </div>
-              <h1 className="text-2xl font-bold text-[#0F172A] sm:text-3xl">{mockProject.title}</h1>
+              <h1 className="text-2xl font-bold text-[#0F172A] sm:text-3xl">{project.title}</h1>
             </div>
             <Link href={`/client/projects/${projectId}/proposals`}>
               <Button
@@ -63,7 +110,7 @@ export const ProjectDetailPage = () => {
                 className="gap-2 bg-gradient-to-r from-[#2E5E99] to-[#3B82F6] px-6 py-2 text-sm font-semibold text-white"
               >
                 <Users className="size-4" />
-                제안 {mockProject.proposals}개 보기
+                제안 {project.proposals}개 보기
               </Button>
             </Link>
           </div>
@@ -76,16 +123,16 @@ export const ProjectDetailPage = () => {
             <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
               <h2 className="mb-4 text-lg font-semibold text-[#0F172A]">프로젝트 설명</h2>
               <div className="prose prose-sm max-w-none text-[#475569] whitespace-pre-line">
-                {mockProject.description}
+                {project.description}
               </div>
             </div>
 
             {/* Attachments */}
-            {mockProject.attachments.length > 0 && (
+            {project.attachments && project.attachments.length > 0 && (
               <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
                 <h2 className="mb-4 text-lg font-semibold text-[#0F172A]">첨부 파일</h2>
                 <div className="space-y-2">
-                  {mockProject.attachments.map((file, index) => (
+                  {project.attachments.map((file, index) => (
                     <div
                       key={index}
                       className="flex items-center gap-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3"
@@ -117,28 +164,28 @@ export const ProjectDetailPage = () => {
                   <DollarSign className="size-5 text-[#94A3B8]" />
                   <div>
                     <p className="text-xs text-[#94A3B8]">예산</p>
-                    <p className="font-semibold text-[#0F172A]">{mockProject.budget}</p>
+                    <p className="font-semibold text-[#0F172A]">{project.budget}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Clock className="size-5 text-[#94A3B8]" />
                   <div>
                     <p className="text-xs text-[#94A3B8]">마감일</p>
-                    <p className="font-semibold text-[#0F172A]">{mockProject.deadline}</p>
+                    <p className="font-semibold text-[#0F172A]">{project.deadline}</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <Users className="size-5 text-[#94A3B8]" />
                   <div>
                     <p className="text-xs text-[#94A3B8]">받은 제안</p>
-                    <p className="font-semibold text-[#2E5E99]">{mockProject.proposals}개</p>
+                    <p className="font-semibold text-[#2E5E99]">{project.proposals}개</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-3">
                   <FileText className="size-5 text-[#94A3B8]" />
                   <div>
                     <p className="text-xs text-[#94A3B8]">카테고리</p>
-                    <p className="font-semibold text-[#0F172A]">{mockProject.category}</p>
+                    <p className="font-semibold text-[#0F172A]">{project.category}</p>
                   </div>
                 </div>
               </div>

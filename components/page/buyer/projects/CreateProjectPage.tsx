@@ -6,10 +6,31 @@ import Link from "next/link";
 import { ArrowLeft, Upload, X } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
+import { useAuth } from "@/hooks/useAuth";
+import { useToast } from "@/hooks/useToast";
+import { Toast } from "@/components/page/admin/shared/Toast";
+import type { ProjectStatus } from "@/types/common";
+
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  budget: string;
+  deadline: string;
+  status: ProjectStatus;
+  buyerId: string;
+  buyer: string;
+  proposals: number;
+  createdAt: string;
+  attachments?: string[];
+}
 
 export const CreateProjectPage = () => {
   useBodyClass("dashboard-page");
   const router = useRouter();
+  const { user } = useAuth();
+  const { toast, showToast, hideToast } = useToast();
   const [formData, setFormData] = useState({
     title: "",
     description: "",
@@ -21,8 +42,42 @@ export const CreateProjectPage = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    // Add project creation logic here
-    router.push("/client/projects");
+    if (!user) {
+      showToast("로그인이 필요합니다.", "error");
+      return;
+    }
+
+    // Generate project ID
+    const projectId = `PROJ-${Date.now()}`;
+    
+    // Create project object
+    const newProject: Project = {
+      id: projectId,
+      title: formData.title,
+      description: formData.description,
+      category: formData.category,
+      budget: formData.budget,
+      deadline: formData.deadline,
+      status: "open",
+      buyerId: user.id,
+      buyer: user.name,
+      proposals: 0,
+      createdAt: new Date().toISOString().split("T")[0],
+      attachments: formData.attachments.map((f) => f.name),
+    };
+
+    // Save to localStorage
+    if (typeof window !== "undefined") {
+      const storedProjects = localStorage.getItem("projects");
+      const existingProjects: Project[] = storedProjects ? JSON.parse(storedProjects) : [];
+      existingProjects.push(newProject);
+      localStorage.setItem("projects", JSON.stringify(existingProjects));
+    }
+
+    showToast("프로젝트가 성공적으로 등록되었습니다!", "success");
+    setTimeout(() => {
+      router.push(`/client/projects/${projectId}`);
+    }, 500);
   };
 
   const handleFileUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -187,6 +242,12 @@ export const CreateProjectPage = () => {
           </div>
         </form>
       </main>
+      <Toast
+        message={toast.message}
+        type={toast.type}
+        isVisible={toast.isVisible}
+        onClose={hideToast}
+      />
     </div>
   );
 };

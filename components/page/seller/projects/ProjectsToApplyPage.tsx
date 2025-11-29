@@ -1,67 +1,59 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { FolderKanban, Search, Filter, Clock, DollarSign, Users, ArrowRight, Send } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
+import type { ProjectStatus } from "@/types/common";
 
-type ProjectStatus = "all" | "open" | "in-progress" | "closed";
+interface Project {
+  id: string;
+  title: string;
+  description: string;
+  category: string;
+  budget: string;
+  deadline: string;
+  status: ProjectStatus;
+  buyerId: string;
+  buyer: string;
+  proposals: number;
+  createdAt: string;
+  attachments?: string[];
+}
 
-const mockProjects = [
-  {
-    id: "PROJ-001",
-    title: "웹사이트 리뉴얼 프로젝트",
-    description: "기존 웹사이트를 모던한 디자인으로 리뉴얼하고 싶습니다.",
-    budget: "500,000 - 1,000,000원",
-    deadline: "2024-02-15",
-    proposals: 5,
-    status: "open",
-    category: "웹 디자인",
-    buyerName: "김클라이언트",
-    createdAt: "2024-01-10",
-  },
-  {
-    id: "PROJ-002",
-    title: "모바일 앱 UI/UX 디자인",
-    description: "iOS/Android 앱의 UI/UX 디자인이 필요합니다.",
-    budget: "1,000,000 - 2,000,000원",
-    deadline: "2024-02-20",
-    proposals: 3,
-    status: "open",
-    category: "UI/UX 디자인",
-    buyerName: "박의뢰인",
-    createdAt: "2024-01-08",
-  },
-  {
-    id: "PROJ-003",
-    title: "브랜드 아이덴티티 개발",
-    description: "새로운 브랜드의 로고, 컬러, 타이포그래피를 개발하고 싶습니다.",
-    budget: "800,000 - 1,500,000원",
-    deadline: "2024-02-25",
-    proposals: 8,
-    status: "open",
-    category: "브랜딩",
-    buyerName: "이구매자",
-    createdAt: "2024-01-12",
-  },
-];
-
-const statusTabs: { id: ProjectStatus; label: string }[] = [
+const statusTabs: { id: ProjectStatus | "all"; label: string }[] = [
   { id: "all", label: "전체" },
   { id: "open", label: "제안 가능" },
-  { id: "in-progress", label: "진행 중" },
+  { id: "in_progress", label: "진행 중" },
   { id: "closed", label: "마감" },
 ];
 
 export const ProjectsToApplyPage = () => {
   useBodyClass("dashboard-page");
   const router = useRouter();
-  const [activeTab, setActiveTab] = useState<ProjectStatus>("open");
+  const [activeTab, setActiveTab] = useState<ProjectStatus | "all">("open");
   const [searchQuery, setSearchQuery] = useState("");
+  const [projects, setProjects] = useState<Project[]>([]);
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
 
-  const filteredProjects = mockProjects.filter((project) => {
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedProjects = localStorage.getItem("projects");
+      if (storedProjects) {
+        try {
+          const allProjects: Project[] = JSON.parse(storedProjects);
+          // Filter only open projects by default
+          setProjects(allProjects);
+        } catch (e) {
+          console.warn("Failed to parse projects from localStorage", e);
+        }
+      }
+    }
+  }, []);
+
+  const filteredProjects = projects.filter((project) => {
     // Default to showing only "open" status projects
     const matchesTab = activeTab === "all" 
       ? true 
@@ -69,7 +61,8 @@ export const ProjectsToApplyPage = () => {
         ? project.status === "open" 
         : project.status === activeTab;
     const matchesSearch = searchQuery === "" || project.title.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesTab && matchesSearch;
+    const matchesCategory = categoryFilter === "all" || project.category === categoryFilter;
+    return matchesTab && matchesSearch && matchesCategory;
   });
 
   return (
@@ -93,13 +86,18 @@ export const ProjectsToApplyPage = () => {
               className="w-full rounded-xl border border-[#E2E8F0] bg-white px-10 py-3 text-sm focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
             />
           </div>
-          <button
-            type="button"
-            className="flex items-center justify-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-sm font-semibold text-[#475569] transition-colors hover:bg-[#F8FAFC]"
+          <select
+            value={categoryFilter}
+            onChange={(e) => setCategoryFilter(e.target.value)}
+            className="rounded-xl border border-[#E2E8F0] bg-white px-4 py-3 text-sm font-semibold text-[#475569] focus:border-[#2E5E99] focus:outline-none"
           >
-            <Filter className="size-4" />
-            필터
-          </button>
+            <option value="all">전체 카테고리</option>
+            <option value="디자인">디자인</option>
+            <option value="개발">개발</option>
+            <option value="마케팅">마케팅</option>
+            <option value="글쓰기">글쓰기</option>
+            <option value="번역">번역</option>
+          </select>
         </div>
 
         {/* Status Tabs */}
@@ -136,8 +134,24 @@ export const ProjectsToApplyPage = () => {
                   <div className="flex-1">
                     <div className="mb-2 flex items-center gap-2">
                       <span className="text-xs font-semibold text-[#94A3B8]">{project.id}</span>
-                      <span className="rounded-full bg-blue-50 px-3 py-0.5 text-xs font-semibold text-blue-700">
-                        {project.status === "open" ? "제안 가능" : "진행 중"}
+                      <span
+                        className={`rounded-full px-3 py-0.5 text-xs font-semibold ${
+                          project.status === "open"
+                            ? "bg-blue-50 text-blue-700"
+                            : project.status === "in_progress"
+                              ? "bg-green-50 text-green-700"
+                              : project.status === "closed"
+                                ? "bg-gray-50 text-gray-700"
+                                : "bg-red-50 text-red-700"
+                        }`}
+                      >
+                        {project.status === "open"
+                          ? "제안 가능"
+                          : project.status === "in_progress"
+                            ? "진행 중"
+                            : project.status === "closed"
+                              ? "마감"
+                              : "취소"}
                       </span>
                     </div>
                     <h3 className="mb-2 text-lg font-bold text-[#0F172A]">{project.title}</h3>
@@ -156,6 +170,7 @@ export const ProjectsToApplyPage = () => {
                         <span>제안 {project.proposals}개</span>
                       </div>
                       <span>카테고리: {project.category}</span>
+                      <span>의뢰인: {project.buyer}</span>
                     </div>
                   </div>
                   <div className="flex flex-col gap-2 sm:items-end">
