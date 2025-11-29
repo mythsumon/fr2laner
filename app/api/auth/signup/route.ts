@@ -16,8 +16,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // role 검증 (admin은 signup 불가)
-    if (body.role === "admin") {
+    // role 검증 (admin은 signup 불가) - 타입 시스템에서 이미 제한되지만 런타임 검증
+    const role = body.role as string;
+    if (role === "admin") {
       return NextResponse.json(
         { error: "관리자 계정은 회원가입으로 생성할 수 없습니다." },
         { status: 403 }
