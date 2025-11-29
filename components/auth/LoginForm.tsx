@@ -6,6 +6,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { Copy, Check } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
 
 export type LoginMode = "client" | "expert";
 
@@ -31,6 +32,7 @@ const sampleAccounts = {
 export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
   const router = useRouter();
   const { t } = useTranslation();
+  const { login } = useAuth();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [remember, setRemember] = useState(true);
@@ -43,26 +45,62 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setIsSubmitting(false);
-    
-    // Save user data to localStorage
-    const userData = {
-      id: mode === "client" ? "buyer-1" : "seller-1",
-      email: email || (mode === "client" ? "client@demo.com" : "expert@demo.com"),
-      name: modeLabel ?? "User",
-      role: mode === "client" ? "buyer" : ("seller" as "buyer" | "seller"),
-    };
-    const token = `token-${Date.now()}`;
-    
-    localStorage.setItem("token", token);
-    localStorage.setItem("user", JSON.stringify(userData));
-    
-    // Redirect based on selected mode
-    if (mode === "client") {
-      router.push("/buyer-dashboard");
-    } else if (mode === "expert") {
-      router.push("/dashboard");
+
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "로그인에 실패했습니다.");
+      }
+
+      // status 체크
+      if (data.user.status !== "active") {
+        const statusMessage =
+          data.user.status === "suspended"
+            ? "계정이 정지되었습니다."
+            : data.user.status === "banned"
+              ? "계정이 영구 정지되었습니다."
+              : "계정 상태를 확인할 수 없습니다.";
+        throw new Error(statusMessage);
+      }
+
+      // 로그인 처리 - useAuth hook 사용
+      login(data.user, data.token);
+
+      // role 기반 리다이렉트
+      const searchParams = new URLSearchParams(window.location.search);
+      const redirect = searchParams.get("redirect");
+
+      if (redirect) {
+        router.push(redirect);
+        router.refresh(); // Next.js 13+ router refresh
+      } else {
+        if (data.user.role === "admin") {
+          router.push("/admin/dashboard");
+        } else if (data.user.role === "client") {
+          router.push("/client/dashboard");
+        } else if (data.user.role === "expert") {
+          router.push("/expert/dashboard");
+        } else {
+          router.push("/");
+        }
+        router.refresh();
+      }
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "로그인 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

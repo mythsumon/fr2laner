@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import {
   Search,
   Filter,
@@ -10,6 +11,7 @@ import {
   AlertTriangle,
   Star,
   User,
+  ExternalLink,
 } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { ConfirmModal } from "@/components/page/admin/shared/ConfirmModal";
@@ -20,6 +22,7 @@ import { useToast } from "@/hooks/useToast";
 interface Review {
   id: number;
   service: string;
+  serviceId: string; // Add service ID for linking
   buyer: string;
   seller: string;
   rating: number;
@@ -42,6 +45,7 @@ const initialReviews: Review[] = [
   {
     id: 1,
     service: "프리미엄 로고 디자인",
+    serviceId: "svc-1",
     buyer: "김구매",
     seller: "최디자인",
     rating: 5,
@@ -52,6 +56,7 @@ const initialReviews: Review[] = [
   {
     id: 2,
     service: "반응형 웹사이트 개발",
+    serviceId: "svc-2",
     buyer: "이소비",
     seller: "정개발",
     rating: 2,
@@ -85,11 +90,18 @@ const initialReports: Report[] = [
 export default function ReviewsManagementPage() {
   const [activeTab, setActiveTab] = useState("reviews");
   const [searchQuery, setSearchQuery] = useState("");
+  const [serviceFilter, setServiceFilter] = useState("");
+  const [authorFilter, setAuthorFilter] = useState("");
+  const [ratingFilter, setRatingFilter] = useState<number | "all">("all");
   const { toast, showToast, hideToast } = useToast();
   const [reviews, setReviews] = useState<Review[]>(initialReviews);
   const [reports, setReports] = useState<Report[]>(initialReports);
 
   const [hideReviewModal, setHideReviewModal] = useState<{ isOpen: boolean; review: Review | null }>({
+    isOpen: false,
+    review: null,
+  });
+  const [deleteReviewModal, setDeleteReviewModal] = useState<{ isOpen: boolean; review: Review | null }>({
     isOpen: false,
     review: null,
   });
@@ -100,6 +112,20 @@ export default function ReviewsManagementPage() {
   const [resolveReportModal, setResolveReportModal] = useState<{ isOpen: boolean; report: Report | null }>({
     isOpen: false,
     report: null,
+  });
+
+  // Filter reviews
+  const filteredReviews = reviews.filter((review) => {
+    const matchesSearch =
+      searchQuery === "" ||
+      review.service.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      review.buyer.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      review.seller.toLowerCase().includes(searchQuery.toLowerCase()) ||
+      review.comment.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesService = serviceFilter === "" || review.service.toLowerCase().includes(serviceFilter.toLowerCase());
+    const matchesAuthor = authorFilter === "" || review.buyer.toLowerCase().includes(authorFilter.toLowerCase());
+    const matchesRating = ratingFilter === "all" || review.rating === ratingFilter;
+    return matchesSearch && matchesService && matchesAuthor && matchesRating;
   });
 
   // Review functions
@@ -121,6 +147,18 @@ export default function ReviewsManagementPage() {
         "success"
       );
       setHideReviewModal({ isOpen: false, review: null });
+    }
+  };
+
+  const handleDeleteReview = (review: Review) => {
+    setDeleteReviewModal({ isOpen: true, review });
+  };
+
+  const confirmDeleteReview = () => {
+    if (deleteReviewModal.review) {
+      setReviews(reviews.filter((r) => r.id !== deleteReviewModal.review!.id));
+      showToast("리뷰가 삭제되었습니다.", "success");
+      setDeleteReviewModal({ isOpen: false, review: null });
     }
   };
 
@@ -194,24 +232,61 @@ export default function ReviewsManagementPage() {
       </div>
 
       {/* Filters */}
-      <div className="bg-white rounded-xl border border-[#E2E8F0] p-4">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="flex-1 relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-[#64748B]" />
-            <input
-              type="text"
-              placeholder="검색..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
-            />
+      {activeTab === "reviews" && (
+        <div className="bg-white rounded-xl border border-[#E2E8F0] p-4">
+          <div className="flex flex-col gap-4">
+            <div className="flex flex-col sm:flex-row gap-4">
+              <div className="flex-1 relative">
+                <Search className="absolute left-3 top-1/2 -translate-y-1/2 size-5 text-[#64748B]" />
+                <input
+                  type="text"
+                  placeholder="서비스, 작성자, 판매자, 댓글 검색..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="w-full pl-10 pr-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              <div>
+                <label className="block text-xs font-semibold text-[#64748B] mb-1">서비스 필터</label>
+                <input
+                  type="text"
+                  placeholder="서비스명..."
+                  value={serviceFilter}
+                  onChange={(e) => setServiceFilter(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#64748B] mb-1">작성자 필터</label>
+                <input
+                  type="text"
+                  placeholder="작성자명..."
+                  value={authorFilter}
+                  onChange={(e) => setAuthorFilter(e.target.value)}
+                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none text-sm"
+                />
+              </div>
+              <div>
+                <label className="block text-xs font-semibold text-[#64748B] mb-1">평점 필터</label>
+                <select
+                  value={ratingFilter}
+                  onChange={(e) => setRatingFilter(e.target.value === "all" ? "all" : parseInt(e.target.value))}
+                  className="w-full px-3 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none text-sm"
+                >
+                  <option value="all">전체 평점</option>
+                  <option value="5">5점</option>
+                  <option value="4">4점</option>
+                  <option value="3">3점</option>
+                  <option value="2">2점</option>
+                  <option value="1">1점</option>
+                </select>
+              </div>
+            </div>
           </div>
-          <Button type="outline">
-            <Filter className="size-4 mr-2" />
-            필터
-          </Button>
         </div>
-      </div>
+      )}
 
       {/* Reviews Tab */}
       {activeTab === "reviews" && (
@@ -230,7 +305,14 @@ export default function ReviewsManagementPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0]">
-                {reviews.map((review) => (
+                {filteredReviews.length === 0 ? (
+                  <tr>
+                    <td colSpan={7} className="px-4 py-8 text-center text-[#64748B]">
+                      리뷰가 없습니다.
+                    </td>
+                  </tr>
+                ) : (
+                  filteredReviews.map((review) => (
                   <tr key={review.id} className="hover:bg-[#F8FAFC]">
                     <td className="px-4 py-4 text-sm text-[#0F172A]">{review.service}</td>
                     <td className="px-4 py-4 text-sm text-[#64748B]">{review.buyer}</td>
@@ -259,6 +341,14 @@ export default function ReviewsManagementPage() {
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
+                        <Link href={`/services/${review.serviceId}`} target="_blank">
+                          <button
+                            className="p-2 rounded-lg hover:bg-[#F8FAFC] text-[#2E5E99]"
+                            title="웹에서 보기"
+                          >
+                            <ExternalLink className="size-4" />
+                          </button>
+                        </Link>
                         <button
                           onClick={() => setEditReviewModal({ isOpen: true, review })}
                           className="p-2 rounded-lg hover:bg-[#F8FAFC] text-[#64748B]"
@@ -268,15 +358,23 @@ export default function ReviewsManagementPage() {
                         </button>
                         <button
                           onClick={() => handleHideReview(review)}
-                          className="p-2 rounded-lg hover:bg-red-50 text-red-600"
+                          className="p-2 rounded-lg hover:bg-yellow-50 text-yellow-600"
                           title={review.status === "visible" ? "숨기기" : "표시하기"}
+                        >
+                          <X className="size-4" />
+                        </button>
+                        <button
+                          onClick={() => handleDeleteReview(review)}
+                          className="p-2 rounded-lg hover:bg-red-50 text-red-600"
+                          title="삭제"
                         >
                           <X className="size-4" />
                         </button>
                       </div>
                     </td>
                   </tr>
-                ))}
+                  ))
+                )}
               </tbody>
             </table>
           </div>
@@ -389,6 +487,17 @@ export default function ReviewsManagementPage() {
         }
         confirmText={hideReviewModal.review?.status === "visible" ? "숨기기" : "표시하기"}
         type="warning"
+      />
+
+      {/* Delete Review Modal */}
+      <ConfirmModal
+        isOpen={deleteReviewModal.isOpen}
+        onClose={() => setDeleteReviewModal({ isOpen: false, review: null })}
+        onConfirm={confirmDeleteReview}
+        title="리뷰 삭제"
+        message="정말로 이 리뷰를 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다."
+        confirmText="삭제"
+        type="danger"
       />
 
       {/* Resolve Report Modal */}

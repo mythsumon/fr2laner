@@ -72,14 +72,21 @@ export default function SuperAdminLoginPage() {
         email: formData.email || "admin@example.com",
         name: formData.email.includes("moderator") ? t("adminLogin.sampleAccounts.roles.moderator") : t("adminLogin.sampleAccounts.roles.superAdmin"),
         role: "admin" as const,
+        status: "active" as const,
+        created_at: new Date().toISOString(),
       };
       const token = `admin-token-${Date.now()}`;
       
       localStorage.setItem("token", token);
       localStorage.setItem("user", JSON.stringify(userData));
       
+      // Trigger storage event to update auth state in other components
+      window.dispatchEvent(new Event("storage"));
+      
       // Use window.location for full page reload to ensure auth state is fresh
-      window.location.href = "/admin/dashboard";
+      setTimeout(() => {
+        window.location.href = "/admin/dashboard";
+      }, 100);
     } catch (err) {
       setError(t("adminLogin.errors.generic"));
       setIsLoading(false);
@@ -231,6 +238,19 @@ export default function SuperAdminLoginPage() {
             <p className="text-xs text-[#64748B] text-center">
               🔒 {t("adminLogin.securityNotice")}: {t("adminLogin.securityDetail")}
             </p>
+          </div>
+
+          {/* Go Back to Website Button */}
+          <div className="mt-6">
+            <Link
+              href="/"
+              className="w-full flex items-center justify-center gap-2 px-4 py-3 rounded-lg border border-[#E2E8F0] text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#2E5E99] transition-colors font-medium"
+            >
+              <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+              </svg>
+              {t("adminLogin.goBackToWebsite")}
+            </Link>
           </div>
         </div>
 

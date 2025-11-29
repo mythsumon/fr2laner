@@ -94,7 +94,7 @@ export const SearchResultsGrid = ({ keyword, type, activeTab, sortBy }: SearchRe
         {results.map((service) => (
           <Link
             key={service.id}
-            href={`/service/${service.id}`}
+            href={`/services/${service.id}`}
             className="group overflow-hidden rounded-xl border border-slate-200 bg-white transition-all hover:-translate-y-1 hover:shadow-lg"
           >
             <div className="relative aspect-video w-full overflow-hidden bg-slate-100">

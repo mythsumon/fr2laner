@@ -7,7 +7,8 @@ import { Button } from "../shared/common";
 import { LanguageSelector } from "../shared/ui";
 import { CategorySelect } from "../nav/CategorySelect";
 import { cn } from "../shared/utils";
-import { Menu, X, Shield } from "lucide-react";
+import { Menu, X, Shield, LayoutDashboard } from "lucide-react";
+import { useAuth } from "@/hooks/useAuth";
 
 const menuLinks = [
   { key: "header.menu.forFreelancers", href: "/for-freelancers" },
@@ -16,6 +17,7 @@ const menuLinks = [
 
 export const Header = () => {
   const { t } = useTranslation();
+  const { user, isLoading } = useAuth();
   const [scrolled, setScrolled] = useState(false);
   const [isMobileNavOpen, setIsMobileNavOpen] = useState(false);
 
@@ -39,6 +41,34 @@ export const Header = () => {
   }, [isMobileNavOpen]);
 
   const closeMobileNav = () => setIsMobileNavOpen(false);
+
+  const getDashboardUrl = () => {
+    if (!user) return "/";
+    switch (user.role) {
+      case "admin":
+        return "/admin/dashboard";
+      case "expert":
+        return "/expert/dashboard";
+      case "client":
+        return "/client/dashboard";
+      default:
+        return "/";
+    }
+  };
+
+  const getDashboardLabel = () => {
+    if (!user) return "";
+    switch (user.role) {
+      case "admin":
+        return t("header.nav.adminDashboard", "Admin Dashboard");
+      case "expert":
+        return t("header.nav.sellerDashboard", "Expert Dashboard");
+      case "client":
+        return t("header.nav.buyerDashboard", "Client Dashboard");
+      default:
+        return "";
+    }
+  };
 
   const baseContainerStyles = "mx-auto flex w-full max-w-7xl items-center justify-between gap-6 px-6 transition-all duration-200";
 
@@ -98,42 +128,68 @@ export const Header = () => {
         <div className="flex items-center gap-3">
           <div className="hidden items-center gap-3 sm:flex">
             <LanguageSelector />
-            <Link href="/admin/login" className="inline-flex" title="관리자 로그인">
-              <Button
-                type="text"
-                shape="round"
-                className="h-11 px-3 text-sm font-semibold text-[#64748B] hover:bg-[#E9EEF8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
-              >
-                <Shield className="size-4" />
-              </Button>
-            </Link>
-            <Link href="/login" className="inline-flex">
-              <Button
-                type="text"
-                shape="round"
-                className="h-11 px-5 text-sm font-semibold text-[#0F172A] hover:bg-[#E9EEF8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
-              >
-                {t("header.nav.login")}
-              </Button>
-            </Link>
-            <Link href="/signup" className="hidden lg:inline-flex">
-              <Button
-                type="default"
-                shape="round"
-                className="h-11 border border-[#2E5E99] bg-[#2E5E99] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#1d4673] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
-              >
-                {t("header.nav.signUp")}
-              </Button>
-            </Link>
-            <Link href="/signup" className="inline-flex">
-              <Button
-                type="default"
-                shape="round"
-                className="h-11 border-none bg-[#2E5E99]/10 px-5 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
-              >
-                {t("header.nav.postProject")}
-              </Button>
-            </Link>
+            {isLoading ? (
+              // Loading state
+              <div className="h-11 w-24 animate-pulse rounded-full bg-gray-200" />
+            ) : user ? (
+              // Logged in user - show dashboard button
+              <Link href={getDashboardUrl()} className="inline-flex">
+                <Button
+                  type="default"
+                  shape="round"
+                  className="h-11 px-4 text-sm font-semibold text-white bg-[#2E5E99] hover:bg-[#1d4673] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99] flex items-center gap-2"
+                >
+                  <LayoutDashboard className="size-4" />
+                  <span className="hidden md:inline">{t("header.nav.myDashboard", "My Dashboard")}</span>
+                  <span className="md:hidden">{t("header.nav.dashboard", "대시보드")}</span>
+                </Button>
+              </Link>
+            ) : (
+              // Not logged in - show login buttons
+              <>
+                <Link href="/admin/login" className="inline-flex" title="관리자 로그인">
+                  <Button
+                    type="text"
+                    shape="round"
+                    className="h-11 px-3 text-sm font-semibold text-[#64748B] hover:bg-[#E9EEF8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+                  >
+                    <Shield className="size-4" />
+                  </Button>
+                </Link>
+                <Link href="/login" className="inline-flex">
+                  <Button
+                    type="text"
+                    shape="round"
+                    className="h-11 px-5 text-sm font-semibold text-[#0F172A] hover:bg-[#E9EEF8] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+                  >
+                    {t("header.nav.login")}
+                  </Button>
+                </Link>
+                <Link href="/signup" className="hidden lg:inline-flex">
+                  <Button
+                    type="default"
+                    shape="round"
+                    className="h-11 border border-[#2E5E99] bg-[#2E5E99] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#1d4673] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+                  >
+                    {t("header.nav.signUp")}
+                  </Button>
+                </Link>
+                {(!user || user.role === "client") && (
+                  <Link 
+                    href={user?.role === "client" ? "/client/projects/new" : `/login?redirect=${encodeURIComponent("/client/projects/new")}`}
+                    className="inline-flex"
+                  >
+                    <Button
+                      type="default"
+                      shape="round"
+                      className="h-11 border-none bg-[#2E5E99]/10 px-5 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99]/20 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+                    >
+                      {t("header.nav.postProject")}
+                    </Button>
+                  </Link>
+                )}
+              </>
+            )}
           </div>
           <button
             type="button"
@@ -194,43 +250,69 @@ export const Header = () => {
               </div>
               <div className="space-y-3">
                 <LanguageSelector />
-                <Link href="/admin/login" onClick={closeMobileNav} className="w-full">
-                  <Button
-                    type="text"
-                    shape="round"
-                    className="w-full border border-[#E2E8F0] px-5 py-2 text-sm font-semibold text-[#64748B] flex items-center justify-center gap-2"
-                  >
-                    <Shield className="size-4" />
-                    관리자
-                  </Button>
-                </Link>
-                <Link href="/login" onClick={closeMobileNav} className="w-full">
-                  <Button
-                    type="text"
-                    shape="round"
-                    className="w-full border border-[#E2E8F0] px-5 py-2 text-sm font-semibold text-[#0F172A]"
-                  >
-                    {t("header.nav.login")}
-                  </Button>
-                </Link>
-                <Link href="/signup" onClick={closeMobileNav} className="w-full">
-                  <Button
-                    type="default"
-                    shape="round"
-                    className="w-full border border-[#2E5E99] bg-[#2E5E99] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#1d4673]"
-                  >
-                    {t("header.nav.signUp")}
-                  </Button>
-                </Link>
-                <Link href="/signup" onClick={closeMobileNav} className="w-full">
-                  <Button
-                    type="default"
-                    shape="round"
-                    className="w-full border-none bg-[#2E5E99]/10 px-5 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99]/20"
-                  >
-                    {t("header.nav.postProject")}
-                  </Button>
-                </Link>
+                {isLoading ? (
+                  // Loading state
+                  <div className="h-11 w-full animate-pulse rounded-full bg-gray-200" />
+                ) : user ? (
+                  // Logged in user - show dashboard button
+                  <Link href={getDashboardUrl()} onClick={closeMobileNav} className="w-full">
+                    <Button
+                      type="default"
+                      shape="round"
+                      className="w-full px-5 py-2 text-sm font-semibold text-white bg-[#2E5E99] hover:bg-[#1d4673] flex items-center justify-center gap-2"
+                    >
+                      <LayoutDashboard className="size-4" />
+                      {getDashboardLabel()}
+                    </Button>
+                  </Link>
+                ) : (
+                  // Not logged in - show login buttons
+                  <>
+                    <Link href="/admin/login" onClick={closeMobileNav} className="w-full">
+                      <Button
+                        type="text"
+                        shape="round"
+                        className="w-full border border-[#E2E8F0] px-5 py-2 text-sm font-semibold text-[#64748B] flex items-center justify-center gap-2"
+                      >
+                        <Shield className="size-4" />
+                        관리자
+                      </Button>
+                    </Link>
+                    <Link href="/login" onClick={closeMobileNav} className="w-full">
+                      <Button
+                        type="text"
+                        shape="round"
+                        className="w-full border border-[#E2E8F0] px-5 py-2 text-sm font-semibold text-[#0F172A]"
+                      >
+                        {t("header.nav.login")}
+                      </Button>
+                    </Link>
+                    <Link href="/signup" onClick={closeMobileNav} className="w-full">
+                      <Button
+                        type="default"
+                        shape="round"
+                        className="w-full border border-[#2E5E99] bg-[#2E5E99] px-5 text-sm font-semibold text-white transition-colors hover:bg-[#1d4673]"
+                      >
+                        {t("header.nav.signUp")}
+                      </Button>
+                    </Link>
+                    {(!user || user.role === "client") && (
+                      <Link 
+                        href={user?.role === "client" ? "/client/projects/new" : `/login?redirect=${encodeURIComponent("/client/projects/new")}`}
+                        onClick={closeMobileNav}
+                        className="w-full"
+                      >
+                        <Button
+                          type="default"
+                          shape="round"
+                          className="w-full border-none bg-[#2E5E99]/10 px-5 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99]/20"
+                        >
+                          {t("header.nav.postProject")}
+                        </Button>
+                      </Link>
+                    )}
+                  </>
+                )}
               </div>
             </div>
           </div>

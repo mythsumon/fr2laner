@@ -62,7 +62,7 @@ export const BuyerProfilePage = () => {
             </div>
           </div>
           <div className="flex flex-1 justify-end gap-2">
-            <Link href="/settings">
+            <Link href="/client/settings">
               <Button
                 type="default"
                 size="middle"
@@ -101,7 +101,7 @@ export const BuyerProfilePage = () => {
         <section className="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-[#0F172A]">빠른 액션</h2>
-            <Link href="/custom-requests/new">
+            <Link href="/client/custom-requests/new">
               <Button
                 type="primary"
                 size="small"

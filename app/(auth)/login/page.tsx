@@ -7,16 +7,27 @@ import { AuthLayout, LoginForm, LoginModeSelector, type LoginMode } from "@/comp
 function LoginContent() {
   const searchParams = useSearchParams();
   const [mode, setMode] = useState<LoginMode | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     const modeParam = searchParams.get("mode");
     if (modeParam === "client" || modeParam === "expert") {
       setMode(modeParam);
     }
+    
+    const errorParam = searchParams.get("error");
+    if (errorParam === "account_suspended") {
+      setError("계정이 정지되었습니다.");
+    }
   }, [searchParams]);
 
   return (
     <AuthLayout>
+      {error && (
+        <div className="mb-4 rounded-lg border border-red-200 bg-red-50 p-4 text-sm text-red-800">
+          {error}
+        </div>
+      )}
       {mode ? <LoginForm mode={mode} onResetMode={() => setMode(null)} /> : <LoginModeSelector onSelect={setMode} />}
     </AuthLayout>
   );

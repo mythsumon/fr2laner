@@ -306,7 +306,7 @@ export default function CMSManagementPage() {
                 }`}
               >
                 <Icon className="size-4" />
-                <span className="font-medium">{tab.label}</span>
+                <span className="font-medium truncate max-w-[120px]">{tab.label}</span>
               </button>
             );
           })}
@@ -339,7 +339,7 @@ export default function CMSManagementPage() {
                     {banner.active ? "활성" : "비활성"}
                   </span>
                 </div>
-                <p className="text-sm text-[#64748B] mb-4">링크: {banner.url}</p>
+                <p className="text-sm text-[#64748B] mb-4 truncate max-w-[250px]" title={banner.url}>링크: {banner.url}</p>
                 <div className="flex gap-2">
                   <Button size="sm" type="outline" onClick={() => handleToggleBanner(banner)}>
                     {banner.active ? "비활성화" : "활성화"}
@@ -373,9 +373,9 @@ export default function CMSManagementPage() {
             {blogPosts.map((post) => (
               <div key={post.id} className="p-4 rounded-lg border border-[#E2E8F0] flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium text-[#0F172A]">{post.title}</h4>
+                  <h4 className="font-medium text-[#0F172A] truncate max-w-[300px]" title={post.title}>{post.title}</h4>
                   <div className="flex items-center gap-4 mt-2 text-sm text-[#64748B]">
-                    <span>{post.category}</span>
+                    <span className="truncate max-w-[100px]" title={post.category}>{post.category}</span>
                     <span>{post.date}</span>
                     <span className={post.status === "published" ? "text-green-600" : "text-yellow-600"}>
                       {post.status === "published" ? "발행됨" : "초안"}
@@ -409,9 +409,9 @@ export default function CMSManagementPage() {
               <div key={faq.id} className="p-4 rounded-lg border border-[#E2E8F0]">
                 <div className="flex items-start justify-between">
                   <div className="flex-1">
-                    <span className="text-xs px-2 py-1 rounded bg-[#F8FAFC] text-[#64748B]">{faq.category}</span>
-                    <h4 className="font-medium text-[#0F172A] mt-2">{faq.question}</h4>
-                    <p className="text-sm text-[#64748B] mt-1">{faq.answer}</p>
+                    <span className="text-xs px-2 py-1 rounded bg-[#F8FAFC] text-[#64748B] truncate max-w-[120px]" title={faq.category}>{faq.category}</span>
+                    <h4 className="font-medium text-[#0F172A] mt-2 truncate max-w-[400px]" title={faq.question}>{faq.question}</h4>
+                    <p className="text-sm text-[#64748B] mt-1 truncate max-w-[400px]" title={faq.answer}>{faq.answer}</p>
                   </div>
                   <div className="flex gap-2 ml-4">
                     <Button size="sm" type="outline">
@@ -435,7 +435,7 @@ export default function CMSManagementPage() {
             {legalPages.map((page) => (
               <div key={page.id} className="p-4 rounded-lg border border-[#E2E8F0] flex items-center justify-between">
                 <div>
-                  <h4 className="font-medium text-[#0F172A]">{page.title}</h4>
+                  <h4 className="font-medium text-[#0F172A] truncate max-w-[300px]" title={page.title}>{page.title}</h4>
                   <p className="text-sm text-[#64748B] mt-1">마지막 수정: {page.lastUpdated}</p>
                 </div>
                 <div className="flex gap-2">

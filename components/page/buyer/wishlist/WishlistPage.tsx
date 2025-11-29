@@ -89,7 +89,7 @@ export const WishlistPage = () => {
             <Heart className="mx-auto size-12 text-[#94A3B8]" />
             <p className="mt-4 text-lg font-semibold text-[#475569]">위시리스트가 비어있습니다.</p>
             <p className="mt-2 text-sm text-[#94A3B8]">관심 있는 서비스를 위시리스트에 추가해보세요.</p>
-            <Link href="/buyer-dashboard" className="mt-4 inline-block">
+            <Link href="/client/dashboard" className="mt-4 inline-block">
               <Button
                 type="primary"
                 size="large"

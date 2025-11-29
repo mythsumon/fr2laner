@@ -16,14 +16,19 @@ import {
   User,
   Award,
   TrendingUp,
+  Edit,
+  Settings,
 } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
+import { ReportModal } from "@/components/shared/ReportModal";
 
 // Mock service data
 const mockService = {
   id: "svc-1",
   title: "프리미엄 로고 디자인",
   seller: {
+    id: "expert-1", // Seller ID for ownership check
     name: "김디자인",
     avatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuA7S1UOblJR2cx4JR39YixpEGU1UHui-W6K5kBdV85e76LIcmyTE3BeCcYGa4R4cK59DG7eLmT8zVfyxZ8S2WnPFRgDrmJfESgK0ZXdmLgCKbe7uu4voBOeYYQitTabm9CCRsWS5plwGzHa9jPp6blda4FLhJIS8NGIA_f--lbM_42vO-5QEeNJgs8xKMyHjMw2U6bGuDGJ7N9EIXZU-4Wp7FmYji3ZkER4Ao5ej1MnPXZCgaT2wE7A0Mu-u5vdgxAKUUD1aifcK0c",
     level: "Expert",
@@ -113,24 +118,60 @@ const mockService = {
 export const ServiceDetailPage = () => {
   const params = useParams();
   const router = useRouter();
+  const { user, isAuthenticated } = useAuth();
   const [selectedPackage, setSelectedPackage] = useState<string | null>(null);
   const [isInWishlist, setIsInWishlist] = useState(false);
   const [selectedImage, setSelectedImage] = useState(0);
+  const [isReportModalOpen, setIsReportModalOpen] = useState(false);
+  const [reportModalData, setReportModalData] = useState<{
+    type: "service" | "review";
+    targetId: string;
+    targetName: string;
+  } | null>(null);
+
+  // Check if current user is the service owner
+  const isServiceOwner = isAuthenticated && user?.role === "expert" && user?.id === mockService.seller.id;
+  const isAdmin = isAuthenticated && user?.role === "admin";
 
   const handleAddToWishlist = () => {
     setIsInWishlist(!isInWishlist);
   };
 
   const handleOrder = () => {
+    if (!isAuthenticated) {
+      const currentPath = `/services/${params.id}`;
+      router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
+      return;
+    }
+
+    if (user?.role !== "client") {
+      return; // Should not happen due to button visibility
+    }
+
     if (!selectedPackage) {
       alert("패키지를 선택해주세요.");
       return;
     }
-    router.push(`/orders/new?service=${params.id}&package=${selectedPackage}`);
+    router.push(`/client/orders/new?service=${params.id}&package=${selectedPackage}`);
   };
 
   const handleContact = () => {
-    router.push(`/buyer-messages?seller=${mockService.seller.name}`);
+    if (!isAuthenticated) {
+      const currentPath = `/services/${params.id}`;
+      router.push(`/login?redirect=${encodeURIComponent(currentPath)}`);
+      return;
+    }
+    // Create or navigate to conversation with seller
+    const conversationId = `conv-${mockService.seller.id}`;
+    router.push(`/client/messages/${conversationId}`);
+  };
+
+  const handleEditService = () => {
+    router.push(`/expert/services/${params.id}/edit`);
+  };
+
+  const handleAdminManage = () => {
+    router.push(`/admin/services/${params.id}`);
   };
 
   return (
@@ -167,9 +208,19 @@ export const ServiceDetailPage = () => {
             </button>
             <button
               type="button"
+              onClick={() => {
+                setReportModalData({
+                  type: "service",
+                  targetId: mockService.id,
+                  targetName: mockService.title,
+                });
+                setIsReportModalOpen(true);
+              }}
               className="flex items-center gap-2 rounded-xl border border-[#E2E8F0] bg-white px-4 py-2 text-sm font-semibold text-[#475569] transition-all hover:bg-[#F8FAFC]"
+              title="신고하기"
             >
               <Flag className="size-4" />
+              신고
             </button>
           </div>
         </div>
@@ -260,6 +311,74 @@ export const ServiceDetailPage = () => {
                 ))}
               </div>
             </div>
+
+            {/* Reviews Section */}
+            <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+              <div className="mb-4 flex items-center justify-between">
+                <h2 className="text-xl font-bold text-[#0F172A]">리뷰</h2>
+                <div className="flex items-center gap-2">
+                  <Star className="size-5 fill-[#F59E0B] text-[#F59E0B]" />
+                  <span className="text-lg font-bold text-[#0F172A]">{mockService.rating}</span>
+                  <span className="text-sm text-[#94A3B8]">({mockService.reviews}개 리뷰)</span>
+                </div>
+              </div>
+              <div className="space-y-4">
+                {/* Mock reviews */}
+                {[
+                  {
+                    id: 1,
+                    buyer: "김구매",
+                    rating: 5,
+                    comment: "정말 만족스러운 서비스였습니다! 디자인이 정말 훌륭하고 빠른 배송도 감사합니다.",
+                    date: "2024-03-15",
+                  },
+                  {
+                    id: 2,
+                    buyer: "이소비",
+                    rating: 4,
+                    comment: "좋은 서비스였습니다. 약간의 수정이 필요했지만 빠르게 반영해주셔서 만족합니다.",
+                    date: "2024-03-10",
+                  },
+                ].map((review) => (
+                  <div key={review.id} className="border-b border-[#E2E8F0] pb-4 last:border-0 last:pb-0">
+                    <div className="mb-2 flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-[#0F172A]">{review.buyer}</span>
+                        <div className="flex items-center gap-1">
+                          {Array.from({ length: 5 }).map((_, i) => (
+                            <Star
+                              key={i}
+                              className={`size-4 ${
+                                i < review.rating
+                                  ? "fill-[#F59E0B] text-[#F59E0B]"
+                                  : "text-[#E2E8F0]"
+                              }`}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-xs text-[#94A3B8]">{review.date}</span>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setReportModalData({
+                            type: "review",
+                            targetId: `${mockService.id}-review-${review.id}`,
+                            targetName: `${review.buyer}님의 리뷰`,
+                          });
+                          setIsReportModalOpen(true);
+                        }}
+                        className="p-1 rounded hover:bg-[#F8FAFC] text-[#94A3B8] hover:text-red-500 transition-colors"
+                        title="리뷰 신고하기"
+                      >
+                        <Flag className="size-3" />
+                      </button>
+                    </div>
+                    <p className="text-sm text-[#475569]">{review.comment}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
 
           {/* Sidebar - Packages & Order */}
@@ -314,28 +433,59 @@ export const ServiceDetailPage = () => {
                   ))}
                 </div>
 
-                {/* Action Buttons */}
+                {/* Action Buttons - Role-based */}
                 <div className="mt-6 space-y-2">
-                  <Button
-                    type="primary"
-                    size="large"
-                    shape="round"
-                    onClick={handleOrder}
-                    disabled={!selectedPackage}
-                    className="w-full !bg-gradient-to-r !from-[#2E5E99] !to-[#3B82F6] font-bold text-white shadow-lg disabled:opacity-50"
-                  >
-                    주문하기
-                  </Button>
-                  <Button
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={handleContact}
-                    className="w-full border border-[#E2E8F0] bg-white font-semibold text-[#475569] hover:bg-[#F8FAFC]"
-                  >
-                    <MessageSquare className="size-4" />
-                    판매자에게 문의하기
-                  </Button>
+                  {isServiceOwner ? (
+                    // Service owner - show edit button
+                    <Button
+                      type="primary"
+                      size="large"
+                      shape="round"
+                      onClick={handleEditService}
+                      className="w-full !bg-gradient-to-r !from-[#2E5E99] !to-[#3B82F6] font-bold text-white shadow-lg"
+                    >
+                      <Edit className="size-4" />
+                      수정하기
+                    </Button>
+                  ) : isAdmin ? (
+                    // Admin - show manage button
+                    <Button
+                      type="primary"
+                      size="large"
+                      shape="round"
+                      onClick={handleAdminManage}
+                      className="w-full !bg-gradient-to-r !from-[#2E5E99] !to-[#3B82F6] font-bold text-white shadow-lg"
+                    >
+                      <Settings className="size-4" />
+                      관리 열기
+                    </Button>
+                  ) : (
+                    // Buyer or not logged in
+                    <>
+                      <Button
+                        type="primary"
+                        size="large"
+                        shape="round"
+                        onClick={handleOrder}
+                        disabled={!selectedPackage}
+                        className="w-full !bg-gradient-to-r !from-[#2E5E99] !to-[#3B82F6] font-bold text-white shadow-lg disabled:opacity-50"
+                      >
+                        {isAuthenticated ? "주문하기" : "로그인하고 주문하기"}
+                      </Button>
+                      {isAuthenticated && user?.role === "client" && (
+                        <Button
+                          type="default"
+                          size="large"
+                          shape="round"
+                          onClick={handleContact}
+                          className="w-full border border-[#E2E8F0] bg-white font-semibold text-[#475569] hover:bg-[#F8FAFC]"
+                        >
+                          <MessageSquare className="size-4" />
+                          판매자에게 문의하기
+                        </Button>
+                      )}
+                    </>
+                  )}
                 </div>
               </div>
 
@@ -361,6 +511,20 @@ export const ServiceDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Report Modal */}
+      {reportModalData && (
+        <ReportModal
+          isOpen={isReportModalOpen}
+          onClose={() => {
+            setIsReportModalOpen(false);
+            setReportModalData(null);
+          }}
+          type={reportModalData.type}
+          targetId={reportModalData.targetId}
+          targetName={reportModalData.targetName}
+        />
+      )}
     </div>
   );
 };

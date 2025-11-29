@@ -15,8 +15,14 @@
       "signUp": "Sign Up",
       "postProject": "Post a Project",
       "sellerDashboard": "Seller Dashboard",
+      "buyerDashboard": "Buyer Dashboard",
+      "adminDashboard": "Admin Dashboard",
+      "dashboard": "Dashboard",
       "openMenu": "Open menu",
-      "closeMenu": "Close menu"
+      "closeMenu": "Close menu",
+      "menuTitle": "Menu",
+      "categoriesTitle": "Categories",
+      "linksTitle": "Navigation"
     }
   },
   "adminLogin": {
@@ -40,6 +46,7 @@
     "copyPassword": "Copy password",
     "sampleWarning": "Demo account notice",
     "sampleWarningDetail": "These accounts are for demo/testing only. Replace them in production.",
+    "goBackToWebsite": "Go back to website",
     "errors": {
       "invalid": "Invalid email or password.",
       "generic": "An error occurred while signing in."

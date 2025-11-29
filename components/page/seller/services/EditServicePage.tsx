@@ -15,7 +15,7 @@ export const EditServicePage = () => {
   return (
     <div>
       <div className="mb-6 flex items-center gap-4 px-4 pt-6 md:px-6 lg:px-8">
-        <Link href="/dashboard/services">
+        <Link href="/expert/services">
           <button
             type="button"
             className="flex size-10 items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#475569] transition-colors hover:bg-[#F1F5F9]"

@@ -1,9 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Link from "next/link";
-import { DollarSign, TrendingUp, Clock } from "lucide-react";
+import { DollarSign, TrendingUp, Clock, AlertCircle } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
 
 interface Transaction {
   id: string;
@@ -20,10 +21,57 @@ const mockTransactions: Transaction[] = [
   { id: "3", orderId: "ORD-003", amount: 150000, status: "Cleared", date: "2024-01-13" },
 ];
 
+interface PayoutRequest {
+  id: string;
+  amount: number;
+  status: "pending" | "approved" | "rejected" | "completed";
+  requestedAt: string;
+  processedAt?: string;
+}
+
 export const EarningsPage = () => {
+  const { user } = useAuth();
   const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month">("week");
+  const [payoutRequests, setPayoutRequests] = useState<PayoutRequest[]>([]);
+  const [commissionRate, setCommissionRate] = useState(15); // Default commission rate
   const availableBalance = 2800000;
   const pendingClearance = 300000;
+
+  // Load commission rate from admin settings
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedSettings = localStorage.getItem("admin_settings");
+      if (storedSettings) {
+        try {
+          const parsedSettings = JSON.parse(storedSettings);
+          if (parsedSettings.commissionRate) {
+            setCommissionRate(parsedSettings.commissionRate);
+          }
+        } catch (e) {
+          console.warn("Failed to parse admin_settings from localStorage", e);
+        }
+      }
+    }
+  }, []);
+
+  // Load payout requests from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedPayouts = localStorage.getItem("payouts");
+      if (storedPayouts) {
+        try {
+          const parsedPayouts = JSON.parse(storedPayouts);
+          // Filter payouts for current seller
+          const sellerPayouts = parsedPayouts.filter(
+            (p: any) => p.sellerId === user?.id || p.seller === user?.name
+          );
+          setPayoutRequests(sellerPayouts);
+        } catch (e) {
+          console.warn("Failed to parse payouts from localStorage", e);
+        }
+      }
+    }
+  }, [user]);
 
   const earningsData = selectedPeriod === "week" 
     ? [45, 52, 48, 61, 55, 58, 62]
@@ -50,14 +98,14 @@ export const EarningsPage = () => {
               <span>정산 대기: ₩{pendingClearance.toLocaleString()}</span>
             </div>
           </div>
-          <Link href="/dashboard/earnings/withdraw">
+          <Link href="/expert/earnings/withdraw">
             <Button
               type="primary"
               size="large"
               shape="round"
               className="bg-white text-sm font-semibold text-[#2E5E99] hover:bg-white/90"
             >
-              출금하기
+              출금 요청하기
             </Button>
           </Link>
         </div>
@@ -103,6 +151,99 @@ export const EarningsPage = () => {
           ))}
         </div>
       </div>
+
+      {/* Period Summary */}
+      <div className="mb-6 grid gap-4 sm:grid-cols-3">
+        <div className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center gap-2 text-sm text-[#475569]">
+            <DollarSign className="size-4" />
+            <span>이번 주 수익</span>
+          </div>
+          <div className="text-2xl font-bold text-[#0F172A]">
+            ₩{selectedPeriod === "week" ? "420,000" : "1,850,000"}
+          </div>
+        </div>
+        <div className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center gap-2 text-sm text-[#475569]">
+            <TrendingUp className="size-4" />
+            <span>이번 달 수익</span>
+          </div>
+          <div className="text-2xl font-bold text-[#0F172A]">₩3,400,000</div>
+        </div>
+        <div className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-sm">
+          <div className="mb-2 flex items-center gap-2 text-sm text-[#475569]">
+            <Clock className="size-4" />
+            <span>정산 대기</span>
+          </div>
+          <div className="text-2xl font-bold text-[#0F172A]">₩300,000</div>
+        </div>
+      </div>
+
+      {/* Commission Rate Info */}
+      <div className="mb-6 rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center gap-2">
+          <AlertCircle className="size-5 text-[#F59E0B]" />
+          <h2 className="text-lg font-semibold text-[#0F172A]">수수료 정보</h2>
+        </div>
+        <div className="space-y-2 text-sm text-[#475569]">
+          <p>
+            플랫폼 수수료율: <span className="font-semibold text-[#0F172A]">{commissionRate}%</span>
+          </p>
+          <p className="text-xs text-[#94A3B8]">
+            주문 금액의 {commissionRate}%가 플랫폼 수수료로 차감됩니다. 나머지 {100 - commissionRate}%가 판매자 수익으로 정산됩니다.
+          </p>
+        </div>
+      </div>
+
+      {/* Payout Requests */}
+      {payoutRequests.length > 0 && (
+        <div className="mb-6 rounded-2xl border border-[#E2E8F0] bg-white shadow-sm">
+          <div className="border-b border-[#E2E8F0] p-4">
+            <h2 className="text-lg font-semibold text-[#0F172A]">출금 요청 내역</h2>
+          </div>
+          <div className="divide-y divide-[#E2E8F0]">
+            {payoutRequests.map((request) => (
+              <div key={request.id} className="p-4">
+                <div className="flex items-center justify-between">
+                  <div>
+                    <div className="mb-1 flex items-center gap-2">
+                      <DollarSign className="size-4 text-blue-500" />
+                      <span className="font-semibold text-[#0F172A]">
+                        출금 요청 #{request.id}
+                      </span>
+                    </div>
+                    <div className="text-sm text-[#475569]">{request.requestedAt}</div>
+                  </div>
+                  <div className="text-right">
+                    <div className="text-lg font-bold text-[#0F172A]">
+                      -₩{request.amount.toLocaleString()}
+                    </div>
+                    <span
+                      className={`text-xs font-medium ${
+                        request.status === "pending"
+                          ? "text-yellow-600"
+                          : request.status === "approved"
+                          ? "text-blue-600"
+                          : request.status === "rejected"
+                          ? "text-red-600"
+                          : "text-green-600"
+                      }`}
+                    >
+                      {request.status === "pending"
+                        ? "대기 중"
+                        : request.status === "approved"
+                        ? "승인됨"
+                        : request.status === "rejected"
+                        ? "거절됨"
+                        : "완료"}
+                    </span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       {/* Transactions */}
       <div className="rounded-2xl border border-[#E2E8F0] bg-white shadow-sm">

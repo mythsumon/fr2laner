@@ -176,7 +176,7 @@ const RecommendationBlock = ({
         {data.map((card) => (
           <Link
             key={card.id}
-            href={`/service/${card.id}`}
+            href={`/services/${card.id}`}
             className="group flex flex-col rounded-2xl border border-slate-200 bg-white/90 shadow-md hover:shadow-xl hover:border-sky-300 transition-all hover:scale-[1.015] overflow-hidden"
           >
             {/* Image */}

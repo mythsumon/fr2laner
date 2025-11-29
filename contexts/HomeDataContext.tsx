@@ -1,6 +1,6 @@
 "use client";
 
-import { createContext, useContext, useState, ReactNode, useEffect } from "react";
+import { createContext, useContext, useState, ReactNode, useEffect, useCallback } from "react";
 
 // Types matching admin data structures
 export interface HomeBanner {
@@ -72,7 +72,13 @@ const HomeDataContext = createContext<HomeDataContextType | undefined>(undefined
 const getInitialBanners = (): HomeBanner[] => {
   if (typeof window !== "undefined") {
     const stored = localStorage.getItem("home_banners");
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.warn("Failed to parse home_banners from localStorage", e);
+      }
+    }
   }
   return [
     {
@@ -105,7 +111,13 @@ const getInitialBanners = (): HomeBanner[] => {
 const getInitialFeaturedServices = (): HomeFeaturedService[] => {
   if (typeof window !== "undefined") {
     const stored = localStorage.getItem("home_featured_services");
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.warn("Failed to parse home_featured_services from localStorage", e);
+      }
+    }
   }
   return [
     { id: 1, title: "프리미엄 로고 디자인", seller: "최디자인", price: "₩250,000", rating: 4.9, orders: 234 },
@@ -116,7 +128,13 @@ const getInitialFeaturedServices = (): HomeFeaturedService[] => {
 const getInitialCategories = (): HomeCategory[] => {
   if (typeof window !== "undefined") {
     const stored = localStorage.getItem("home_categories");
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.warn("Failed to parse home_categories from localStorage", e);
+      }
+    }
   }
   return [];
 };
@@ -124,7 +142,13 @@ const getInitialCategories = (): HomeCategory[] => {
 const getInitialTestimonials = (): HomeTestimonial[] => {
   if (typeof window !== "undefined") {
     const stored = localStorage.getItem("home_testimonials");
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.warn("Failed to parse home_testimonials from localStorage", e);
+      }
+    }
   }
   return [];
 };
@@ -132,58 +156,93 @@ const getInitialTestimonials = (): HomeTestimonial[] => {
 const getInitialServices = (): HomeService[] => {
   if (typeof window !== "undefined") {
     const stored = localStorage.getItem("home_services");
-    if (stored) return JSON.parse(stored);
+    if (stored) {
+      try {
+        return JSON.parse(stored);
+      } catch (e) {
+        console.warn("Failed to parse home_services from localStorage", e);
+      }
+    }
   }
   return [];
 };
 
 export const HomeDataProvider = ({ children }: { children: ReactNode }) => {
-  const [banners, setBanners] = useState<HomeBanner[]>(getInitialBanners);
-  const [featuredServices, setFeaturedServices] = useState<HomeFeaturedService[]>(getInitialFeaturedServices);
-  const [services, setServices] = useState<HomeService[]>(getInitialServices);
-  const [categories, setCategories] = useState<HomeCategory[]>(getInitialCategories);
-  const [testimonials, setTestimonials] = useState<HomeTestimonial[]>(getInitialTestimonials);
+  const [banners, setBanners] = useState<HomeBanner[]>([]);
+  const [featuredServices, setFeaturedServices] = useState<HomeFeaturedService[]>([]);
+  const [services, setServices] = useState<HomeService[]>([]);
+  const [categories, setCategories] = useState<HomeCategory[]>([]);
+  const [testimonials, setTestimonials] = useState<HomeTestimonial[]>([]);
 
-  // Sync with localStorage
+  // Initialize state with data
   useEffect(() => {
-    localStorage.setItem("home_banners", JSON.stringify(banners));
+    setBanners(getInitialBanners());
+    setFeaturedServices(getInitialFeaturedServices());
+    setServices(getInitialServices());
+    setCategories(getInitialCategories());
+    setTestimonials(getInitialTestimonials());
+  }, []);
+
+  // Sync with localStorage - only update when values actually change
+  useEffect(() => {
+    try {
+      localStorage.setItem("home_banners", JSON.stringify(banners));
+    } catch (e) {
+      console.warn("Failed to save home_banners to localStorage", e);
+    }
   }, [banners]);
 
   useEffect(() => {
-    localStorage.setItem("home_featured_services", JSON.stringify(featuredServices));
+    try {
+      localStorage.setItem("home_featured_services", JSON.stringify(featuredServices));
+    } catch (e) {
+      console.warn("Failed to save home_featured_services to localStorage", e);
+    }
   }, [featuredServices]);
 
   useEffect(() => {
-    localStorage.setItem("home_categories", JSON.stringify(categories));
+    try {
+      localStorage.setItem("home_categories", JSON.stringify(categories));
+    } catch (e) {
+      console.warn("Failed to save home_categories to localStorage", e);
+    }
   }, [categories]);
 
   useEffect(() => {
-    localStorage.setItem("home_testimonials", JSON.stringify(testimonials));
+    try {
+      localStorage.setItem("home_testimonials", JSON.stringify(testimonials));
+    } catch (e) {
+      console.warn("Failed to save home_testimonials to localStorage", e);
+    }
   }, [testimonials]);
 
   useEffect(() => {
-    localStorage.setItem("home_services", JSON.stringify(services));
+    try {
+      localStorage.setItem("home_services", JSON.stringify(services));
+    } catch (e) {
+      console.warn("Failed to save home_services to localStorage", e);
+    }
   }, [services]);
 
-  const updateBanners = (newBanners: HomeBanner[]) => {
+  const updateBanners = useCallback((newBanners: HomeBanner[]) => {
     setBanners(newBanners);
-  };
+  }, []);
 
-  const updateFeaturedServices = (newServices: HomeFeaturedService[]) => {
+  const updateFeaturedServices = useCallback((newServices: HomeFeaturedService[]) => {
     setFeaturedServices(newServices);
-  };
+  }, []);
 
-  const updateServices = (newServices: HomeService[]) => {
+  const updateServices = useCallback((newServices: HomeService[]) => {
     setServices(newServices);
-  };
+  }, []);
 
-  const updateCategories = (newCategories: HomeCategory[]) => {
+  const updateCategories = useCallback((newCategories: HomeCategory[]) => {
     setCategories(newCategories);
-  };
+  }, []);
 
-  const updateTestimonials = (newTestimonials: HomeTestimonial[]) => {
+  const updateTestimonials = useCallback((newTestimonials: HomeTestimonial[]) => {
     setTestimonials(newTestimonials);
-  };
+  }, []);
 
   return (
     <HomeDataContext.Provider
@@ -212,4 +271,3 @@ export const useHomeData = () => {
   }
   return context;
 };
-

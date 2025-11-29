@@ -4,7 +4,7 @@ import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, Filter, Star, Heart, Sparkles, TrendingUp, Clock, Award, X } from "lucide-react";
+import { Search, Filter, Star, Heart, Sparkles, TrendingUp, Clock, Award, X, Package, FolderKanban, ArrowRight } from "lucide-react";
 import { Button } from "@/components/shared/common";
 
 const categories = [
@@ -189,8 +189,105 @@ export const BuyerDashboardPage = () => {
     window.location.reload();
   };
 
+  // Mock recent orders and projects
+  const recentOrders = [
+    { id: "ORD-1043", title: "프리미엄 로고 디자인", seller: "김디자이너", status: "진행 중", price: 350000 },
+    { id: "ORD-1038", title: "브랜드 아이덴티티 패키지", seller: "박브랜딩", status: "요구사항", price: 680000 },
+  ];
+
+  const recentProjects = [
+    { id: "PROJ-001", title: "웹사이트 리뉴얼 프로젝트", proposals: 5, status: "제안 대기" },
+    { id: "PROJ-002", title: "모바일 앱 UI/UX 디자인", proposals: 3, status: "진행 중" },
+  ];
+
   return (
     <div className="space-y-10">
+      {/* Recent Orders & Projects Section */}
+      <div className="grid gap-6 md:grid-cols-2">
+        {/* Recent Orders */}
+        <section className="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <Package className="size-5 text-[#2E5E99]" />
+              <h2 className="text-xl font-bold text-[#0F172A]">최근 주문</h2>
+            </div>
+            <Link
+              href="/client/orders"
+              className="flex items-center gap-1 text-sm font-semibold text-[#2E5E99] transition-colors hover:text-[#1d4673] hover:underline"
+            >
+              모든 주문 보기
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {recentOrders.length === 0 ? (
+              <p className="py-8 text-center text-sm text-[#94A3B8]">주문 내역이 없습니다.</p>
+            ) : (
+              recentOrders.map((order) => (
+                <Link
+                  key={order.id}
+                  href={`/client/orders/${order.id}`}
+                  className="block rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all hover:border-[#2E5E99] hover:bg-white hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="mb-1 text-xs font-semibold text-[#94A3B8]">{order.id}</p>
+                      <h3 className="mb-1 text-sm font-bold text-[#0F172A]">{order.title}</h3>
+                      <p className="text-xs text-[#475569]">
+                        {order.seller} · <span className="font-semibold text-[#2E5E99]">{order.status}</span>
+                      </p>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-sm font-bold text-[#0F172A]">₩{order.price.toLocaleString()}</p>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
+        </section>
+
+        {/* Recent Projects */}
+        <section className="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <FolderKanban className="size-5 text-[#2E5E99]" />
+              <h2 className="text-xl font-bold text-[#0F172A]">최근 프로젝트</h2>
+            </div>
+            <Link
+              href="/client/projects"
+              className="flex items-center gap-1 text-sm font-semibold text-[#2E5E99] transition-colors hover:text-[#1d4673] hover:underline"
+            >
+              모든 프로젝트 보기
+              <ArrowRight className="size-4" />
+            </Link>
+          </div>
+          <div className="space-y-3">
+            {recentProjects.length === 0 ? (
+              <p className="py-8 text-center text-sm text-[#94A3B8]">프로젝트가 없습니다.</p>
+            ) : (
+              recentProjects.map((project) => (
+                <Link
+                  key={project.id}
+                  href={`/client/projects/${project.id}`}
+                  className="block rounded-2xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all hover:border-[#2E5E99] hover:bg-white hover:shadow-md"
+                >
+                  <div className="flex items-start justify-between">
+                    <div className="flex-1">
+                      <p className="mb-1 text-xs font-semibold text-[#94A3B8]">{project.id}</p>
+                      <h3 className="mb-1 text-sm font-bold text-[#0F172A]">{project.title}</h3>
+                      <p className="text-xs text-[#475569]">
+                        제안 {project.proposals}개 · <span className="font-semibold text-[#2E5E99]">{project.status}</span>
+                      </p>
+                    </div>
+                  </div>
+                </Link>
+              ))
+            )}
+          </div>
+        </section>
+      </div>
+
       {/* Search Section */}
       <form onSubmit={handleSearch} className="flex flex-col gap-3 sm:flex-row">
         <div className="group flex flex-1 items-center gap-3 rounded-2xl border-2 border-[#E2E8F0] bg-white px-5 py-4 shadow-lg transition-all focus-within:border-[#2E5E99] focus-within:shadow-xl">

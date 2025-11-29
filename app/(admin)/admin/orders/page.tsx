@@ -200,8 +200,16 @@ export default function OrdersManagementPage() {
                       {order.id}
                     </Link>
                   </td>
-                  <td className="px-4 py-4 text-sm text-[#0F172A]">{order.buyer}</td>
-                  <td className="px-4 py-4 text-sm text-[#0F172A]">{order.seller}</td>
+                  <td className="px-4 py-4 text-sm text-[#0F172A]">
+                    <Link href={`/client/orders?buyer=${order.buyer}`} className="text-[#2E5E99] hover:underline">
+                      {order.buyer}
+                    </Link>
+                  </td>
+                  <td className="px-4 py-4 text-sm text-[#0F172A]">
+                    <Link href={`/expert/orders?seller=${order.seller}`} className="text-[#2E5E99] hover:underline">
+                      {order.seller}
+                    </Link>
+                  </td>
                   <td className="px-4 py-4 text-sm text-[#64748B]">{order.service}</td>
                   <td className="px-4 py-4 text-sm font-medium text-[#0F172A]">{order.amount}</td>
                   <td className="px-4 py-4">{getStatusBadge(order.status)}</td>

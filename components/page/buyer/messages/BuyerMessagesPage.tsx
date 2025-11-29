@@ -248,7 +248,7 @@ export const BuyerMessagesPage = () => {
               </div>
               <div className="flex items-center gap-2">
                 {selectedChatData.orderId && (
-                  <Link href={`/orders/${selectedChatData.orderId}`}>
+                  <Link href={`/client/orders/${selectedChatData.orderId}`}>
                     <Button
                       type="primary"
                       size="small"

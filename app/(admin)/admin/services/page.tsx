@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+import Link from "next/link";
 import {
   Search,
   Filter,
@@ -174,6 +175,9 @@ export default function ServicesManagementPage() {
       : initialServices
   );
 
+  // Track previous approved services to prevent unnecessary updates
+  const prevApprovedServicesRef = useRef<string>("");
+  
   // Sync services to homepage on mount and when services change
   useEffect(() => {
     const approvedServices: HomeService[] = services
@@ -189,7 +193,19 @@ export default function ServicesManagementPage() {
         status: s.status,
         featured: s.featured,
       }));
-    updateServices(approvedServices);
+    
+    // Only update if the data actually changed
+    const currentDataStr = JSON.stringify(approvedServices.map(s => ({
+      id: s.id,
+      status: s.status,
+      featured: s.featured,
+      title: s.title,
+    })).sort((a, b) => a.id - b.id));
+    
+    if (currentDataStr !== prevApprovedServicesRef.current) {
+      prevApprovedServicesRef.current = currentDataStr;
+      updateServices(approvedServices);
+    }
   }, [services, updateServices]);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
   const [tags, setTags] = useState<string[]>(initialTags);
@@ -806,10 +822,18 @@ export default function ServicesManagementPage() {
                     </td>
                     <td className="px-4 py-4">
                       <div className="flex items-center gap-2">
+                        <Link href={`/services/${service.id}`} target="_blank">
+                          <button
+                            className="p-2 rounded-lg hover:bg-[#F8FAFC] text-[#2E5E99]"
+                            title="웹에서 보기"
+                          >
+                            <Eye className="size-4" />
+                          </button>
+                        </Link>
                         <button
                           onClick={() => setViewModal({ isOpen: true, service })}
                           className="p-2 rounded-lg hover:bg-[#F8FAFC] text-[#64748B]"
-                          title="View"
+                          title="상세 보기"
                         >
                           <Eye className="size-4" />
                         </button>

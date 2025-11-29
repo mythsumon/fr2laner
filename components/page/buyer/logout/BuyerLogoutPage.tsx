@@ -49,7 +49,7 @@ export const BuyerLogoutPage = () => {
       {/* Header */}
       <header className="border-b border-[#E2E8F0] bg-white px-6 py-4">
         <div className="mx-auto flex max-w-4xl items-center gap-4">
-          <Link href="/profile">
+          <Link href="/client/profile">
             <button
               type="button"
               className="flex size-10 items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#475569] transition-colors hover:bg-[#F1F5F9]"

@@ -108,7 +108,7 @@ export const CreateCustomRequestPage = () => {
       <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
         {/* Header */}
         <div className="mb-6">
-          <Link href="/custom-requests">
+          <Link href="/client/custom-requests">
             <button
               type="button"
               className="mb-4 flex items-center gap-2 text-sm font-medium text-[#2E5E99] hover:underline"

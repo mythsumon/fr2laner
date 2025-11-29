@@ -15,8 +15,14 @@
       "signUp": "회원가입",
       "postProject": "프로젝트 등록",
       "sellerDashboard": "판매자 센터",
+      "buyerDashboard": "구매자 센터",
+      "adminDashboard": "관리자 센터",
+      "dashboard": "대시보드",
       "openMenu": "메뉴 열기",
-      "closeMenu": "메뉴 닫기"
+      "closeMenu": "메뉴 닫기",
+      "menuTitle": "메뉴",
+      "categoriesTitle": "카테고리",
+      "linksTitle": "네비게이션"
     }
   },
   "adminLogin": {
@@ -40,6 +46,7 @@
     "copyPassword": "비밀번호 복사",
     "sampleWarning": "테스트 계정 안내",
     "sampleWarningDetail": "해당 계정은 데모/테스트용입니다. 실제 서비스에서는 교체하세요.",
+    "goBackToWebsite": "웹사이트로 돌아가기",
     "errors": {
       "invalid": "이메일 또는 비밀번호가 올바르지 않습니다.",
       "generic": "로그인 중 오류가 발생했습니다."
@@ -73,7 +80,7 @@
           "description": "나만의 전문성을 발휘하고 전 세계 클라이언트와 협업하세요."
         }
       },
-      "footer": "가입 이후에도 언제든 원하는 상태로 전환할 수 있어요."
+      "footer": "가입 이후에도 언제든지 원하는 상태로 전환할 수 있어요."
     },
     "login": {
       "heading": "로그인",

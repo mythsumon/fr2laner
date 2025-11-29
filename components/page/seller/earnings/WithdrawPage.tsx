@@ -1,21 +1,26 @@
 "use client";
 
 import { useState } from "react";
+import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, DollarSign } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
 
 const banks = ["KB국민은행", "신한은행", "하나은행", "우리은행", "NH농협은행", "IBK기업은행"];
 
 export const WithdrawPage = () => {
+  const router = useRouter();
+  const { user } = useAuth();
   const [selectedBank, setSelectedBank] = useState("");
   const [accountNumber, setAccountNumber] = useState("");
   const [withdrawAmount, setWithdrawAmount] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const availableBalance = 2800000;
   const fee = 0; // Assume no fee for now
   const total = parseFloat(withdrawAmount) || 0;
 
-  const handleWithdraw = () => {
+  const handleWithdraw = async () => {
     if (!selectedBank || !accountNumber || !withdrawAmount) {
       alert("모든 항목을 입력해주세요");
       return;
@@ -24,9 +29,31 @@ export const WithdrawPage = () => {
       alert("출금 가능 금액을 초과했습니다");
       return;
     }
-    console.log("Withdraw:", { selectedBank, accountNumber, total });
-    // Navigate back
-    window.location.href = "/dashboard/earnings";
+    if (total < 10000) {
+      alert("최소 출금 금액은 10,000원입니다");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    // Save payout request to localStorage
+    const payouts = JSON.parse(localStorage.getItem("payouts") || "[]");
+    const newPayout = {
+      id: `PAY-${Date.now()}`,
+      seller: user?.name || "판매자",
+      sellerId: user?.id || "seller-1",
+      amount: total,
+      bank: selectedBank,
+      accountNumber: accountNumber,
+      status: "pending",
+      requestedAt: new Date().toISOString().split("T")[0],
+    };
+    payouts.push(newPayout);
+    localStorage.setItem("payouts", JSON.stringify(payouts));
+
+    setIsSubmitting(false);
+    alert("출금 요청이 접수되었습니다. 관리자 승인 후 처리됩니다.");
+    router.push("/expert/earnings");
   };
 
   return (
@@ -34,7 +61,7 @@ export const WithdrawPage = () => {
       <div className="mx-auto max-w-2xl">
         {/* Header */}
         <div className="mb-6">
-          <Link href="/dashboard/earnings">
+          <Link href="/expert/earnings">
             <button
               type="button"
               className="mb-4 flex items-center gap-2 text-sm font-medium text-[#2E5E99] hover:underline"
@@ -142,7 +169,7 @@ export const WithdrawPage = () => {
           </div>
 
           <div className="mt-6 flex gap-3">
-            <Link href="/dashboard/earnings" className="flex-1 sm:flex-initial">
+            <Link href="/expert/earnings" className="flex-1 sm:flex-initial">
               <Button
                 type="default"
                 size="large"
@@ -157,9 +184,10 @@ export const WithdrawPage = () => {
               size="large"
               shape="round"
               onClick={handleWithdraw}
-              className="flex-1 bg-[#2E5E99] text-sm font-semibold text-white hover:bg-[#1d4673] sm:flex-initial"
+              disabled={isSubmitting || !selectedBank || !accountNumber || !withdrawAmount || total > availableBalance || total < 10000}
+              className="flex-1 bg-[#2E5E99] text-sm font-semibold text-white hover:bg-[#1d4673] sm:flex-initial disabled:opacity-50"
             >
-              출금하기
+              {isSubmitting ? "제출 중..." : "출금 요청하기"}
             </Button>
           </div>
         </div>

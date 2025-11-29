@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Settings,
   Image,
@@ -12,6 +12,7 @@ import {
   Database,
   Save,
   Upload,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { Toast } from "@/components/page/admin/shared/Toast";
@@ -27,11 +28,18 @@ export default function SystemSettingsPage() {
     email: "admin@example.com",
     maintenanceMode: false,
     maintenanceMessage: "",
+    commissionRate: 15,
     paymentGateways: {
       creditCard: true,
       bankTransfer: true,
       virtualAccount: false,
       paypal: false,
+    },
+    policies: {
+      termsOfService: "",
+      privacyPolicy: "",
+      refundPolicy: "",
+      userAgreement: "",
     },
     smtp: {
       host: "smtp.gmail.com",
@@ -46,8 +54,27 @@ export default function SystemSettingsPage() {
   });
 
   const handleSaveSettings = () => {
+    // Save settings to localStorage
+    if (typeof window !== "undefined") {
+      localStorage.setItem("admin_settings", JSON.stringify(settings));
+    }
     showToast("설정이 저장되었습니다.", "success");
   };
+
+  // Load settings from localStorage on mount
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedSettings = localStorage.getItem("admin_settings");
+      if (storedSettings) {
+        try {
+          const parsedSettings = JSON.parse(storedSettings);
+          setSettings(parsedSettings);
+        } catch (e) {
+          console.warn("Failed to parse admin_settings from localStorage", e);
+        }
+      }
+    }
+  }, []);
 
   const handleLogoUpload = () => {
     showToast("로고가 업로드되었습니다.", "success");
@@ -88,6 +115,7 @@ export default function SystemSettingsPage() {
             { id: "sms", label: "SMS/OTP", icon: MessageSquare },
             { id: "maintenance", label: "유지보수", icon: Server },
             { id: "backup", label: "백업", icon: Database },
+            { id: "policies", label: "정책", icon: FileText },
           ].map((tab) => {
             const Icon = tab.icon;
             return (
@@ -147,6 +175,27 @@ export default function SystemSettingsPage() {
       {/* Payment Tab */}
       {activeTab === "payment" && (
         <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-6">
+          <div>
+            <h3 className="text-lg font-bold text-[#0F172A] mb-4">수수료 설정</h3>
+            <div className="mb-6 space-y-4">
+              <div>
+                <label className="block text-sm font-semibold text-[#0F172A] mb-2">
+                  플랫폼 수수료율 (%)
+                </label>
+                <input
+                  type="number"
+                  min="0"
+                  max="100"
+                  step="0.1"
+                  value={settings.commissionRate}
+                  onChange={(e) => setSettings({ ...settings, commissionRate: parseFloat(e.target.value) || 0 })}
+                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
+                  placeholder="예: 15"
+                />
+                <p className="text-xs text-[#64748B] mt-1">주문 금액의 {settings.commissionRate}%가 플랫폼 수수료로 차감됩니다.</p>
+              </div>
+            </div>
+          </div>
           <div>
             <h3 className="text-lg font-bold text-[#0F172A] mb-4">결제 게이트웨이</h3>
             <div className="space-y-4">
@@ -276,6 +325,77 @@ export default function SystemSettingsPage() {
               className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
               placeholder="유지보수 중 메시지를 입력하세요..."
             />
+          </div>
+        </div>
+      )}
+
+      {/* Policies Tab */}
+      {activeTab === "policies" && (
+        <div className="bg-white rounded-xl border border-[#E2E8F0] p-6 space-y-6">
+          <div>
+            <h3 className="text-lg font-bold text-[#0F172A] mb-4">정책 문서 관리</h3>
+            <div className="space-y-6">
+              <div>
+                <label className="block text-sm font-semibold text-[#0F172A] mb-2">이용약관</label>
+                <textarea
+                  rows={8}
+                  value={settings.policies.termsOfService}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      policies: { ...settings.policies, termsOfService: e.target.value },
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
+                  placeholder="이용약관 내용을 입력하세요..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#0F172A] mb-2">개인정보 처리방침</label>
+                <textarea
+                  rows={8}
+                  value={settings.policies.privacyPolicy}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      policies: { ...settings.policies, privacyPolicy: e.target.value },
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
+                  placeholder="개인정보 처리방침 내용을 입력하세요..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#0F172A] mb-2">환불 정책</label>
+                <textarea
+                  rows={8}
+                  value={settings.policies.refundPolicy}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      policies: { ...settings.policies, refundPolicy: e.target.value },
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
+                  placeholder="환불 정책 내용을 입력하세요..."
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-[#0F172A] mb-2">사용자 계약</label>
+                <textarea
+                  rows={8}
+                  value={settings.policies.userAgreement}
+                  onChange={(e) =>
+                    setSettings({
+                      ...settings,
+                      policies: { ...settings.policies, userAgreement: e.target.value },
+                    })
+                  }
+                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
+                  placeholder="사용자 계약 내용을 입력하세요..."
+                />
+              </div>
+            </div>
           </div>
         </div>
       )}

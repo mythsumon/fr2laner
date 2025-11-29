@@ -237,7 +237,7 @@ export const MessagesPage = () => {
               <div className="flex items-center gap-2">
                 {selectedChatData.orderId && (
                   <Link
-                    href={`/dashboard/orders/${selectedChatData.orderId}`}
+                    href={`/expert/orders/${selectedChatData.orderId}`}
                     className="rounded-lg bg-gradient-to-r from-[#2E5E99] to-[#3B82F6] px-3 py-1.5 text-xs font-bold text-white shadow-sm transition-all hover:shadow-md"
                   >
                     주문 보기

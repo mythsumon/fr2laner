@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, User, Upload, Send, FileText, MessageSquare } from "lucide-react";
+import { Clock, User, Upload, Send, FileText, MessageSquare, ExternalLink, CheckCircle2 } from "lucide-react";
 import { Button } from "@/components/shared/common";
 
 // Mock data
@@ -41,7 +41,7 @@ export const OrderDetailPage = () => {
     <div className="min-h-screen bg-[#F8FAFC] p-4 pb-24 md:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-6">
-        <Link href="/dashboard/orders">
+        <Link href="/expert/orders">
           <button
             type="button"
             className="mb-4 flex items-center gap-2 text-sm font-medium text-[#2E5E99] hover:underline"
@@ -68,6 +68,13 @@ export const OrderDetailPage = () => {
                 <div className="mb-1 flex items-center gap-2">
                   <User className="size-4 text-[#475569]" />
                   <span className="font-semibold text-[#0F172A]">{mockOrder.buyerName}</span>
+                  <Link
+                    href={`/expert/messages?buyer=${mockOrder.buyerName}`}
+                    className="ml-2 flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-[#2E5E99] transition-colors hover:bg-[#E9EEF8]"
+                  >
+                    <MessageSquare className="size-3" />
+                    메시지
+                  </Link>
                 </div>
                 <div className="text-sm text-[#475569]">주문번호: {mockOrder.id}</div>
               </div>
@@ -154,7 +161,16 @@ export const OrderDetailPage = () => {
 
         {/* Chat Section */}
         <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
-          <h2 className="mb-4 text-lg font-semibold text-[#0F172A]">메시지</h2>
+          <div className="mb-4 flex items-center justify-between">
+            <h2 className="text-lg font-semibold text-[#0F172A]">메시지</h2>
+            <Link
+              href={`/expert/messages?order=${mockOrder.id}`}
+              className="flex items-center gap-1 text-sm font-semibold text-[#2E5E99] hover:underline"
+            >
+              전체 대화 보기
+              <ExternalLink className="size-4" />
+            </Link>
+          </div>
           <div className="mb-4 max-h-[400px] space-y-4 overflow-y-auto rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4">
             <div className="flex gap-3">
               <Image
@@ -222,16 +238,27 @@ export const OrderDetailPage = () => {
               />
             </label>
           </div>
-          <Button
-            type="primary"
-            size="large"
-            shape="round"
-            onClick={handleSendDelivery}
-            className="w-full gap-2 bg-[#2E5E99] text-sm font-semibold text-white hover:bg-[#1d4673] sm:w-auto"
-          >
-            <Upload className="size-4" />
-            납품하기
-          </Button>
+          <div className="flex gap-3">
+            <Button
+              type="primary"
+              size="large"
+              shape="round"
+              onClick={handleSendDelivery}
+              className="flex-1 gap-2 bg-[#2E5E99] text-sm font-semibold text-white hover:bg-[#1d4673] sm:flex-initial"
+            >
+              <Upload className="size-4" />
+              납품하기
+            </Button>
+            <Button
+              type="default"
+              size="large"
+              shape="round"
+              className="gap-2 border border-green-200 bg-green-50 text-sm font-semibold text-green-700 hover:bg-green-100"
+            >
+              <CheckCircle2 className="size-4" />
+              작업 완료
+            </Button>
+          </div>
         </div>
       </div>
     </div>

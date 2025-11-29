@@ -4,20 +4,21 @@ import { useState } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, User, FileText, MessageSquare, CheckCircle2, AlertTriangle, Download } from "lucide-react";
+import { Clock, User, FileText, MessageSquare, CheckCircle2, AlertTriangle, Download, ExternalLink, Star } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
 
 // Mock data
 const mockOrder = {
   id: "ORD-1043",
+  serviceId: "svc-1", // Service ID for linking
   sellerName: "김디자이너",
   sellerAvatar: "https://lh3.googleusercontent.com/aida-public/AB6AXuA7S1UOblJR2cx4JR39YixpEGU1UHui-W6K5kBdV85e76LIcmyTE3BeCcYGa4R4cK59DG7eLmT8zVfyxZ8S2WnPFRgDrmJfESgK0ZXdmLgCKbe7uu4voBOeYYQitTabm9CCRsWS5plwGzHa9jPp6blda4FLhJIS8NGIA_f--lbM_42vO-5QEeNJgs8xKMyHjMw2U6bGuDGJ7N9EIXZU-4Wp7FmYji3ZkER4Ao5ej1MnPXZCgaT2wE7A0Mu-u5vdgxAKUUD1aifcK0c",
   packageName: "Premium 패키지",
   price: 350000,
   deliveryDays: 7,
-  daysRemaining: 3,
-  status: "진행 중",
+  daysRemaining: 0,
+  status: "완료",
   title: "프리미엄 로고 디자인",
   requirements: [
     { type: "text", question: "브랜드 컨셉을 설명해주세요", answer: "심플하고 모던한 느낌을 원합니다" },
@@ -26,8 +27,9 @@ const mockOrder = {
   timeline: [
     { step: "주문 접수", date: "2024-01-10", completed: true },
     { step: "작업 시작", date: "2024-01-11", completed: true },
-    { step: "작업 중", date: "진행 중", completed: false },
-    { step: "납품", date: "예정일: 2024-01-18", completed: false },
+    { step: "작업 중", date: "2024-01-15", completed: true },
+    { step: "납품", date: "2024-01-17", completed: true },
+    { step: "주문 완료", date: "2024-01-18", completed: true },
   ],
   deliverables: [
     { name: "로고_시안_1.ai", size: "2.5MB", uploadedAt: "2024-01-12" },
@@ -54,7 +56,7 @@ export const BuyerOrderDetailPage = () => {
     <div className="min-h-screen bg-[#F8FAFC] p-4 pb-24 md:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-6">
-        <Link href="/orders">
+        <Link href="/client/orders">
           <button
             type="button"
             className="mb-4 flex items-center gap-2 text-sm font-medium text-[#2E5E99] hover:underline"
@@ -83,10 +85,25 @@ export const BuyerOrderDetailPage = () => {
                   <span className="font-semibold text-[#0F172A]">{mockOrder.sellerName}</span>
                 </div>
                 <div className="text-sm text-[#475569]">주문번호: {mockOrder.id}</div>
-                <div className="mt-1 text-base font-semibold text-[#0F172A]">{mockOrder.title}</div>
+                <div className="mt-1 flex items-center gap-2">
+                  <span className="text-base font-semibold text-[#0F172A]">{mockOrder.title}</span>
+                  <Link
+                    href={`/services/${mockOrder.serviceId}`}
+                    className="flex items-center gap-1 rounded-lg px-2 py-1 text-xs font-semibold text-[#2E5E99] transition-colors hover:bg-[#E9EEF8]"
+                  >
+                    서비스 페이지 보기
+                    <ExternalLink className="size-3" />
+                  </Link>
+                </div>
               </div>
             </div>
-            <span className="rounded-full bg-blue-50 border border-blue-200 px-3 py-1 text-xs font-medium text-blue-700">
+            <span className={`rounded-full border px-3 py-1 text-xs font-medium ${
+              mockOrder.status === "완료" 
+                ? "bg-green-50 border-green-200 text-green-700"
+                : mockOrder.status === "진행 중"
+                ? "bg-blue-50 border-blue-200 text-blue-700"
+                : "bg-gray-50 border-gray-200 text-gray-700"
+            }`}>
               {mockOrder.status}
             </span>
           </div>
@@ -124,14 +141,24 @@ export const BuyerOrderDetailPage = () => {
             </div>
           </div>
 
-          {/* Delivery Countdown */}
-          <div className="mt-4 flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-200 p-3">
-            <Clock className="size-5 text-blue-500" />
-            <div>
-              <div className="text-sm font-semibold text-blue-700">남은 시간: {mockOrder.daysRemaining}일</div>
-              <div className="text-xs text-blue-600">납품 예정일까지</div>
+          {/* Completion Status */}
+          {mockOrder.status === "완료" ? (
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-green-50 border border-green-200 p-3">
+              <CheckCircle2 className="size-5 text-green-500" />
+              <div>
+                <div className="text-sm font-semibold text-green-700">주문이 완료되었습니다</div>
+                <div className="text-xs text-green-600">리뷰를 작성해주세요</div>
+              </div>
             </div>
-          </div>
+          ) : (
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-200 p-3">
+              <Clock className="size-5 text-blue-500" />
+              <div>
+                <div className="text-sm font-semibold text-blue-700">남은 시간: {mockOrder.daysRemaining}일</div>
+                <div className="text-xs text-blue-600">납품 예정일까지</div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Requirements */}
@@ -185,28 +212,46 @@ export const BuyerOrderDetailPage = () => {
                 </div>
               ))}
             </div>
-            <div className="mt-4 flex gap-3">
-              <Button
-                type="primary"
-                size="large"
-                shape="round"
-                onClick={handleApproveDelivery}
-                className="flex-1 gap-2 bg-[#16A34A] text-sm font-semibold text-white hover:bg-[#15803D]"
-              >
-                <CheckCircle2 className="size-4" />
-                납품 승인
-              </Button>
-              <Button
-                type="default"
-                size="large"
-                shape="round"
-                onClick={handleRequestRevision}
-                className="flex-1 gap-2 border border-[#F59E0B] bg-white text-sm font-semibold text-[#B45309] hover:bg-[#FEF3C7]"
-              >
-                <AlertTriangle className="size-4" />
-                수정 요청
-              </Button>
-            </div>
+            {mockOrder.status === "완료" ? (
+              /* Review Button - Show when order is completed */
+              <div className="mt-4">
+                <Link href={`/client/orders/${orderId}/review`}>
+                  <Button
+                    type="primary"
+                    size="large"
+                    shape="round"
+                    className="w-full gap-2 bg-gradient-to-r from-[#F59E0B] to-[#F97316] text-sm font-semibold text-white hover:from-[#D97706] hover:to-[#EA580C]"
+                  >
+                    <Star className="size-4" />
+                    리뷰 작성하기
+                  </Button>
+                </Link>
+              </div>
+            ) : (
+              /* Approval/Revision Buttons - Show when order is in progress */
+              <div className="mt-4 flex gap-3">
+                <Button
+                  type="primary"
+                  size="large"
+                  shape="round"
+                  onClick={handleApproveDelivery}
+                  className="flex-1 gap-2 bg-[#16A34A] text-sm font-semibold text-white hover:bg-[#15803D]"
+                >
+                  <CheckCircle2 className="size-4" />
+                  납품 승인
+                </Button>
+                <Button
+                  type="default"
+                  size="large"
+                  shape="round"
+                  onClick={handleRequestRevision}
+                  className="flex-1 gap-2 border border-[#F59E0B] bg-white text-sm font-semibold text-[#B45309] hover:bg-[#FEF3C7]"
+                >
+                  <AlertTriangle className="size-4" />
+                  수정 요청
+                </Button>
+              </div>
+            )}
           </div>
         )}
 

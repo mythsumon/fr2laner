@@ -105,7 +105,7 @@ export const CreateServicePage = () => {
     <div className="min-h-screen bg-[#F8FAFC] p-4 pb-24 md:p-6 lg:p-8">
       {/* Header */}
       <div className="mb-6 flex items-center gap-4">
-        <Link href="/dashboard/services">
+        <Link href="/expert/services">
           <button
             type="button"
             className="flex size-10 items-center justify-center rounded-lg border border-[#E2E8F0] bg-white text-[#475569] transition-colors hover:bg-[#F1F5F9]"

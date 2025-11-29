@@ -55,7 +55,7 @@ export default function SellerSecuritySettingsPage() {
     <div className="min-h-screen bg-gradient-to-b from-[#F8FAFC] to-[#EEF2FF]">
       <main className="mx-auto max-w-4xl px-4 py-6 sm:px-6 lg:px-8">
         <Link
-          href="/dashboard/settings"
+          href="/expert/settings"
           className="mb-6 inline-flex items-center gap-2 text-sm text-[#475569] transition-colors hover:text-[#2E5E99]"
         >
           <ArrowLeft className="size-4" />

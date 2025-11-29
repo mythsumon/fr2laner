@@ -3,8 +3,18 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
 
 export const FindTalentCTA = () => {
+  const { user, isAuthenticated } = useAuth();
+  
+  const getPostProjectUrl = () => {
+    if (isAuthenticated && user?.role === "client") {
+      return "/client/projects/new";
+    }
+    return `/login?redirect=${encodeURIComponent("/client/projects/new")}`;
+  };
+
   return (
     <section className="bg-gradient-to-br from-[#E9EEF8] to-[#F1F5F9] py-16 md:py-24">
       <div className="mx-auto w-full max-w-4xl px-6 text-center">
@@ -15,25 +25,25 @@ export const FindTalentCTA = () => {
           검증된 전문가와 함께 프로젝트를 성공적으로 완료하세요. 무료로 시작할 수 있습니다.
         </p>
         <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-          <Link href="/search?type=sellers">
+          <Link href="/experts">
             <Button
               type="primary"
               size="large"
               shape="round"
               className="group h-14 gap-2 bg-[#2E5E99] px-8 text-base font-semibold text-white shadow-lg transition-all hover:scale-105 hover:bg-[#1d4673] hover:shadow-xl"
             >
-              전문가 찾기
+              전문가 리스트 보기
               <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
             </Button>
           </Link>
-          <Link href="/signup">
+          <Link href={getPostProjectUrl()}>
             <Button
               type="default"
               size="large"
               shape="round"
               className="h-14 border-2 border-[#2E5E99] bg-transparent px-8 text-base font-semibold text-[#2E5E99] transition-all hover:bg-[#2E5E99]/10"
             >
-              무료 가입하기
+              프로젝트 등록하기
             </Button>
           </Link>
         </div>

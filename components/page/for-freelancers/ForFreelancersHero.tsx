@@ -3,8 +3,18 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
 
 export const ForFreelancersHero = () => {
+  const { user, isAuthenticated } = useAuth();
+  
+  const getSignupUrl = () => {
+    if (isAuthenticated && user?.role === "expert") {
+      return "/expert/dashboard";
+    }
+    return "/signup?type=expert";
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-[#2E5E99] via-[#1d4673] to-[#2E5E99] pt-20 pb-16 md:pt-32 md:pb-24">
       <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
@@ -19,14 +29,14 @@ export const ForFreelancersHero = () => {
             전 세계 클라이언트와 연결되고, 원하는 시간에 일하며, 프리랜서로 성공적인 커리어를 쌓아보세요.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link href="/signup">
+            <Link href={getSignupUrl()}>
               <Button
                 type="primary"
                 size="large"
                 shape="round"
                 className="group h-14 gap-2 bg-white px-8 text-base font-semibold text-[#2E5E99] shadow-lg transition-all hover:scale-105 hover:shadow-xl"
               >
-                무료로 시작하기
+                {isAuthenticated && user?.role === "expert" ? "대시보드로 이동" : "무료로 시작하기"}
                 <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>

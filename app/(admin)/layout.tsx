@@ -24,12 +24,18 @@ export default function AdminLayoutWrapper({
         return;
       }
       
+      // Check user status
+      if (user.status !== "active") {
+        router.push("/admin/login?error=account_suspended");
+        return;
+      }
+      
       if (user.role !== "admin") {
         // Redirect to appropriate dashboard based on user role
-        if (user.role === "buyer") {
-          router.push("/buyer-dashboard");
-        } else if (user.role === "seller") {
-          router.push("/dashboard");
+        if (user.role === "client") {
+          router.push("/client/dashboard");
+        } else if (user.role === "expert") {
+          router.push("/expert/dashboard");
         } else {
           router.push("/admin/login");
         }
@@ -38,11 +44,12 @@ export default function AdminLayoutWrapper({
     }
   }, [isLoginPage, isLoading, user, router]);
 
-  // Don't apply dashboard layout to login page
+  // Don't apply dashboard layout to login page - return immediately
   if (isLoginPage) {
     return <>{children}</>;
   }
 
+  // Show loading state for non-login pages
   if (isLoading) {
     return (
       <div className="flex min-h-screen items-center justify-center">
@@ -54,7 +61,7 @@ export default function AdminLayoutWrapper({
     );
   }
 
-  if (!user || user.role !== "admin") {
+  if (!user || user.role !== "admin" || user.status !== "active") {
     return null; // Will redirect in useEffect
   }
 

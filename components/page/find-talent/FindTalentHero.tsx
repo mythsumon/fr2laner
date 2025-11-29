@@ -3,8 +3,18 @@
 import Link from "next/link";
 import { ArrowRight, CheckCircle } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
 
 export const FindTalentHero = () => {
+  const { user, isAuthenticated } = useAuth();
+  
+  const getPostProjectUrl = () => {
+    if (isAuthenticated && user?.role === "client") {
+      return "/client/projects/new";
+    }
+    return `/login?redirect=${encodeURIComponent("/client/projects/new")}`;
+  };
+
   return (
     <section className="relative overflow-hidden bg-gradient-to-br from-[#1d4673] via-[#2E5E99] to-[#1d4673] pt-20 pb-16 md:pt-32 md:pb-24">
       <div className="absolute inset-0 bg-[url('/pattern.svg')] opacity-5" />
@@ -19,18 +29,18 @@ export const FindTalentHero = () => {
             검증된 프리랜서와 협업하여 프로젝트를 성공적으로 완료하세요. 다양한 분야의 전문가가 준비되어 있습니다.
           </p>
           <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
-            <Link href="/search?type=sellers">
+            <Link href="/experts">
               <Button
                 type="primary"
                 size="large"
                 shape="round"
                 className="group h-14 gap-2 bg-white px-8 text-base font-semibold text-[#2E5E99] shadow-lg transition-all hover:scale-105 hover:shadow-xl"
               >
-                전문가 찾기
+                전문가 리스트 보기
                 <ArrowRight className="size-5 transition-transform group-hover:translate-x-1" />
               </Button>
             </Link>
-            <Link href="/signup">
+            <Link href={getPostProjectUrl()}>
               <Button
                 type="default"
                 size="large"

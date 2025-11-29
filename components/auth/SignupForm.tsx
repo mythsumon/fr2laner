@@ -39,15 +39,50 @@ export const SignupForm = ({ mode, onResetMode }: SignupFormProps) => {
       alert("이용약관에 동의해주세요.");
       return;
     }
+    if (!mode) {
+      alert("이용 방식을 선택해주세요.");
+      return;
+    }
+
     setIsSubmitting(true);
-    await new Promise((resolve) => setTimeout(resolve, 800));
-    setIsSubmitting(false);
-    
-    // Redirect based on selected mode
-    if (mode === "client") {
-      router.push("/buyer-dashboard");
-    } else if (mode === "expert") {
-      router.push("/dashboard");
+    try {
+      const response = await fetch("/api/auth/signup", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password,
+          name,
+          role: mode, // "client" | "expert"
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "회원가입에 실패했습니다.");
+      }
+
+      // 로그인 처리 - localStorage에 저장하고 페이지 새로고침으로 auth state 업데이트
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      // role 기반 리다이렉트
+      if (data.user.role === "client") {
+        router.push("/client/dashboard");
+        router.refresh(); // Next.js 13+ router refresh
+      } else if (data.user.role === "expert") {
+        router.push("/expert/dashboard");
+        router.refresh();
+      } else {
+        router.push("/");
+      }
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "회원가입 중 오류가 발생했습니다.");
+    } finally {
+      setIsSubmitting(false);
     }
   };
 

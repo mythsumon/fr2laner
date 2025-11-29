@@ -10,6 +10,8 @@ import {
   MessageSquare,
   Plus,
   Briefcase,
+  ArrowRight,
+  Package,
 } from "lucide-react";
 import { Button } from "@/components/shared/common";
 
@@ -44,7 +46,7 @@ export const SellerDashboardPage = () => {
       <div className="mb-6 rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
         <div className="mb-4 flex items-center justify-between">
           <h2 className="text-lg font-semibold text-[#0F172A]">수익 현황</h2>
-          <Link href="/dashboard/earnings" className="text-sm font-medium text-[#2E5E99] hover:underline">
+          <Link href="/expert/earnings" className="text-sm font-medium text-[#2E5E99] hover:underline">
             자세히 보기 →
           </Link>
         </div>
@@ -75,7 +77,7 @@ export const SellerDashboardPage = () => {
             <div className="mb-2 text-2xl font-bold text-[#0F172A]">
               ₩{stats.withdrawableBalance.toLocaleString()}
             </div>
-            <Link href="/dashboard/earnings/withdraw">
+            <Link href="/expert/earnings/withdraw">
               <Button
                 type="primary"
                 size="small"
@@ -100,10 +102,90 @@ export const SellerDashboardPage = () => {
         </div>
       </div>
 
+      {/* Recent Orders Card */}
+      <div className="mb-6 rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-[#0F172A]">최근 주문</h2>
+          <Link
+            href="/expert/orders"
+            className="flex items-center gap-1 text-sm font-medium text-[#2E5E99] hover:underline"
+          >
+            자세히 보기
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        <div className="space-y-3">
+          {[
+            { id: "ORD-001", buyer: "김클라이언트", title: "프리미엄 로고 디자인", status: "진행 중", price: 500000 },
+            { id: "ORD-002", buyer: "박의뢰인", title: "브랜드 아이덴티티", status: "대기 중", price: 300000 },
+          ].map((order) => (
+            <Link
+              key={order.id}
+              href={`/expert/orders/${order.id}`}
+              className="block rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all hover:border-[#2E5E99] hover:bg-white hover:shadow-md"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <p className="mb-1 text-xs font-semibold text-[#94A3B8]">{order.id}</p>
+                  <h3 className="mb-1 text-sm font-bold text-[#0F172A]">{order.title}</h3>
+                  <p className="text-xs text-[#475569]">
+                    {order.buyer} · <span className="font-semibold text-[#2E5E99]">{order.status}</span>
+                  </p>
+                </div>
+                <div className="text-right">
+                  <p className="text-sm font-bold text-[#0F172A]">₩{order.price.toLocaleString()}</p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
+      {/* Recent Messages Card */}
+      <div className="mb-6 rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <h2 className="text-lg font-semibold text-[#0F172A]">최근 메시지</h2>
+          <Link
+            href="/expert/messages"
+            className="flex items-center gap-1 text-sm font-medium text-[#2E5E99] hover:underline"
+          >
+            자세히 보기
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        <div className="space-y-3">
+          {[
+            { id: "1", buyer: "김클라이언트", message: "시안 확인 부탁드려요!", time: "5분 전", unread: 2 },
+            { id: "2", buyer: "박의뢰인", message: "견적서 전달드렸습니다.", time: "어제", unread: 0 },
+          ].map((msg) => (
+            <Link
+              key={msg.id}
+              href={`/expert/messages/${msg.id}`}
+              className="block rounded-xl border border-[#E2E8F0] bg-[#F8FAFC] p-4 transition-all hover:border-[#2E5E99] hover:bg-white hover:shadow-md"
+            >
+              <div className="flex items-start justify-between">
+                <div className="flex-1">
+                  <div className="mb-1 flex items-center gap-2">
+                    <span className="text-sm font-bold text-[#0F172A]">{msg.buyer}</span>
+                    {msg.unread > 0 && (
+                      <span className="flex size-5 items-center justify-center rounded-full bg-gradient-to-r from-[#2E5E99] to-[#3B82F6] text-[10px] font-bold text-white">
+                        {msg.unread}
+                      </span>
+                    )}
+                  </div>
+                  <p className="line-clamp-1 text-sm text-[#475569]">{msg.message}</p>
+                  <p className="mt-1 text-xs text-[#94A3B8]">{msg.time}</p>
+                </div>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </div>
+
       {/* Order Status Cards */}
       <div className="mb-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
         <Link
-          href="/dashboard/orders?status=active"
+          href="/expert/orders?status=active"
           className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-sm transition-all hover:shadow-md"
         >
           <div className="mb-2 flex items-center gap-2 text-sm text-[#475569]">
@@ -114,7 +196,7 @@ export const SellerDashboardPage = () => {
           <div className="mt-1 text-xs text-[#94A3B8]">주문</div>
         </Link>
         <Link
-          href="/dashboard/orders?status=pending"
+          href="/expert/orders?status=pending"
           className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-sm transition-all hover:shadow-md"
         >
           <div className="mb-2 flex items-center gap-2 text-sm text-[#475569]">
@@ -125,7 +207,7 @@ export const SellerDashboardPage = () => {
           <div className="mt-1 text-xs text-[#94A3B8]">주문</div>
         </Link>
         <Link
-          href="/dashboard/orders?status=revision"
+          href="/expert/orders?status=revision"
           className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-sm transition-all hover:shadow-md"
         >
           <div className="mb-2 flex items-center gap-2 text-sm text-[#475569]">
@@ -136,7 +218,7 @@ export const SellerDashboardPage = () => {
           <div className="mt-1 text-xs text-[#94A3B8]">주문</div>
         </Link>
         <Link
-          href="/dashboard/orders?status=completed"
+          href="/expert/orders?status=completed"
           className="rounded-xl border border-[#E2E8F0] bg-white p-4 shadow-sm transition-all hover:shadow-md"
         >
           <div className="mb-2 flex items-center gap-2 text-sm text-[#475569]">
@@ -189,7 +271,7 @@ export const SellerDashboardPage = () => {
         <h2 className="mb-4 text-lg font-semibold text-[#0F172A]">빠른 메뉴</h2>
         <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4">
           <Link
-            href="/dashboard/services/new"
+            href="/expert/services/new"
             className="flex items-center gap-3 rounded-lg border border-[#E2E8F0] bg-white p-4 transition-all hover:border-[#2E5E99] hover:shadow-sm"
           >
             <div className="flex size-10 items-center justify-center rounded-lg bg-[#2E5E99]/10">
@@ -198,7 +280,7 @@ export const SellerDashboardPage = () => {
             <span className="font-medium text-[#0F172A]">서비스 등록</span>
           </Link>
           <Link
-            href="/dashboard/services"
+            href="/expert/services"
             className="flex items-center gap-3 rounded-lg border border-[#E2E8F0] bg-white p-4 transition-all hover:border-[#2E5E99] hover:shadow-sm"
           >
             <div className="flex size-10 items-center justify-center rounded-lg bg-blue-50">
@@ -207,7 +289,7 @@ export const SellerDashboardPage = () => {
             <span className="font-medium text-[#0F172A]">내 서비스</span>
           </Link>
           <Link
-            href="/dashboard/messages"
+            href="/expert/messages"
             className="flex items-center gap-3 rounded-lg border border-[#E2E8F0] bg-white p-4 transition-all hover:border-[#2E5E99] hover:shadow-sm"
           >
             <div className="flex size-10 items-center justify-center rounded-lg bg-green-50">
@@ -216,7 +298,7 @@ export const SellerDashboardPage = () => {
             <span className="font-medium text-[#0F172A]">메시지</span>
           </Link>
           <Link
-            href="/dashboard/earnings"
+            href="/expert/earnings"
             className="flex items-center gap-3 rounded-lg border border-[#E2E8F0] bg-white p-4 transition-all hover:border-[#2E5E99] hover:shadow-sm"
           >
             <div className="flex size-10 items-center justify-center rounded-lg bg-purple-50">
@@ -229,7 +311,7 @@ export const SellerDashboardPage = () => {
 
       {/* Floating Action Button - Mobile */}
       <Link
-        href="/dashboard/services/new"
+        href="/expert/services/new"
         className="fixed bottom-6 right-6 z-50 flex size-14 items-center justify-center rounded-full bg-[#2E5E99] text-white shadow-lg transition-all hover:scale-110 hover:bg-[#1d4673] hover:shadow-xl lg:hidden"
         aria-label="새 서비스 등록"
       >

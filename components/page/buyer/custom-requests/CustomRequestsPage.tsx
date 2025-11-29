@@ -87,7 +87,7 @@ export const CustomRequestsPage = () => {
             <h1 className="text-2xl font-bold text-[#0F172A] sm:text-3xl">커스텀 요청</h1>
             <p className="mt-1 text-sm text-[#475569]">요청서 작성 및 제안 관리</p>
           </div>
-          <Link href="/custom-requests/new">
+          <Link href="/client/custom-requests/new">
             <Button
               type="primary"
               size="large"
@@ -129,7 +129,7 @@ export const CustomRequestsPage = () => {
               <FileText className="mx-auto size-12 text-[#94A3B8]" />
               <p className="mt-4 text-lg font-semibold text-[#475569]">요청이 없습니다.</p>
               <p className="mt-2 text-sm text-[#94A3B8]">새로운 커스텀 요청을 만들어보세요.</p>
-              <Link href="/custom-requests/new" className="mt-4 inline-block">
+              <Link href="/client/custom-requests/new" className="mt-4 inline-block">
                 <Button
                   type="primary"
                   size="large"

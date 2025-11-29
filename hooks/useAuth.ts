@@ -2,13 +2,7 @@
 
 import { useEffect, useState, useCallback } from "react";
 import { useRouter, usePathname } from "next/navigation";
-
-export interface User {
-  id: string;
-  email: string;
-  name: string;
-  role: "buyer" | "seller" | "admin";
-}
+import type { User, UserRole } from "@/types/common";
 
 export const useAuth = () => {
   const [user, setUser] = useState<User | null>(null);
@@ -51,7 +45,7 @@ export const useAuth = () => {
     return () => window.removeEventListener("storage", handleStorageChange);
   }, []);
 
-  const login = (userData: User, token: string) => {
+  const login = (userData: Omit<User, "password_hash">, token: string) => {
     localStorage.setItem("token", token);
     localStorage.setItem("user", JSON.stringify(userData));
     setUser(userData);
@@ -64,29 +58,30 @@ export const useAuth = () => {
     router.push("/");
   };
 
-  const requireAuth = useCallback((requiredRole?: "buyer" | "seller" | "admin") => {
+  const requireAuth = useCallback((requiredRole?: UserRole) => {
     if (isLoading) return false;
     
     if (!user) {
       // Determine login page based on current path
-      if (pathname?.startsWith("/admin")) {
-        router.push("/admin/login");
-      } else if (pathname?.startsWith("/dashboard")) {
-        router.push("/login?mode=expert");
-      } else {
-        router.push("/login?mode=client");
-      }
+      const redirectUrl = pathname ? `?redirect=${encodeURIComponent(pathname)}` : "";
+      router.push(`/login${redirectUrl}`);
+      return false;
+    }
+
+    // status 체크
+    if (user.status !== "active") {
+      router.push("/login?error=account_suspended");
       return false;
     }
 
     if (requiredRole && user.role !== requiredRole) {
-      // Redirect to appropriate dashboard
-      if (user.role === "buyer") {
-        router.push("/buyer-dashboard");
-      } else if (user.role === "seller") {
-        router.push("/dashboard");
-      } else if (user.role === "admin") {
+      // Redirect to appropriate dashboard based on user's role
+      if (user.role === "admin") {
         router.push("/admin/dashboard");
+      } else if (user.role === "client") {
+        router.push("/client/dashboard");
+      } else if (user.role === "expert") {
+        router.push("/expert/dashboard");
       }
       return false;
     }
