@@ -163,26 +163,37 @@ export const ServiceDetailPage = () => {
           console.warn("Failed to parse reviews from localStorage", e);
         }
       }
+    }
+  }, [serviceId]);
 
-      // Check if user can write review (has completed order for this service)
-      if (isAuthenticated && user?.role === "client") {
-        const storedOrders = localStorage.getItem("orders");
-        if (storedOrders) {
-          try {
-            const orders: any[] = JSON.parse(storedOrders);
-            const completedOrder = orders.find(
-              (o) => o.serviceId === serviceId && o.status === "completed" && o.buyerId === user.id
-            );
-            // Check if review already exists
-            const existingReview = reviews.find((r) => r.buyerId === user.id && r.serviceId === serviceId);
-            setCanWriteReview(!!completedOrder && !existingReview);
-          } catch (e) {
-            console.warn("Failed to parse orders from localStorage", e);
+  // Check if user can write review (has completed order for this service)
+  useEffect(() => {
+    if (typeof window !== "undefined" && isAuthenticated && user?.role === "client") {
+      const storedOrders = localStorage.getItem("orders");
+      const storedReviews = localStorage.getItem("reviews");
+      if (storedOrders) {
+        try {
+          const orders: any[] = JSON.parse(storedOrders);
+          const completedOrder = orders.find(
+            (o) => o.serviceId === serviceId && o.status === "completed" && o.buyerId === user.id
+          );
+          // Check if review already exists
+          let existingReview = false;
+          if (storedReviews) {
+            try {
+              const allReviews: Review[] = JSON.parse(storedReviews);
+              existingReview = allReviews.some((r) => r.buyerId === user.id && r.serviceId === serviceId);
+            } catch (e) {
+              console.warn("Failed to parse reviews", e);
+            }
           }
+          setCanWriteReview(!!completedOrder && !existingReview);
+        } catch (e) {
+          console.warn("Failed to parse orders from localStorage", e);
         }
       }
     }
-  }, [serviceId, isAuthenticated, user, reviews.length]);
+  }, [serviceId, isAuthenticated, user?.id, user?.role]);
 
   // Calculate average rating
   const averageRating = reviews.length > 0

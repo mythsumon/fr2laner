@@ -92,7 +92,7 @@ export const CreateReviewPage = () => {
       serviceId: serviceId,
       buyerId: user?.id || "",
       buyerName: user?.name || "",
-      buyerAvatar: user?.avatar || "",
+      buyerAvatar: "",
       sellerId: "", // Will be filled from service
       sellerName: "", // Will be filled from service
       rating: formData.rating,
