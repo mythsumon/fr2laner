@@ -16,9 +16,9 @@ export default function SellerDashboardLayoutWrapper({
 
   useEffect(() => {
     if (!isLoading && !user) {
-      requireAuth("seller");
-    } else if (!isLoading && user && user.role !== "seller") {
-      requireAuth("seller");
+      requireAuth("expert");
+    } else if (!isLoading && user && user.role !== "expert") {
+      requireAuth("expert");
     }
   }, [isLoading, user, requireAuth]);
 
@@ -33,7 +33,7 @@ export default function SellerDashboardLayoutWrapper({
     );
   }
 
-  if (!user || user.role !== "seller") {
+  if (!user || user.role !== "expert") {
     return null; // Will redirect in useEffect
   }
 
