@@ -16,9 +16,9 @@ export default function BuyerDashboardLayoutWrapper({
 
   useEffect(() => {
     if (!isLoading && !user) {
-      requireAuth("buyer");
-    } else if (!isLoading && user && user.role !== "buyer") {
-      requireAuth("buyer");
+      requireAuth("client");
+    } else if (!isLoading && user && user.role !== "client") {
+      requireAuth("client");
     }
   }, [isLoading, user, requireAuth]);
 
@@ -33,7 +33,7 @@ export default function BuyerDashboardLayoutWrapper({
     );
   }
 
-  if (!user || user.role !== "buyer") {
+  if (!user || user.role !== "client") {
     return null; // Will redirect in useEffect
   }
 
