@@ -60,19 +60,25 @@ export const BuyerSettingsPage = () => {
       id: "notifications",
       label: "알림 설정",
       icon: Bell,
-      href: "/settings/notifications",
+      href: "/client/settings/notifications",
     },
     {
       id: "payment",
       label: "결제 수단",
       icon: CreditCard,
-      href: "/settings/payment",
+      href: "/client/settings/payment",
+    },
+    {
+      id: "payment-history",
+      label: "결제 내역",
+      icon: CreditCard,
+      href: "/client/payment-history",
     },
     {
       id: "security",
       label: "보안 및 인증",
       icon: ShieldCheck,
-      href: "/settings/security",
+      href: "/client/settings/security",
     },
   ];
 

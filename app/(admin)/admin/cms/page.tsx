@@ -107,9 +107,45 @@ export default function CMSManagementPage() {
         }))
       : initialBanners
   );
-  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(initialBlogPosts);
-  const [faqs, setFaqs] = useState<FAQ[]>(initialFAQs);
-  const [legalPages] = useState<LegalPage[]>(initialLegalPages);
+  const [blogPosts, setBlogPosts] = useState<BlogPost[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("cms_blog_posts");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          return initialBlogPosts;
+        }
+      }
+    }
+    return initialBlogPosts;
+  });
+  const [faqs, setFaqs] = useState<FAQ[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("cms_faqs");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          return initialFAQs;
+        }
+      }
+    }
+    return initialFAQs;
+  });
+  const [legalPages] = useState<LegalPage[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("cms_legal_pages");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          return initialLegalPages;
+        }
+      }
+    }
+    return initialLegalPages;
+  });
 
   const [addBannerModal, setAddBannerModal] = useState(false);
   const [editBannerModal, setEditBannerModal] = useState<{ isOpen: boolean; banner: Banner | null }>({
@@ -241,7 +277,12 @@ export default function CMSManagementPage() {
       date: new Date().toISOString().split("T")[0],
       status: "draft",
     };
-    setBlogPosts([...blogPosts, newPost]);
+    const updatedPosts = [...blogPosts, newPost];
+    setBlogPosts(updatedPosts);
+    // Save to localStorage for Website access
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cms_blog_posts", JSON.stringify(updatedPosts));
+    }
     showToast("블로그 게시물이 추가되었습니다.", "success");
     setAddBlogModal(false);
   };
@@ -256,7 +297,12 @@ export default function CMSManagementPage() {
       question: formData.get("question") as string,
       answer: formData.get("answer") as string,
     };
-    setFaqs([...faqs, newFAQ]);
+    const updatedFaqs = [...faqs, newFAQ];
+    setFaqs(updatedFaqs);
+    // Save to localStorage for Website/Buyer/Seller access
+    if (typeof window !== "undefined") {
+      localStorage.setItem("cms_faqs", JSON.stringify(updatedFaqs));
+    }
     showToast("FAQ가 추가되었습니다.", "success");
     setAddFAQModal(false);
   };
@@ -267,7 +313,12 @@ export default function CMSManagementPage() {
 
   const confirmDeleteFAQ = () => {
     if (deleteFAQModal.faq) {
-      setFaqs(faqs.filter((f) => f.id !== deleteFAQModal.faq!.id));
+      const updatedFaqs = faqs.filter((f) => f.id !== deleteFAQModal.faq!.id);
+      setFaqs(updatedFaqs);
+      // Save to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("cms_faqs", JSON.stringify(updatedFaqs));
+      }
       showToast("FAQ가 삭제되었습니다.", "success");
       setDeleteFAQModal({ isOpen: false, faq: null });
     }

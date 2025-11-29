@@ -3,49 +3,30 @@
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 
-const footerSections = [
-  {
-    titleKey: "footer.categories.title",
-    itemKeys: [
-      "footer.categories.items.logoDesign",
-      "footer.categories.items.webDevelopment",
-      "footer.categories.items.videoEditing",
-      "footer.categories.items.contentWriting",
-    ],
-  },
-  {
-    titleKey: "footer.about.title",
-    itemKeys: [
-      "footer.about.items.aboutUs",
-      "footer.about.items.careers",
-      "footer.about.items.press",
-      "footer.about.items.partnerships",
-    ],
-  },
+const footerSections: Array<{
+  titleKey: string;
+  itemKeys: string[];
+  links?: Array<{ key: string; href: string }>;
+}> = [
   {
     titleKey: "footer.support.title",
     itemKeys: [
       "footer.support.items.help",
-      "footer.support.items.trust",
-      "footer.support.items.selling",
-      "footer.support.items.buying",
     ],
+    links: [{ key: "help", href: "/faq" }],
   },
   {
     titleKey: "footer.community.title",
     itemKeys: [
-      "footer.community.items.events",
       "footer.community.items.blog",
-      "footer.community.items.forum",
-      "footer.community.items.podcast",
     ],
+    links: [{ key: "blog", href: "/blog" }],
   },
 ];
 
 const legalLinks = [
-  { labelKey: "footer.legal.terms", href: "#" },
-  { labelKey: "footer.legal.privacy", href: "#" },
-  { labelKey: "footer.legal.sitemap", href: "#" },
+  { labelKey: "footer.legal.terms", href: "/terms" },
+  { labelKey: "footer.legal.privacy", href: "/privacy" },
 ];
 
 export const Footer = () => {
@@ -92,13 +73,24 @@ export const Footer = () => {
               <div key={section.titleKey}>
                 <h3 className="text-base font-semibold text-[#1A202C]">{t(section.titleKey)}</h3>
                 <ul className="mt-5 space-y-3 text-sm text-[#6B7280]">
-                  {section.itemKeys.map((itemKey) => (
-                    <li key={itemKey}>
-                      <Link href="#" className="transition-colors hover:text-[#2E5E99]">
-                        {t(itemKey)}
-                      </Link>
-                    </li>
-                  ))}
+                  {section.itemKeys.map((itemKey) => {
+                    // Check if this item has a custom link
+                    const customLink = section.links?.find((link) => {
+                      if (itemKey.includes("blog") && link.key === "blog") return true;
+                      if (itemKey.includes("help") && link.key === "help") return true;
+                      return false;
+                    });
+                    return (
+                      <li key={itemKey}>
+                        <Link
+                          href={customLink?.href || "#"}
+                          className="transition-colors hover:text-[#2E5E99]"
+                        >
+                          {t(itemKey)}
+                        </Link>
+                      </li>
+                    );
+                  })}
                 </ul>
               </div>
             ))}

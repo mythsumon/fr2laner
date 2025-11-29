@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Filter,
@@ -71,7 +71,25 @@ export default function SupportTicketsPage() {
   const [searchQuery, setSearchQuery] = useState("");
   const [selectedStatus, setSelectedStatus] = useState("all");
   const { toast, showToast, hideToast } = useToast();
-  const [tickets, setTickets] = useState<Ticket[]>(initialTickets);
+  const [tickets, setTickets] = useState<Ticket[]>([]);
+
+  // Load tickets from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedTickets = localStorage.getItem("support_tickets");
+      if (storedTickets) {
+        try {
+          const parsedTickets = JSON.parse(storedTickets);
+          setTickets(parsedTickets);
+        } catch (e) {
+          console.warn("Failed to parse support_tickets from localStorage", e);
+          setTickets(initialTickets);
+        }
+      } else {
+        setTickets(initialTickets);
+      }
+    }
+  }, []);
   const [assignModal, setAssignModal] = useState<{ isOpen: boolean; ticket: Ticket | null }>({
     isOpen: false,
     ticket: null,

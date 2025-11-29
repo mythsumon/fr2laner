@@ -1,10 +1,10 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useParams } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
-import { Clock, User, Upload, Send, FileText, MessageSquare, ExternalLink, CheckCircle2 } from "lucide-react";
+import { Clock, User, Upload, Send, FileText, MessageSquare, ExternalLink, CheckCircle2, AlertTriangle } from "lucide-react";
 import { Button } from "@/components/shared/common";
 
 // Mock data
@@ -32,6 +32,24 @@ const mockOrder = {
 export const OrderDetailPage = () => {
   const params = useParams();
   const [message, setMessage] = useState("");
+  const [disputes, setDisputes] = useState<any[]>([]);
+  const orderId = params.id as string;
+
+  useEffect(() => {
+    // Load disputes for this order
+    if (typeof window !== "undefined") {
+      const storedDisputes = localStorage.getItem("disputes");
+      if (storedDisputes) {
+        try {
+          const allDisputes = JSON.parse(storedDisputes);
+          const orderDisputes = allDisputes.filter((d: any) => d.orderId === orderId);
+          setDisputes(orderDisputes);
+        } catch (e) {
+          console.warn("Failed to parse disputes from localStorage", e);
+        }
+      }
+    }
+  }, [orderId]);
 
   const handleSendDelivery = () => {
     console.log("Send delivery");
@@ -125,6 +143,19 @@ export const OrderDetailPage = () => {
               <div className="text-xs text-blue-600">납품 예정일까지</div>
             </div>
           </div>
+
+          {/* Dispute Alert */}
+          {disputes.length > 0 && disputes.some((d) => d.status === "open") && (
+            <div className="mt-4 flex items-center gap-2 rounded-lg bg-red-50 border border-red-200 p-3">
+              <AlertTriangle className="size-5 text-red-500" />
+              <div className="flex-1">
+                <div className="text-sm font-semibold text-red-700">분쟁 신고가 접수되었습니다</div>
+                <div className="text-xs text-red-600">
+                  {disputes.filter((d) => d.status === "open").length}개의 진행 중인 분쟁이 있습니다
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
         {/* Requirements */}

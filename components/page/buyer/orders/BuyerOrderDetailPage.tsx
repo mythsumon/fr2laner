@@ -7,6 +7,7 @@ import Link from "next/link";
 import { Clock, User, FileText, MessageSquare, CheckCircle2, AlertTriangle, Download, ExternalLink, Star } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
+import { DisputeModal } from "@/components/shared/DisputeModal";
 
 // Mock data
 const mockOrder = {
@@ -41,6 +42,7 @@ export const BuyerOrderDetailPage = () => {
   useBodyClass("dashboard-page");
   const params = useParams();
   const orderId = params.id as string;
+  const [showDisputeModal, setShowDisputeModal] = useState(false);
 
   const handleApproveDelivery = () => {
     console.log("Approve delivery");
@@ -50,6 +52,16 @@ export const BuyerOrderDetailPage = () => {
   const handleRequestRevision = () => {
     console.log("Request revision");
     // Add revision request logic here
+  };
+
+  const handleDisputeSubmit = (dispute: {
+    orderId: string;
+    reason: string;
+    description: string;
+    priority: "high" | "medium" | "low";
+  }) => {
+    console.log("Dispute submitted:", dispute);
+    // Additional logic if needed
   };
 
   return (
@@ -229,26 +241,38 @@ export const BuyerOrderDetailPage = () => {
               </div>
             ) : (
               /* Approval/Revision Buttons - Show when order is in progress */
-              <div className="mt-4 flex gap-3">
-                <Button
-                  type="primary"
-                  size="large"
-                  shape="round"
-                  onClick={handleApproveDelivery}
-                  className="flex-1 gap-2 bg-[#16A34A] text-sm font-semibold text-white hover:bg-[#15803D]"
-                >
-                  <CheckCircle2 className="size-4" />
-                  납품 승인
-                </Button>
+              <div className="mt-4 space-y-3">
+                <div className="flex gap-3">
+                  <Button
+                    type="primary"
+                    size="large"
+                    shape="round"
+                    onClick={handleApproveDelivery}
+                    className="flex-1 gap-2 bg-[#16A34A] text-sm font-semibold text-white hover:bg-[#15803D]"
+                  >
+                    <CheckCircle2 className="size-4" />
+                    납품 승인
+                  </Button>
+                  <Button
+                    type="default"
+                    size="large"
+                    shape="round"
+                    onClick={handleRequestRevision}
+                    className="flex-1 gap-2 border border-[#F59E0B] bg-white text-sm font-semibold text-[#B45309] hover:bg-[#FEF3C7]"
+                  >
+                    <AlertTriangle className="size-4" />
+                    수정 요청
+                  </Button>
+                </div>
                 <Button
                   type="default"
                   size="large"
                   shape="round"
-                  onClick={handleRequestRevision}
-                  className="flex-1 gap-2 border border-[#F59E0B] bg-white text-sm font-semibold text-[#B45309] hover:bg-[#FEF3C7]"
+                  onClick={() => setShowDisputeModal(true)}
+                  className="w-full gap-2 border border-red-300 bg-white text-sm font-semibold text-red-600 hover:bg-red-50"
                 >
                   <AlertTriangle className="size-4" />
-                  수정 요청
+                  분쟁 신고
                 </Button>
               </div>
             )}
@@ -291,6 +315,16 @@ export const BuyerOrderDetailPage = () => {
           </div>
         </div>
       </div>
+
+      {/* Dispute Modal */}
+      <DisputeModal
+        isOpen={showDisputeModal}
+        onClose={() => setShowDisputeModal(false)}
+        orderId={mockOrder.id}
+        orderTitle={mockOrder.title}
+        orderAmount={mockOrder.price}
+        onSubmit={handleDisputeSubmit}
+      />
     </div>
   );
 };

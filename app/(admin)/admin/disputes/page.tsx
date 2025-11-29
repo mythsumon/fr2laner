@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Search,
   Filter,
@@ -59,7 +59,25 @@ export default function DisputesManagementPage() {
   const [selectedStatus, setSelectedStatus] = useState("all");
   const [activeTab, setActiveTab] = useState("open");
   const { toast, showToast, hideToast } = useToast();
-  const [disputes, setDisputes] = useState<Dispute[]>(initialDisputes);
+  const [disputes, setDisputes] = useState<Dispute[]>([]);
+
+  // Load disputes from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const storedDisputes = localStorage.getItem("disputes");
+      if (storedDisputes) {
+        try {
+          const parsedDisputes = JSON.parse(storedDisputes);
+          setDisputes(parsedDisputes);
+        } catch (e) {
+          console.warn("Failed to parse disputes from localStorage", e);
+          setDisputes(initialDisputes);
+        }
+      } else {
+        setDisputes(initialDisputes);
+      }
+    }
+  }, []);
   const [resolveModal, setResolveModal] = useState<{ isOpen: boolean; dispute: Dispute | null }>({
     isOpen: false,
     dispute: null,

@@ -78,7 +78,19 @@ export default function MarketingManagementPage() {
     banners: homeBanners,
     updateBanners,
   } = useHomeData();
-  const [coupons, setCoupons] = useState<Coupon[]>(initialCoupons);
+  const [coupons, setCoupons] = useState<Coupon[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("marketing_coupons");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          return initialCoupons;
+        }
+      }
+    }
+    return initialCoupons;
+  });
   const [featuredServices, setFeaturedServices] = useState<FeaturedService[]>(
     homeFeaturedServices.length > 0
       ? homeFeaturedServices.map((s) => ({
@@ -139,7 +151,12 @@ export default function MarketingManagementPage() {
       expiry: formData.get("expiry") as string,
       status: "active",
     };
-    setCoupons([...coupons, newCoupon]);
+    const updatedCoupons = [...coupons, newCoupon];
+    setCoupons(updatedCoupons);
+    // Save to localStorage for Buyer access
+    if (typeof window !== "undefined") {
+      localStorage.setItem("marketing_coupons", JSON.stringify(updatedCoupons));
+    }
     showToast("쿠폰이 생성되었습니다.", "success");
     setAddCouponModal(false);
   };
@@ -152,20 +169,23 @@ export default function MarketingManagementPage() {
     e.preventDefault();
     if (editCouponModal.coupon) {
       const formData = new FormData(e.currentTarget);
-      setCoupons(
-        coupons.map((c) =>
-          c.id === editCouponModal.coupon!.id
-            ? {
-                ...c,
-                code: formData.get("code") as string,
-                type: formData.get("type") as "percentage" | "amount",
-                value: parseFloat(formData.get("value") as string) || 0,
-                limit: parseInt(formData.get("limit") as string) || 0,
-                expiry: formData.get("expiry") as string,
-              }
-            : c
-        )
+      const updatedCoupons = coupons.map((c) =>
+        c.id === editCouponModal.coupon!.id
+          ? {
+              ...c,
+              code: formData.get("code") as string,
+              type: formData.get("type") as "percentage" | "amount",
+              value: parseFloat(formData.get("value") as string) || 0,
+              limit: parseInt(formData.get("limit") as string) || 0,
+              expiry: formData.get("expiry") as string,
+            }
+          : c
       );
+      setCoupons(updatedCoupons);
+      // Save to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("marketing_coupons", JSON.stringify(updatedCoupons));
+      }
       showToast("쿠폰이 업데이트되었습니다.", "success");
       setEditCouponModal({ isOpen: false, coupon: null });
     }
@@ -177,7 +197,12 @@ export default function MarketingManagementPage() {
 
   const confirmDeleteCoupon = () => {
     if (deleteCouponModal.coupon) {
-      setCoupons(coupons.filter((c) => c.id !== deleteCouponModal.coupon!.id));
+      const updatedCoupons = coupons.filter((c) => c.id !== deleteCouponModal.coupon!.id);
+      setCoupons(updatedCoupons);
+      // Save to localStorage
+      if (typeof window !== "undefined") {
+        localStorage.setItem("marketing_coupons", JSON.stringify(updatedCoupons));
+      }
       showToast("쿠폰이 삭제되었습니다.", "success");
       setDeleteCouponModal({ isOpen: false, coupon: null });
     }
