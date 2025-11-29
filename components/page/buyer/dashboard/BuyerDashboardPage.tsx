@@ -1,11 +1,13 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { Search, Filter, Star, Heart, Sparkles, TrendingUp, Clock, Award, X, Package, FolderKanban, ArrowRight } from "lucide-react";
+import { Search, Filter, Star, Heart, Sparkles, TrendingUp, Clock, Award, X, Package, FolderKanban, ArrowRight, Gift, Tag } from "lucide-react";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
+import type { Coupon } from "@/components/shared/CouponCard";
 
 const categories = [
   { id: "design", label: "디자인", icon: "🎨", color: "from-purple-500 to-pink-500" },
@@ -157,9 +159,11 @@ const ServiceCard = ({ service, onWishlistToggle, isInWishlist = false }: Servic
 
 export const BuyerDashboardPage = () => {
   const router = useRouter();
+  const { user } = useAuth();
   const [searchQuery, setSearchQuery] = useState("");
   const [showFilters, setShowFilters] = useState(false);
   const [wishlistItems, setWishlistItems] = useState<Set<string>>(new Set());
+  const [myCoupons, setMyCoupons] = useState<Coupon[]>([]);
 
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
@@ -188,6 +192,37 @@ export const BuyerDashboardPage = () => {
     // Refresh AI recommendations
     window.location.reload();
   };
+
+  // Load my coupons
+  useEffect(() => {
+    if (user?.id && typeof window !== "undefined") {
+      const storedClaimed = localStorage.getItem(`user_claimed_coupons_${user.id}`);
+      let claimedIds: number[] = [];
+      if (storedClaimed) {
+        try {
+          claimedIds = JSON.parse(storedClaimed);
+        } catch (e) {
+          console.warn("Failed to parse claimed coupons", e);
+        }
+      }
+
+      const storedCoupons = localStorage.getItem("marketing_coupons");
+      if (storedCoupons) {
+        try {
+          const allCoupons: Coupon[] = JSON.parse(storedCoupons);
+          const claimed = allCoupons.filter(
+            (c) =>
+              claimedIds.includes(c.id) &&
+              c.status === "active" &&
+              new Date(c.expiry) > new Date()
+          );
+          setMyCoupons(claimed);
+        } catch (e) {
+          console.warn("Failed to parse coupons", e);
+        }
+      }
+    }
+  }, [user?.id]);
 
   // Mock recent orders and projects
   const recentOrders = [
@@ -287,6 +322,67 @@ export const BuyerDashboardPage = () => {
           </div>
         </section>
       </div>
+
+      {/* My Coupons Section */}
+      <section className="rounded-3xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
+        <div className="mb-4 flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Gift className="size-5 text-[#2E5E99]" />
+            <h2 className="text-xl font-bold text-[#0F172A]">내 쿠폰</h2>
+            {myCoupons.length > 0 && (
+              <span className="rounded-full bg-[#2E5E99]/10 px-2 py-1 text-xs font-semibold text-[#2E5E99]">
+                {myCoupons.length}개
+              </span>
+            )}
+          </div>
+          <Link
+            href="/client/coupons"
+            className="flex items-center gap-1 text-sm font-semibold text-[#2E5E99] transition-colors hover:text-[#1d4673] hover:underline"
+          >
+            모든 쿠폰 보기
+            <ArrowRight className="size-4" />
+          </Link>
+        </div>
+        {myCoupons.length === 0 ? (
+          <div className="py-8 text-center">
+            <Tag className="mx-auto mb-3 size-12 text-[#94A3B8]" />
+            <p className="mb-2 text-sm text-[#94A3B8]">받은 쿠폰이 없습니다.</p>
+            <Link
+              href="/coupons"
+              className="inline-flex items-center gap-2 rounded-lg bg-[#2E5E99] px-4 py-2 text-sm font-semibold text-white transition-colors hover:bg-[#1d4673]"
+            >
+              <Gift className="size-4" />
+              쿠폰 받으러 가기
+            </Link>
+          </div>
+        ) : (
+          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+            {myCoupons.slice(0, 3).map((coupon) => (
+              <Link
+                key={coupon.id}
+                href="/client/coupons"
+                className="block rounded-2xl border-2 border-[#2E5E99] bg-gradient-to-br from-[#2E5E99]/5 to-white p-4 transition-all hover:shadow-md"
+              >
+                <div className="mb-2 flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <Tag className="size-4 text-[#2E5E99]" />
+                    <span className="font-mono font-semibold text-[#2E5E99]">{coupon.code}</span>
+                  </div>
+                </div>
+                <div className="mb-2">
+                  <span className="text-lg font-bold text-[#2E5E99]">
+                    {coupon.type === "percentage" ? `${coupon.value}%` : `₩${coupon.value.toLocaleString()}`}
+                  </span>
+                  <span className="ml-1 text-sm text-gray-600">할인</span>
+                </div>
+                <p className="text-xs text-gray-500">
+                  만료일: {new Date(coupon.expiry).toLocaleDateString("ko-KR")}
+                </p>
+              </Link>
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Search Section */}
       <form onSubmit={handleSearch} className="flex flex-col gap-3 sm:flex-row">

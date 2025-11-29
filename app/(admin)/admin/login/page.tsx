@@ -4,7 +4,7 @@ import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { Eye, EyeOff, Shield, Lock, Mail, AlertCircle, Copy, Check } from "lucide-react";
+import { Eye, EyeOff, Shield, Lock, Mail, AlertCircle, Copy, Check, Zap } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { LanguageSelector } from "@/components/shared/ui";
 
@@ -44,6 +44,7 @@ export default function SuperAdminLoginPage() {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
   const [copiedField, setCopiedField] = useState<string | null>(null);
+  const [quickLoginLoading, setQuickLoginLoading] = useState<number | null>(null);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -101,6 +102,53 @@ export default function SuperAdminLoginPage() {
     });
   };
 
+  const handleQuickLogin = async (account: SampleAccount, index: number) => {
+    setQuickLoginLoading(index);
+    setError("");
+
+    try {
+      // Simulate login validation
+      const isValid = 
+        (account.email === "admin@example.com" && account.password === "admin1234") ||
+        (account.email === "moderator@example.com" && account.password === "moderator1234") ||
+        account.email.includes("@") && account.password.length >= 6;
+
+      if (!isValid) {
+        setError(t("adminLogin.errors.invalid"));
+        setQuickLoginLoading(null);
+        return;
+      }
+
+      // Simulate login delay
+      await new Promise((resolve) => setTimeout(resolve, 800));
+      
+      // Save admin user data to localStorage
+      const userData = {
+        id: "admin-1",
+        email: account.email,
+        name: account.email.includes("moderator") ? t("adminLogin.sampleAccounts.roles.moderator") : t("adminLogin.sampleAccounts.roles.superAdmin"),
+        role: "admin" as const,
+        status: "active" as const,
+        created_at: new Date().toISOString(),
+      };
+      const token = `admin-token-${Date.now()}`;
+      
+      localStorage.setItem("token", token);
+      localStorage.setItem("user", JSON.stringify(userData));
+      
+      // Trigger storage event to update auth state in other components
+      window.dispatchEvent(new Event("storage"));
+      
+      // Use window.location for full page reload to ensure auth state is fresh
+      setTimeout(() => {
+        window.location.href = "/admin/dashboard";
+      }, 100);
+    } catch (err) {
+      setError(t("adminLogin.errors.generic"));
+      setQuickLoginLoading(null);
+    }
+  };
+
   const handleCopy = async (text: string, field: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -135,6 +183,22 @@ export default function SuperAdminLoginPage() {
           <div className="mb-4 flex justify-end sm:hidden">
             <LanguageSelector />
           </div>
+          
+          {/* ChatGPT/테스트 사용자 안내 */}
+          <div className="mb-6 rounded-xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-yellow-50 p-4">
+            <div className="flex items-start gap-3">
+              <div className="flex-1">
+                <div className="mb-1 flex items-center gap-2">
+                  <span className="text-lg">🤖</span>
+                  <h3 className="text-sm font-bold text-amber-900">ChatGPT / 테스트 사용자를 위한 빠른 로그인</h3>
+                </div>
+                <p className="text-xs text-amber-700">
+                  아래 <strong>"원클릭 로그인"</strong> 버튼을 클릭하면 테스트 계정으로 자동 로그인됩니다.
+                </p>
+              </div>
+            </div>
+          </div>
+
           {error && (
             <div className="mb-4 p-3 rounded-lg bg-red-50 border border-red-200 flex items-center gap-2 text-red-700 text-sm">
               <AlertCircle className="size-4" />
@@ -268,7 +332,7 @@ export default function SuperAdminLoginPage() {
                 className="bg-white/5 rounded-xl border border-white/10 p-4 hover:bg-white/10 transition-colors"
               >
                 <div className="flex items-start justify-between mb-3">
-                  <div>
+                  <div className="flex-1">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="font-semibold text-white">{t(account.roleKey)}</span>
                       <span className="text-xs px-2 py-0.5 rounded-full bg-white/20 text-white/90">
@@ -277,15 +341,34 @@ export default function SuperAdminLoginPage() {
                     </div>
                     <p className="text-xs text-white/70">{t(account.permissionsKey)}</p>
                   </div>
-                  <Button
-                    type="ghost"
-                    size="sm"
-                    onClick={() => handleUseAccount(account)}
-                    className="text-white hover:bg-white/20 border-white/30"
-                  >
-                    {t("adminLogin.useAccount")}
-                  </Button>
                 </div>
+                
+                {/* Quick Login Button */}
+                <button
+                  onClick={() => handleQuickLogin(account, index)}
+                  disabled={quickLoginLoading !== null}
+                  className="mb-3 w-full flex items-center justify-center gap-2 rounded-lg border-2 border-white/30 bg-gradient-to-r from-white/20 to-white/10 px-4 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:from-white/30 hover:to-white/20 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  {quickLoginLoading === index ? (
+                    <>
+                      <span className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                      <span>로그인 중...</span>
+                    </>
+                  ) : (
+                    <>
+                      <Zap className="size-4" />
+                      <span>🚀 원클릭 로그인</span>
+                    </>
+                  )}
+                </button>
+                
+                {/* Manual Input Button */}
+                <button
+                  onClick={() => handleUseAccount(account)}
+                  className="mb-3 w-full flex items-center justify-center gap-2 rounded-lg border border-white/20 bg-white/5 px-4 py-2 text-sm font-medium text-white/90 hover:bg-white/10 transition-colors"
+                >
+                  📋 계정 정보 입력하기
+                </button>
                 <div className="space-y-2">
                   <div className="flex items-center gap-2">
                     <Mail className="size-4 text-white/70" />

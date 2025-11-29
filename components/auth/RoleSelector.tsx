@@ -1,11 +1,25 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Zap } from "lucide-react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/hooks/useAuth";
 
 export type RoleMode = "client" | "expert";
+
+// Sample accounts for quick login
+const sampleAccounts = {
+  client: {
+    email: "client@demo.com",
+    password: "demo1234",
+  },
+  expert: {
+    email: "expert@demo.com",
+    password: "demo1234",
+  },
+} as const;
 
 type RoleSelectorProps = {
   onSelect: (mode: RoleMode) => void;
@@ -21,7 +35,10 @@ export const RoleSelector = ({
   label,
 }: RoleSelectorProps) => {
   const [clickedCard, setClickedCard] = useState<string | null>(null);
+  const [quickLoginLoading, setQuickLoginLoading] = useState<RoleMode | null>(null);
   const { t } = useTranslation();
+  const router = useRouter();
+  const { login } = useAuth();
 
   const cards = useMemo(
     () => [
@@ -49,6 +66,58 @@ export const RoleSelector = ({
       onSelect(mode);
       setClickedCard(null);
     }, 80);
+  };
+
+  const handleQuickLogin = async (mode: RoleMode, e: React.MouseEvent) => {
+    e.stopPropagation(); // Prevent card click
+    setQuickLoginLoading(mode);
+    
+    const account = sampleAccounts[mode];
+    
+    try {
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email: account.email,
+          password: account.password,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        throw new Error(data.error || "로그인에 실패했습니다.");
+      }
+
+      if (data.user.status !== "active") {
+        const statusMessage =
+          data.user.status === "suspended"
+            ? "계정이 정지되었습니다."
+            : data.user.status === "banned"
+              ? "계정이 영구 정지되었습니다."
+              : "계정 상태를 확인할 수 없습니다.";
+        throw new Error(statusMessage);
+      }
+
+      login(data.user, data.token);
+
+      if (data.user.role === "admin") {
+        router.push("/admin/dashboard");
+      } else if (data.user.role === "client") {
+        router.push("/client/dashboard");
+      } else if (data.user.role === "expert") {
+        router.push("/expert/dashboard");
+      } else {
+        router.push("/");
+      }
+      router.refresh();
+    } catch (error) {
+      alert(error instanceof Error ? error.message : "로그인 중 오류가 발생했습니다.");
+      setQuickLoginLoading(null);
+    }
   };
 
   return (
@@ -90,15 +159,12 @@ export const RoleSelector = ({
           const isExpert = card.mode === "expert";
 
           return (
-            <button
+            <div
               key={card.mode}
-              type="button"
-              onClick={() => handleCardClick(card.mode)}
               className={`
                 group relative flex h-full flex-col rounded-2xl border bg-slate-50/70 px-6 py-6 text-left shadow-[0_14px_40px_rgba(15,23,42,0.06)] transition-all
                 ${isClicked ? "scale-95" : ""}
                 hover:-translate-y-1 hover:border-sky-200 hover:bg-white hover:shadow-[0_20px_55px_rgba(15,23,42,0.14)]
-                focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300
                 border-slate-100
               `}
             >
@@ -107,12 +173,45 @@ export const RoleSelector = ({
                   PRO
                 </span>
               )}
-              <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl ${card.iconBg}`}>
-                {card.emoji}
+              <button
+                type="button"
+                onClick={() => handleCardClick(card.mode)}
+                className="flex h-full flex-col text-left focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-sky-300"
+              >
+                <div className={`flex h-12 w-12 items-center justify-center rounded-2xl text-2xl ${card.iconBg}`}>
+                  {card.emoji}
+                </div>
+                <h3 className="mt-3 text-base font-semibold text-slate-900 md:text-lg">{card.title}</h3>
+                <p className="mt-2 text-sm leading-relaxed text-slate-500">{card.description}</p>
+              </button>
+              
+              {/* Quick Login Button */}
+              <button
+                type="button"
+                onClick={(e) => handleQuickLogin(card.mode, e)}
+                disabled={quickLoginLoading !== null}
+                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border-2 border-sky-400 bg-gradient-to-r from-sky-500 to-blue-500 px-4 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:from-sky-600 hover:to-blue-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                {quickLoginLoading === card.mode ? (
+                  <>
+                    <span className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                    <span>로그인 중...</span>
+                  </>
+                ) : (
+                  <>
+                    <Zap className="size-4" />
+                    <span>원클릭 로그인</span>
+                  </>
+                )}
+              </button>
+              
+              {/* Test Account Info */}
+              <div className="mt-3 rounded-lg bg-white/60 p-2 text-center">
+                <p className="text-[10px] font-medium text-slate-600">
+                  테스트 계정: <span className="font-mono text-sky-600">{sampleAccounts[card.mode].email}</span>
+                </p>
               </div>
-              <h3 className="mt-3 text-base font-semibold text-slate-900 md:text-lg">{card.title}</h3>
-              <p className="mt-2 text-sm leading-relaxed text-slate-500">{card.description}</p>
-            </button>
+            </div>
           );
         })}
       </div>

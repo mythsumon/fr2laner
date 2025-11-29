@@ -33,6 +33,7 @@ export const CreateOrderPage = () => {
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<Coupon | null>(null);
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
+  const [myCoupons, setMyCoupons] = useState<Coupon[]>([]);
   const [basePrice, setBasePrice] = useState(250000); // Mock price
   const [requirements, setRequirements] = useState({
     message: "",
@@ -53,12 +54,32 @@ export const CreateOrderPage = () => {
               new Date(c.expiry) > new Date()
           );
           setAvailableCoupons(activeCoupons);
+
+          // Load my claimed coupons
+          if (user?.id) {
+            const storedClaimed = localStorage.getItem(`user_claimed_coupons_${user.id}`);
+            if (storedClaimed) {
+              try {
+                const claimedIds: number[] = JSON.parse(storedClaimed);
+                const claimed = parsedCoupons.filter(
+                  (c) =>
+                    claimedIds.includes(c.id) &&
+                    c.status === "active" &&
+                    c.used < c.limit &&
+                    new Date(c.expiry) > new Date()
+                );
+                setMyCoupons(claimed);
+              } catch (e) {
+                console.warn("Failed to parse claimed coupons", e);
+              }
+            }
+          }
         } catch (e) {
           console.warn("Failed to parse coupons from localStorage", e);
         }
       }
     }
-  }, []);
+  }, [user?.id]);
 
   const handleApplyCoupon = () => {
     if (!couponCode.trim()) {
@@ -218,22 +239,50 @@ export const CreateOrderPage = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex gap-2">
-                <input
-                  type="text"
-                  value={couponCode}
-                  onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
-                  placeholder="쿠폰 코드 입력"
-                  className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-2 text-sm focus:border-[#2E5E99] focus:outline-none"
-                />
-                <Button
-                  type="default"
-                  onClick={handleApplyCoupon}
-                  className="gap-2 border border-[#2E5E99] bg-white text-sm font-semibold text-[#2E5E99] hover:bg-[#E9EEF8]"
-                >
-                  <Tag className="size-4" />
-                  적용
-                </Button>
+              <div className="space-y-3">
+                <div className="flex gap-2">
+                  <input
+                    type="text"
+                    value={couponCode}
+                    onChange={(e) => setCouponCode(e.target.value.toUpperCase())}
+                    placeholder="쿠폰 코드 입력"
+                    className="flex-1 rounded-lg border border-[#E2E8F0] px-4 py-2 text-sm focus:border-[#2E5E99] focus:outline-none"
+                  />
+                  <Button
+                    type="default"
+                    onClick={handleApplyCoupon}
+                    className="gap-2 border border-[#2E5E99] bg-white text-sm font-semibold text-[#2E5E99] hover:bg-[#E9EEF8]"
+                  >
+                    <Tag className="size-4" />
+                    적용
+                  </Button>
+                </div>
+                {myCoupons.length > 0 && (
+                  <div className="rounded-lg border border-[#E2E8F0] bg-gray-50 p-3">
+                    <p className="mb-2 text-xs font-semibold text-gray-600">내 쿠폰 ({myCoupons.length}개)</p>
+                    <div className="flex flex-wrap gap-2">
+                      {myCoupons.map((coupon) => (
+                        <button
+                          key={coupon.id}
+                          type="button"
+                          onClick={() => {
+                            setCouponCode(coupon.code);
+                            handleApplyCoupon();
+                          }}
+                          className="rounded-lg border border-[#2E5E99] bg-white px-3 py-1.5 text-xs font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99] hover:text-white"
+                        >
+                          {coupon.code}
+                        </button>
+                      ))}
+                    </div>
+                    <Link
+                      href="/coupons"
+                      className="mt-2 block text-xs text-[#2E5E99] hover:underline"
+                    >
+                      더 많은 쿠폰 받기 →
+                    </Link>
+                  </div>
+                )}
               </div>
             )}
           </div>

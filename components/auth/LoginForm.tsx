@@ -110,6 +110,70 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
     setPassword(account.password);
   };
 
+  const handleQuickLogin = async () => {
+    const account = mode ? sampleAccounts[mode] : sampleAccounts.client;
+    setEmail(account.email);
+    setPassword(account.password);
+    
+    // Auto submit after a short delay
+    setTimeout(async () => {
+      setIsSubmitting(true);
+      try {
+        const response = await fetch("/api/auth/login", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            email: account.email,
+            password: account.password,
+          }),
+        });
+
+        const data = await response.json();
+
+        if (!response.ok) {
+          throw new Error(data.error || "로그인에 실패했습니다.");
+        }
+
+        if (data.user.status !== "active") {
+          const statusMessage =
+            data.user.status === "suspended"
+              ? "계정이 정지되었습니다."
+              : data.user.status === "banned"
+                ? "계정이 영구 정지되었습니다."
+                : "계정 상태를 확인할 수 없습니다.";
+          throw new Error(statusMessage);
+        }
+
+        login(data.user, data.token);
+
+        const searchParams = new URLSearchParams(window.location.search);
+        const redirect = searchParams.get("redirect");
+
+        if (redirect) {
+          router.push(redirect);
+          router.refresh();
+        } else {
+          if (data.user.role === "admin") {
+            router.push("/admin/dashboard");
+          } else if (data.user.role === "client") {
+            router.push("/client/dashboard");
+          } else if (data.user.role === "expert") {
+            router.push("/expert/dashboard");
+          } else {
+            router.push("/");
+          }
+          router.refresh();
+        }
+      } catch (error) {
+        alert(error instanceof Error ? error.message : "로그인 중 오류가 발생했습니다.");
+      } finally {
+        setIsSubmitting(false);
+      }
+    }, 100);
+  };
+
   const handleCopy = async (text: string, field: string) => {
     try {
       await navigator.clipboard.writeText(text);
@@ -132,6 +196,21 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
 
   return (
     <div className="space-y-6">
+      {/* ChatGPT/테스트 사용자 안내 */}
+      <div className="rounded-xl border-2 border-amber-300 bg-gradient-to-r from-amber-50 to-yellow-50 p-4">
+        <div className="flex items-start gap-3">
+          <div className="flex-1">
+            <div className="mb-1 flex items-center gap-2">
+              <span className="text-lg">🤖</span>
+              <h3 className="text-sm font-bold text-amber-900">ChatGPT / 테스트 사용자를 위한 빠른 로그인</h3>
+            </div>
+            <p className="text-xs text-amber-700">
+              아래 <strong>"원클릭 로그인"</strong> 버튼을 클릭하면 테스트 계정으로 자동 로그인됩니다.
+            </p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex flex-col gap-2">
         <div className="flex items-start gap-3">
           <div className="flex-1">
@@ -155,18 +234,45 @@ export const LoginForm = ({ mode, onResetMode }: LoginFormProps) => {
 
       {/* Sample Account Display */}
       {currentSampleAccount && (
-        <div className="rounded-xl border border-sky-200 bg-sky-50/50 p-4">
-          <div className="mb-3 flex items-center justify-between">
-            <div>
-              <h3 className="text-sm font-semibold text-sky-900">✨ {t(currentSampleAccount.labelKey)}</h3>
-              <p className="mt-0.5 text-xs text-sky-700">{t("auth.login.sample.description")}</p>
+        <div className="rounded-xl border-2 border-sky-300 bg-gradient-to-br from-sky-50 to-blue-50 p-5 shadow-lg">
+          <div className="mb-4 flex items-center justify-between">
+            <div className="flex-1">
+              <div className="mb-1 flex items-center gap-2">
+                <span className="text-lg">✨</span>
+                <h3 className="text-base font-bold text-sky-900">{t(currentSampleAccount.labelKey)}</h3>
+              </div>
+              <p className="text-xs text-sky-700">{t("auth.login.sample.description")}</p>
             </div>
+          </div>
+          
+          {/* Quick Login Button */}
+          <div className="mb-4">
+            <button
+              type="button"
+              onClick={handleQuickLogin}
+              disabled={isSubmitting}
+              className="w-full rounded-lg bg-gradient-to-r from-sky-600 to-blue-600 px-4 py-3 text-sm font-bold text-white shadow-md transition-all hover:from-sky-700 hover:to-blue-700 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isSubmitting ? (
+                <span className="flex items-center justify-center gap-2">
+                  <span className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                  로그인 중...
+                </span>
+              ) : (
+                "🚀 원클릭 로그인 (테스트 계정)"
+              )}
+            </button>
+          </div>
+
+          {/* Account Info */}
+          <div className="mb-3">
+            <p className="mb-2 text-xs font-semibold text-sky-800">또는 수동으로 입력:</p>
             <button
               type="button"
               onClick={handleUseSampleAccount}
-              className="rounded-lg bg-sky-600 px-3 py-1.5 text-xs font-semibold text-white transition-colors hover:bg-sky-700"
+              className="w-full rounded-lg border border-sky-300 bg-white px-3 py-2 text-xs font-semibold text-sky-700 transition-colors hover:bg-sky-50"
             >
-              {t("auth.login.sample.use")}
+              📋 계정 정보 입력하기
             </button>
           </div>
           <div className="space-y-2">

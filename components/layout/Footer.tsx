@@ -22,6 +22,13 @@ const footerSections: Array<{
     ],
     links: [{ key: "blog", href: "/blog" }],
   },
+  {
+    titleKey: "footer.promotions.title",
+    itemKeys: [
+      "footer.promotions.items.coupons",
+    ],
+    links: [{ key: "coupons", href: "/coupons" }],
+  },
 ];
 
 const legalLinks = [
@@ -78,6 +85,7 @@ export const Footer = () => {
                     const customLink = section.links?.find((link) => {
                       if (itemKey.includes("blog") && link.key === "blog") return true;
                       if (itemKey.includes("help") && link.key === "help") return true;
+                      if (itemKey.includes("coupons") && link.key === "coupons") return true;
                       return false;
                     });
                     return (
