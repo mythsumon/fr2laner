@@ -45,35 +45,35 @@ export const SearchHeader = ({ keyword, totalResults, keywordTags = [], title, d
 
   return (
     <>
-      <header className="mx-auto w-full max-w-7xl px-6 pt-12 pb-10">
-        <nav className="mb-4 text-sm text-[#475569]" aria-label="Breadcrumb">
+      <header className="mx-auto w-full max-w-7xl px-4 sm:px-6 pt-8 sm:pt-12 pb-6 sm:pb-10">
+        <nav className="mb-3 sm:mb-4 text-xs sm:text-sm text-[#475569]" aria-label="Breadcrumb">
           <Link href="/" className="text-[#2E5E99] hover:underline">
             {t("category.design.header.breadcrumb.home")}
           </Link>{" "}
           <span className="mx-1">›</span>
           <span className="text-[#475569]">검색</span>
         </nav>
-        <div className="grid gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <h1 className="text-4xl font-bold tracking-tight text-[#0F172A]">{headerTitle}</h1>
-              <p className="max-w-2xl text-lg text-[#475569]">{headerDescription}</p>
+        <div className="grid gap-6 sm:gap-8 lg:gap-10 lg:grid-cols-[minmax(0,1fr)_340px]">
+          <div className="space-y-4 sm:space-y-6">
+            <div className="space-y-3 sm:space-y-4">
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-[#0F172A] leading-tight">{headerTitle}</h1>
+              <p className="max-w-2xl text-base sm:text-lg text-[#475569] leading-relaxed">{headerDescription}</p>
               <div className="flex flex-wrap gap-2">
-                <span className="inline-flex items-center rounded-full bg-[#E9EEF8] px-4 py-1.5 text-sm font-semibold text-[#2E5E99]">
+                <span className="inline-flex items-center rounded-full bg-[#E9EEF8] px-3 sm:px-4 py-1 sm:py-1.5 text-xs sm:text-sm font-semibold text-[#2E5E99]">
                   총 {totalResults.toLocaleString()}개 결과
                 </span>
               </div>
             </div>
             {keywordTags.length > 0 && (
               <div
-                className="keyword-scroll flex gap-2 overflow-x-auto pb-2"
+                className="keyword-scroll flex gap-2 overflow-x-auto pb-2 -mx-4 sm:mx-0 px-4 sm:px-0"
                 aria-label="Related keywords"
               >
                 {keywordTags.map((tag) => (
                   <button
                     key={tag}
                     type="button"
-                    className="whitespace-nowrap rounded-full border border-[#E2E8F0] px-4 py-2 text-sm font-medium text-[#0F172A] transition-colors hover:border-[#2E5E99] hover:text-[#2E5E99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+                    className="whitespace-nowrap rounded-full border border-[#E2E8F0] px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-medium text-[#0F172A] transition-colors hover:border-[#2E5E99] hover:text-[#2E5E99] focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99] touch-manipulation min-h-[36px] sm:min-h-[40px]"
                   >
                     {tag}
                   </button>
@@ -81,26 +81,26 @@ export const SearchHeader = ({ keyword, totalResults, keywordTags = [], title, d
               </div>
             )}
           </div>
-          <aside className="relative" aria-live="polite">
-            <div className="relative h-full overflow-hidden rounded-3xl bg-[#E8F1FF] shadow-[0_16px_40px_rgba(46,94,153,0.15)]">
+          <aside className="relative hidden lg:block" aria-live="polite">
+            <div className="relative h-full min-h-[280px] overflow-hidden rounded-3xl bg-[#E8F1FF] shadow-[0_16px_40px_rgba(46,94,153,0.15)]">
               {promoItems.map((item, index) => (
                 <div
                   key={item.id}
                   className={cn(
-                    "absolute inset-0 flex h-full w-full flex-col justify-between p-8 transition-opacity duration-500",
+                    "absolute inset-0 flex h-full w-full flex-col justify-between p-6 sm:p-8 transition-opacity duration-500",
                     index === activePromo ? "opacity-100" : "pointer-events-none opacity-0"
                   )}
                 >
-                  <div className="space-y-3">
-                    <span className="inline-flex w-fit items-center rounded-full bg-white/70 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-[#2E5E99]">
+                  <div className="space-y-2 sm:space-y-3">
+                    <span className="inline-flex w-fit items-center rounded-full bg-white/70 px-2 sm:px-3 py-1 text-[10px] sm:text-xs font-semibold uppercase tracking-wide text-[#2E5E99]">
                       {item.badge}
                     </span>
-                    <h3 className="text-2xl font-bold text-[#0F172A]">{item.title}</h3>
-                    <p className="text-sm text-[#475569]">{item.description}</p>
+                    <h3 className="text-xl sm:text-2xl font-bold text-[#0F172A]">{item.title}</h3>
+                    <p className="text-xs sm:text-sm text-[#475569]">{item.description}</p>
                   </div>
                   <button
                     type="button"
-                    className="inline-flex w-fit items-center justify-center rounded-full border border-[#2E5E99] bg-white px-4 py-2 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+                    className="inline-flex w-fit items-center justify-center rounded-full border border-[#2E5E99] bg-white px-3 sm:px-4 py-1.5 sm:py-2 text-xs sm:text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99] touch-manipulation min-h-[40px] sm:min-h-[44px]"
                   >
                     {item.cta}
                   </button>
@@ -108,7 +108,7 @@ export const SearchHeader = ({ keyword, totalResults, keywordTags = [], title, d
                 </div>
               ))}
             </div>
-            <div className="mt-4 flex items-center gap-3">
+            <div className="mt-3 sm:mt-4 flex items-center gap-2 sm:gap-3">
               <div className="flex items-center gap-2">
                 {promoItems.map((item, index) => (
                   <button
@@ -116,7 +116,7 @@ export const SearchHeader = ({ keyword, totalResults, keywordTags = [], title, d
                     type="button"
                     onClick={() => setActivePromo(index)}
                     className={cn(
-                      "h-2 rounded-full transition-all",
+                      "h-2 rounded-full transition-all touch-manipulation",
                       index === activePromo ? "w-6 bg-[#2E5E99]" : "w-3 bg-[#CBD5F5]"
                     )}
                     aria-label={`Promo ${index + 1}`}

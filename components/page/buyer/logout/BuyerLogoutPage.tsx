@@ -95,7 +95,7 @@ export const BuyerLogoutPage = () => {
           </div>
 
           <div className="flex flex-col gap-3 sm:flex-row sm:justify-end">
-            <Link href="/profile" className="flex-1 sm:flex-initial">
+            <Link href="/client/profile" className="flex-1 sm:flex-initial">
               <Button
                 type="default"
                 size="large"

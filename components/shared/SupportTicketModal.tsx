@@ -87,8 +87,8 @@ export const SupportTicketModal = ({
   };
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-      <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
+      <div className="w-full max-w-md rounded-2xl bg-white p-4 md:p-6 shadow-xl my-4">
         <div className="flex items-center justify-between mb-6">
           <div className="flex items-center gap-2">
             <MessageSquare className="size-5 text-[#2E5E99]" />
@@ -179,7 +179,7 @@ export const SupportTicketModal = ({
             </p>
           </div>
 
-          <div className="flex gap-3 pt-4">
+          <div className="flex flex-col sm:flex-row gap-3 pt-4">
             <Button
               type="outline"
               onClick={handleClose}

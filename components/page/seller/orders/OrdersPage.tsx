@@ -144,7 +144,7 @@ export const OrdersPage = () => {
           filteredOrders.map((order) => (
             <Link
               key={order.id}
-              href={`/dashboard/orders/${order.id}`}
+              href={`/expert/orders/${order.id}`}
               className="block rounded-2xl border border-[#E2E8F0] bg-white p-4 shadow-sm transition-all hover:shadow-md md:p-6"
             >
               <div className="flex items-start gap-4">
@@ -191,7 +191,7 @@ export const OrdersPage = () => {
                   className="shrink-0 bg-[#2E5E99] text-xs font-semibold text-white hover:bg-[#1d4673]"
                   onClick={(e) => {
                     e.preventDefault();
-                    window.location.href = `/dashboard/orders/${order.id}`;
+                    window.location.href = `/expert/orders/${order.id}`;
                   }}
                 >
                   주문 보기

@@ -68,8 +68,10 @@ export const CreateReviewPage = () => {
     }
     setIsSubmitting(true);
 
-    // Get order info to extract serviceId
+    // Get order info to extract serviceId and seller info
     let serviceId = "";
+    let sellerId = "";
+    let sellerName = "";
     if (typeof window !== "undefined") {
       const storedOrders = localStorage.getItem("orders");
       if (storedOrders) {
@@ -78,6 +80,25 @@ export const CreateReviewPage = () => {
           const order = orders.find((o) => o.id === orderId);
           if (order) {
             serviceId = order.serviceId || "";
+            sellerId = order.sellerId || "";
+            sellerName = order.sellerName || "";
+            
+            // If seller info not in order, try to get from service
+            if (!sellerId && serviceId) {
+              const storedServices = localStorage.getItem("services");
+              if (storedServices) {
+                try {
+                  const services: any[] = JSON.parse(storedServices);
+                  const service = services.find((s) => s.id === serviceId);
+                  if (service) {
+                    sellerId = service.sellerId || service.userId || "";
+                    sellerName = service.sellerName || service.seller || "";
+                  }
+                } catch (e) {
+                  console.warn("Failed to parse services", e);
+                }
+              }
+            }
           }
         } catch (e) {
           console.warn("Failed to parse orders", e);
@@ -92,9 +113,9 @@ export const CreateReviewPage = () => {
       serviceId: serviceId,
       buyerId: user?.id || "",
       buyerName: user?.name || "",
-      buyerAvatar: "",
-      sellerId: "", // Will be filled from service
-      sellerName: "", // Will be filled from service
+      buyerAvatar: user?.email ? `https://ui-avatars.com/api/?name=${encodeURIComponent(user.name)}&background=2E5E99&color=fff` : "",
+      sellerId: sellerId,
+      sellerName: sellerName,
       rating: formData.rating,
       comment: formData.comment,
       status: "visible" as const,

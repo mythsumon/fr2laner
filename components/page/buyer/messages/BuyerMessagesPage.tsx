@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MessageSquare, Circle, Send, Paperclip, Mic, Search, MoreVertical, Check, CheckCheck, Star } from "lucide-react";
+import { MessageSquare, Circle, Send, Paperclip, Mic, Search, MoreVertical, Check, CheckCheck, Star, Archive, UserX, Trash2, Info, X } from "lucide-react";
 import { BuyerBottomNav } from "@/components/page/buyer/BuyerBottomNav";
 import { Button } from "@/components/shared/common";
 import { useBodyClass } from "@/hooks";
@@ -121,6 +121,8 @@ export const BuyerMessagesPage = () => {
 
   const [selectedChat, setSelectedChat] = useState<string | null>("1");
   const [messageInput, setMessageInput] = useState("");
+  const [showChatMenu, setShowChatMenu] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const selectedChatData = mockChats.find((chat) => chat.id === selectedChat);
   const messages = selectedChat ? mockMessages[selectedChat] || [] : [];
@@ -131,10 +133,42 @@ export const BuyerMessagesPage = () => {
     setMessageInput("");
   };
 
+  const handleArchiveChat = () => {
+    if (!selectedChat) return;
+    // Archive chat logic
+    setShowChatMenu(false);
+    alert("대화방이 보관되었습니다.");
+  };
+
+  const handleBlockUser = () => {
+    if (!selectedChat) return;
+    // Block user logic
+    setShowChatMenu(false);
+    alert("사용자가 차단되었습니다.");
+  };
+
+  const handleDeleteChat = () => {
+    if (!selectedChat) return;
+    // Delete chat logic
+    setShowChatMenu(false);
+    setShowDeleteConfirm(false);
+    setSelectedChat(null);
+    alert("대화방이 삭제되었습니다.");
+  };
+
+  const handleViewInfo = () => {
+    if (!selectedChat) return;
+    setShowChatMenu(false);
+    // Show chat info modal or navigate
+    alert("대화방 정보를 표시합니다.");
+  };
+
   return (
-    <div className="flex h-[calc(100vh-80px)] bg-gradient-to-br from-[#F8FAFC] to-[#F0F7FF] pb-24">
+    <div className="flex h-[calc(100vh-80px)] bg-gradient-to-br from-[#F8FAFC] to-[#F0F7FF] pb-20 md:pb-24">
       {/* Chat List Sidebar */}
-      <div className="flex w-full flex-col border-r border-[#E2E8F0] bg-white sm:w-96">
+      <div className={`flex w-full flex-col border-r border-[#E2E8F0] bg-white transition-transform duration-300 ${
+        selectedChat ? 'hidden md:flex md:w-96' : 'flex md:w-96'
+      }`}>
         {/* Search Header */}
         <div className="border-b border-[#E2E8F0] bg-gradient-to-r from-[#2E5E99] to-[#3B82F6] p-4">
           <div className="mb-3 flex items-center justify-between">
@@ -210,12 +244,24 @@ export const BuyerMessagesPage = () => {
       </div>
 
       {/* Chat Room */}
-      <div className={`flex flex-1 flex-col ${selectedChat ? "flex" : "hidden sm:flex"}`}>
+      <div className={`flex flex-1 flex-col transition-transform duration-300 ${
+        selectedChat ? "flex" : "hidden md:flex"
+      }`}>
         {selectedChat && selectedChatData ? (
           <>
             {/* Chat Header */}
-            <div className="flex items-center justify-between border-b border-[#E2E8F0] bg-white px-6 py-4 shadow-sm">
-              <div className="flex items-center gap-3">
+            <div className="flex items-center justify-between border-b border-[#E2E8F0] bg-white px-4 py-3 md:px-6 md:py-4 shadow-sm">
+              <div className="flex items-center gap-2 md:gap-3">
+                <button
+                  type="button"
+                  onClick={() => setSelectedChat(null)}
+                  className="rounded-lg p-2 text-[#475569] transition-colors hover:bg-[#F8FAFC] md:hidden touch-manipulation"
+                  aria-label="Back to chat list"
+                >
+                  <svg className="size-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg>
+                </button>
                 <div className="relative">
                   <Image
                     src={selectedChatData.sellerAvatar}
@@ -259,18 +305,67 @@ export const BuyerMessagesPage = () => {
                     </Button>
                   </Link>
                 )}
-                <button
-                  type="button"
-                  className="rounded-lg p-2 text-[#475569] transition-colors hover:bg-[#F8FAFC]"
-                  aria-label="더보기"
-                >
-                  <MoreVertical className="size-5" />
-                </button>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowChatMenu(!showChatMenu)}
+                    className="rounded-lg p-2 text-[#475569] transition-colors hover:bg-[#F8FAFC]"
+                    aria-label="더보기"
+                  >
+                    <MoreVertical className="size-5" />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {showChatMenu && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setShowChatMenu(false)}
+                      />
+                      <div className="absolute right-0 top-full mt-2 z-50 w-48 rounded-lg border border-[#E2E8F0] bg-white shadow-xl">
+                        <div className="py-1">
+                          <button
+                            onClick={handleViewInfo}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[#0F172A] transition-colors hover:bg-[#F8FAFC]"
+                          >
+                            <Info className="size-4 text-[#64748B]" />
+                            <span>대화방 정보</span>
+                          </button>
+                          <button
+                            onClick={handleArchiveChat}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[#0F172A] transition-colors hover:bg-[#F8FAFC]"
+                          >
+                            <Archive className="size-4 text-[#64748B]" />
+                            <span>보관하기</span>
+                          </button>
+                          <button
+                            onClick={handleBlockUser}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[#0F172A] transition-colors hover:bg-[#F8FAFC]"
+                          >
+                            <UserX className="size-4 text-[#64748B]" />
+                            <span>차단하기</span>
+                          </button>
+                          <div className="my-1 border-t border-[#E2E8F0]" />
+                          <button
+                            onClick={() => {
+                              setShowChatMenu(false);
+                              setShowDeleteConfirm(true);
+                            }}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                          >
+                            <Trash2 className="size-4" />
+                            <span>대화방 삭제</span>
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
             {/* Messages Area */}
-            <div className="flex-1 space-y-4 overflow-y-auto bg-gradient-to-b from-[#F8FAFC] to-white p-6">
+            <div className="flex-1 space-y-4 overflow-y-auto bg-gradient-to-b from-[#F8FAFC] to-white p-4 md:p-6">
               {messages.map((message, index) => {
                 const isBuyer = message.sender === "buyer";
                 const showAvatar = index === 0 || messages[index - 1]?.sender !== message.sender;
@@ -318,15 +413,15 @@ export const BuyerMessagesPage = () => {
             </div>
 
             {/* Message Input */}
-            <div className="border-t border-[#E2E8F0] bg-white p-4">
+            <div className="border-t border-[#E2E8F0] bg-white p-3 md:p-4">
               <div className="mx-auto max-w-4xl">
-                <div className="flex items-end gap-2 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-3 transition-all focus-within:border-[#2E5E99] focus-within:bg-white focus-within:shadow-md">
+                <div className="flex items-end gap-1.5 md:gap-2 rounded-2xl border-2 border-[#E2E8F0] bg-[#F8FAFC] p-2 md:p-3 transition-all focus-within:border-[#2E5E99] focus-within:bg-white focus-within:shadow-md">
                   <button
                     type="button"
-                    className="rounded-lg p-2 text-[#475569] transition-colors hover:bg-[#E2E8F0]"
+                    className="rounded-lg p-1.5 md:p-2 text-[#475569] transition-colors hover:bg-[#E2E8F0] touch-manipulation"
                     aria-label="파일 첨부"
                   >
-                    <Paperclip className="size-5" />
+                    <Paperclip className="size-4 md:size-5" />
                   </button>
                   <textarea
                     value={messageInput}
@@ -343,10 +438,10 @@ export const BuyerMessagesPage = () => {
                   />
                   <button
                     type="button"
-                    className="rounded-lg p-2 text-[#475569] transition-colors hover:bg-[#E2E8F0]"
+                    className="rounded-lg p-1.5 md:p-2 text-[#475569] transition-colors hover:bg-[#E2E8F0] touch-manipulation"
                     aria-label="음성 메시지"
                   >
-                    <Mic className="size-5" />
+                    <Mic className="size-4 md:size-5" />
                   </button>
                   <Button
                     type="primary"
@@ -354,7 +449,7 @@ export const BuyerMessagesPage = () => {
                     shape="round"
                     onClick={handleSendMessage}
                     disabled={!messageInput.trim()}
-                    className="!bg-gradient-to-r !from-[#2E5E99] !to-[#3B82F6] px-4 font-bold text-white shadow-md disabled:opacity-50"
+                    className="!bg-gradient-to-r !from-[#2E5E99] !to-[#3B82F6] px-3 md:px-4 py-2 font-bold text-white shadow-md disabled:opacity-50 touch-manipulation min-h-[44px]"
                   >
                     <Send className="size-4" />
                   </Button>
@@ -372,6 +467,42 @@ export const BuyerMessagesPage = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-[#0F172A]">대화방 삭제</h2>
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="rounded-lg p-2 hover:bg-[#F8FAFC] text-[#64748B]"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <p className="mb-6 text-sm text-[#64748B]">
+              대화방을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                type="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1"
+              >
+                취소
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleDeleteChat}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                삭제
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <BuyerBottomNav />
     </div>

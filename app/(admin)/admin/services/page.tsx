@@ -37,6 +37,28 @@ interface Service {
   imageUrl?: string;
   sellerAvatar?: string;
   description?: string;
+  tags?: string[];
+  // Seller-specific fields
+  skills?: string[];
+  packages?: Array<{
+    title: string;
+    description: string;
+    deliveryDays: number;
+    revisions: number;
+    price: number;
+    extras: string[];
+  }>;
+  faqs?: Array<{
+    question: string;
+    answer: string;
+  }>;
+  requirements?: Array<{
+    type: "text" | "file" | "multiple";
+    question: string;
+    options?: string[];
+  }>;
+  gallery?: string[];
+  sellerId?: string;
 }
 
 const initialServices: Service[] = [
@@ -158,8 +180,40 @@ export default function ServicesManagementPage() {
   const { toast, showToast, hideToast } = useToast();
   const { services: homeServices, updateServices } = useHomeData();
 
-  const [services, setServices] = useState<Service[]>(
-    homeServices.length > 0
+  const [services, setServices] = useState<Service[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("admin_services");
+      if (stored) {
+        try {
+          const storedServices: Service[] = JSON.parse(stored);
+          // Merge with homeServices if available
+          if (homeServices.length > 0) {
+            const homeServiceIds = new Set(homeServices.map((s) => s.id));
+            const newServices = storedServices.filter((s) => !homeServiceIds.has(s.id));
+            return [
+              ...homeServices.map((s) => ({
+                id: s.id,
+                title: s.title,
+                seller: s.seller,
+                category: s.category,
+                price: s.price,
+                orders: s.orders,
+                rating: s.rating,
+                status: s.status,
+                featured: s.featured,
+                createdAt: new Date().toISOString().split("T")[0],
+                tags: [],
+              })),
+              ...newServices,
+            ];
+          }
+          return storedServices;
+        } catch (e) {
+          console.warn("Failed to parse admin_services", e);
+        }
+      }
+    }
+    return homeServices.length > 0
       ? homeServices.map((s) => ({
           id: s.id,
           title: s.title,
@@ -171,9 +225,36 @@ export default function ServicesManagementPage() {
           status: s.status,
           featured: s.featured,
           createdAt: new Date().toISOString().split("T")[0],
+          tags: [],
         }))
-      : initialServices
-  );
+      : initialServices;
+  });
+
+  // Save services to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("admin_services", JSON.stringify(services));
+    }
+  }, [services]);
+
+  // Listen for new services from sellers
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const handleStorageChange = (e: StorageEvent) => {
+        if (e.key === "admin_services" && e.newValue) {
+          try {
+            const newServices: Service[] = JSON.parse(e.newValue);
+            setServices(newServices);
+          } catch (e) {
+            console.warn("Failed to parse admin_services", e);
+          }
+        }
+      };
+
+      window.addEventListener("storage", handleStorageChange);
+      return () => window.removeEventListener("storage", handleStorageChange);
+    }
+  }, []);
 
   // Track previous approved services to prevent unnecessary updates
   const prevApprovedServicesRef = useRef<string>("");
@@ -208,7 +289,19 @@ export default function ServicesManagementPage() {
     }
   }, [services, updateServices]);
   const [categories, setCategories] = useState<Category[]>(initialCategories);
-  const [tags, setTags] = useState<string[]>(initialTags);
+  const [tags, setTags] = useState<string[]>(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("admin_service_tags");
+      if (stored) {
+        try {
+          return JSON.parse(stored);
+        } catch (e) {
+          return initialTags;
+        }
+      }
+    }
+    return initialTags;
+  });
   const { categories: homeCategories, updateCategories } = useHomeData();
 
   // Modal states
@@ -528,17 +621,28 @@ export default function ServicesManagementPage() {
     setDeleteCategoryModal({ isOpen: false, category: "" });
   };
 
+  // Save tags to localStorage whenever they change
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      localStorage.setItem("admin_service_tags", JSON.stringify(tags));
+    }
+  }, [tags]);
+
   // Tag functions
   const handleAddTag = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const formData = new FormData(e.currentTarget);
     const tag = formData.get("tag") as string;
     if (tag && !tags.includes(tag)) {
-      setTags([...tags, tag]);
-      showToast("Tag has been added.", "success");
+      const updatedTags = [...tags, tag];
+      setTags(updatedTags);
+      if (typeof window !== "undefined") {
+        localStorage.setItem("admin_service_tags", JSON.stringify(updatedTags));
+      }
+      showToast("태그가 추가되었습니다.", "success");
       setAddTagModal(false);
     } else if (tags.includes(tag)) {
-      showToast("Tag already exists.", "error");
+      showToast("이미 존재하는 태그입니다.", "error");
     }
   };
 
@@ -554,12 +658,15 @@ export default function ServicesManagementPage() {
 
     if (newName && newName !== oldName) {
       if (tags.includes(newName)) {
-        showToast("Tag name already exists.", "error");
+        showToast("이미 존재하는 태그 이름입니다.", "error");
         return;
       }
       const updatedTags = tags.map((t) => (t === oldName ? newName : t));
       setTags(updatedTags);
-      showToast("Tag has been updated.", "success");
+      if (typeof window !== "undefined") {
+        localStorage.setItem("admin_service_tags", JSON.stringify(updatedTags));
+      }
+      showToast("태그가 업데이트되었습니다.", "success");
       setEditTagModal({ isOpen: false, tag: "", newName: undefined });
     }
   };
@@ -569,8 +676,12 @@ export default function ServicesManagementPage() {
   };
 
   const confirmDeleteTag = () => {
-    setTags(tags.filter((t) => t !== deleteTagModal.tag));
-    showToast("Tag has been deleted.", "success");
+    const updatedTags = tags.filter((t) => t !== deleteTagModal.tag);
+    setTags(updatedTags);
+    if (typeof window !== "undefined") {
+      localStorage.setItem("admin_service_tags", JSON.stringify(updatedTags));
+    }
+    showToast("태그가 삭제되었습니다.", "success");
     setDeleteTagModal({ isOpen: false, tag: "" });
   };
 
@@ -589,7 +700,7 @@ export default function ServicesManagementPage() {
 
       {/* Tabs */}
       <div className="bg-white rounded-xl border border-[#E2E8F0] p-1">
-        <div className="flex gap-1">
+        <div className="flex gap-1 overflow-x-auto">
           {[
             { id: "services", label: "All Services", icon: Package },
             { id: "categories", label: "Categories", icon: Tag },
@@ -600,14 +711,14 @@ export default function ServicesManagementPage() {
               <button
                 key={tab.id}
                 onClick={() => setActiveTab(tab.id)}
-                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-lg transition-colors ${
+                className={`flex-1 flex items-center justify-center gap-2 px-3 md:px-4 py-2 md:py-3 rounded-lg transition-colors touch-manipulation min-w-[100px] ${
                   activeTab === tab.id
                     ? "bg-[#2E5E99] text-white"
                     : "text-[#64748B] hover:bg-[#F8FAFC]"
                 }`}
               >
                 <Icon className="size-4" />
-                <span className="font-medium">{tab.label}</span>
+                <span className="font-medium text-xs md:text-sm whitespace-nowrap">{tab.label}</span>
               </button>
             );
           })}
@@ -1137,7 +1248,7 @@ export default function ServicesManagementPage() {
       {/* Add Service Modal */}
       {addServiceModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4 overflow-y-auto">
-          <div className="w-full max-w-2xl rounded-2xl bg-white p-6 shadow-xl my-8">
+          <div className="w-full max-w-2xl rounded-2xl bg-white p-4 md:p-6 shadow-xl my-4 md:my-8">
             <div className="flex items-center justify-between mb-6">
               <h2 className="text-xl font-bold text-[#0F172A]">서비스 추가</h2>
               <button
@@ -1590,6 +1701,109 @@ export default function ServicesManagementPage() {
                   <p className="text-[#0F172A]">{viewModal.service.featured ? "예" : "아니오"}</p>
                 </div>
               </div>
+              {viewModal.service.description && (
+                <div>
+                  <label className="text-sm font-semibold text-[#64748B] mb-2 block">설명</label>
+                  <p className="text-sm text-[#64748B]">{viewModal.service.description}</p>
+                </div>
+              )}
+              {viewModal.service.tags && viewModal.service.tags.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-[#64748B] mb-2 block">태그</label>
+                  <div className="flex flex-wrap gap-2">
+                    {viewModal.service.tags.map((tag) => (
+                      <span
+                        key={tag}
+                        className="inline-flex items-center rounded-full bg-[#F8FAFC] border border-[#E2E8F0] px-3 py-1 text-xs font-medium text-[#64748B]"
+                      >
+                        {tag}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {viewModal.service.skills && viewModal.service.skills.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-[#64748B] mb-2 block">기술/스킬</label>
+                  <div className="flex flex-wrap gap-2">
+                    {viewModal.service.skills.map((skill) => (
+                      <span
+                        key={skill}
+                        className="inline-flex items-center rounded-full bg-[#E9EEF8] px-3 py-1 text-xs font-medium text-[#2E5E99]"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {viewModal.service.packages && viewModal.service.packages.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-[#64748B] mb-2 block">패키지</label>
+                  <div className="space-y-3">
+                    {viewModal.service.packages.map((pkg, index) => (
+                      <div key={index} className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4">
+                        <div className="mb-2 flex items-center justify-between">
+                          <h4 className="font-semibold text-[#0F172A]">{pkg.title}</h4>
+                          <span className="text-lg font-bold text-[#2E5E99]">₩{pkg.price.toLocaleString()}</span>
+                        </div>
+                        {pkg.description && (
+                          <p className="mb-2 text-sm text-[#64748B]">{pkg.description}</p>
+                        )}
+                        <div className="flex flex-wrap gap-4 text-xs text-[#64748B]">
+                          <span>배송: {pkg.deliveryDays}일</span>
+                          <span>수정: {pkg.revisions === 999 ? "무제한" : `${pkg.revisions}회`}</span>
+                          {pkg.extras && pkg.extras.length > 0 && (
+                            <span>추가 옵션: {pkg.extras.length}개</span>
+                          )}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {viewModal.service.faqs && viewModal.service.faqs.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-[#64748B] mb-2 block">FAQ</label>
+                  <div className="space-y-3">
+                    {viewModal.service.faqs.map((faq, index) => (
+                      <div key={index} className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3">
+                        <h4 className="mb-1 text-sm font-semibold text-[#0F172A]">Q: {faq.question}</h4>
+                        <p className="text-sm text-[#64748B]">A: {faq.answer}</p>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+              {viewModal.service.requirements && viewModal.service.requirements.length > 0 && (
+                <div>
+                  <label className="text-sm font-semibold text-[#64748B] mb-2 block">요구사항</label>
+                  <div className="space-y-2">
+                    {viewModal.service.requirements.map((req, index) => (
+                      <div key={index} className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-3">
+                        <div className="mb-1 flex items-center gap-2">
+                          <span className="text-xs font-medium text-[#64748B]">
+                            {req.type === "text" ? "텍스트" : req.type === "file" ? "파일" : "다중 선택"}
+                          </span>
+                        </div>
+                        <p className="text-sm text-[#0F172A]">{req.question}</p>
+                        {req.options && req.options.length > 0 && (
+                          <div className="mt-2 flex flex-wrap gap-2">
+                            {req.options.map((opt, optIndex) => (
+                              <span
+                                key={optIndex}
+                                className="inline-flex items-center rounded-full bg-white border border-[#E2E8F0] px-2 py-1 text-xs text-[#64748B]"
+                              >
+                                {opt}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
             </div>
             <div className="flex gap-3 pt-4 border-t border-[#E2E8F0]">
               <Button

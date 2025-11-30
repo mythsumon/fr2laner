@@ -283,7 +283,7 @@ export const BuyerOrderDetailPage = () => {
         <div className="rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
           <div className="mb-4 flex items-center justify-between">
             <h2 className="text-lg font-semibold text-[#0F172A]">메시지</h2>
-            <Link href={`/buyer-messages?chat=${orderId}`}>
+            <Link href={`/client/messages?chat=${orderId}`}>
               <Button
                 type="default"
                 size="small"

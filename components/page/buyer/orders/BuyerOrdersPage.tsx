@@ -141,7 +141,7 @@ export const BuyerOrdersPage = () => {
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Link href={`/buyer-messages?orderId=${order.id}`}>
+                    <Link href={`/client/messages?orderId=${order.id}`}>
                       <Button
                         type="default"
                         size="small"
@@ -152,7 +152,7 @@ export const BuyerOrdersPage = () => {
                         메시지
                       </Button>
                     </Link>
-                    <Link href={`/orders/${order.id}`}>
+                    <Link href={`/client/orders/${order.id}`}>
                       <Button
                         type="primary"
                         size="small"

@@ -120,6 +120,23 @@ const GridCard = ({ service }: { service: CategoryService }) => {
         <span className="text-[#94A3B8]">•</span>
         <span className="text-[#94A3B8]">{service.revisions}</span>
       </div>
+      {service.tags && service.tags.length > 0 && (
+        <div className="flex flex-wrap gap-1.5 mb-2">
+          {service.tags.slice(0, 3).map((tag) => (
+            <span
+              key={tag}
+              className="inline-flex items-center rounded-full bg-[#F8FAFC] border border-[#E2E8F0] px-2 py-0.5 text-xs font-medium text-[#64748B]"
+            >
+              {tag}
+            </span>
+          ))}
+          {service.tags.length > 3 && (
+            <span className="inline-flex items-center rounded-full bg-[#F8FAFC] border border-[#E2E8F0] px-2 py-0.5 text-xs font-medium text-[#64748B]">
+              +{service.tags.length - 3}
+            </span>
+          )}
+        </div>
+      )}
       <div className="mt-auto flex items-center justify-between pt-2">
         <span className="text-lg font-bold text-[#0F172A]">
           ₩{service.price.toLocaleString()}
@@ -228,6 +245,23 @@ const ListCard = ({ service }: { service: CategoryService }) => {
           <span className="text-[#94A3B8]">•</span>
           <span className="text-[#94A3B8]">{service.revisions}</span>
         </div>
+        {service.tags && service.tags.length > 0 && (
+          <div className="flex flex-wrap gap-1.5">
+            {service.tags.slice(0, 4).map((tag) => (
+              <span
+                key={tag}
+                className="inline-flex items-center rounded-full bg-[#F8FAFC] border border-[#E2E8F0] px-2 py-0.5 text-xs font-medium text-[#64748B]"
+              >
+                {tag}
+              </span>
+            ))}
+            {service.tags.length > 4 && (
+              <span className="inline-flex items-center rounded-full bg-[#F8FAFC] border border-[#E2E8F0] px-2 py-0.5 text-xs font-medium text-[#64748B]">
+                +{service.tags.length - 4}
+              </span>
+            )}
+          </div>
+        )}
         <div className="mt-auto flex items-center justify-between pt-2">
           <span className="text-xl font-bold text-[#0F172A]">
             ₩{service.price.toLocaleString()}

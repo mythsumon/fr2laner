@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Tag, Calendar, CheckCircle2, X, Gift } from "lucide-react";
@@ -11,12 +11,18 @@ import { CouponCard, type Coupon } from "@/components/shared/CouponCard";
 
 export const MyCouponsPage = () => {
   useBodyClass("dashboard-page");
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
   const [claimedCoupons, setClaimedCoupons] = useState<Coupon[]>([]);
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
 
-  useEffect(() => {
+  const loadCoupons = useCallback(() => {
+    // Wait for auth to finish loading
+    if (isLoading) {
+      return;
+    }
+    
+    // Only redirect to login if user is definitely not logged in
     if (!user?.id) {
       router.push("/login");
       return;
@@ -57,7 +63,23 @@ export const MyCouponsPage = () => {
         }
       }
     }
-  }, [user?.id, router]);
+  }, [user?.id, router, isLoading]);
+
+  useEffect(() => {
+    loadCoupons();
+  }, [loadCoupons]);
+
+  // Listen for coupon data changes from admin or other pages
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "marketing_coupons") {
+        loadCoupons();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [loadCoupons]);
 
   const handleClaimCoupon = (coupon: Coupon) => {
     if (!user?.id) return;

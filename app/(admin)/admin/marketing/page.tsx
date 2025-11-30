@@ -10,13 +10,12 @@ import {
   X,
   CheckCircle2,
   Clock,
-  Image as ImageIcon,
 } from "lucide-react";
 import { Button } from "@/components/shared/common";
 import { ConfirmModal } from "@/components/page/admin/shared/ConfirmModal";
 import { Toast } from "@/components/page/admin/shared/Toast";
 import { BackToHomeButton } from "@/components/page/admin/shared/BackToHomeButton";
-import { useHomeData, type HomeFeaturedService, type HomeBanner } from "@/contexts/HomeDataContext";
+import { useHomeData, type HomeFeaturedService } from "@/contexts/HomeDataContext";
 import { useToast } from "@/hooks/useToast";
 
 interface Coupon {
@@ -38,8 +37,6 @@ interface FeaturedService {
   duration: string;
   status: "active" | "pending";
 }
-
-type Banner = HomeBanner;
 
 const initialCoupons: Coupon[] = [
   {
@@ -75,8 +72,6 @@ export default function MarketingManagementPage() {
   const { 
     featuredServices: homeFeaturedServices, 
     updateFeaturedServices,
-    banners: homeBanners,
-    updateBanners,
   } = useHomeData();
   const [coupons, setCoupons] = useState<Coupon[]>(() => {
     if (typeof window !== "undefined") {
@@ -103,15 +98,26 @@ export default function MarketingManagementPage() {
         }))
       : initialFeaturedServices
   );
-  const [banners, setBanners] = useState<Banner[]>(homeBanners);
   const [notificationTargets, setNotificationTargets] = useState<string[]>([]);
   const [notificationMessage, setNotificationMessage] = useState("");
   const [notificationLink, setNotificationLink] = useState("");
 
-  // Sync banners with HomeDataContext
+  // Listen for coupon data changes from other tabs/pages
   useEffect(() => {
-    setBanners(homeBanners);
-  }, [homeBanners]);
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "marketing_coupons" && e.newValue) {
+        try {
+          const updatedCoupons: Coupon[] = JSON.parse(e.newValue);
+          setCoupons(updatedCoupons);
+        } catch (error) {
+          console.warn("Failed to parse updated coupons", error);
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
 
   const [addCouponModal, setAddCouponModal] = useState(false);
   const [editCouponModal, setEditCouponModal] = useState<{ isOpen: boolean; coupon: Coupon | null }>({
@@ -127,15 +133,6 @@ export default function MarketingManagementPage() {
     service: null,
   });
   const [addFeaturedModal, setAddFeaturedModal] = useState(false);
-  const [addBannerModal, setAddBannerModal] = useState(false);
-  const [editBannerModal, setEditBannerModal] = useState<{ isOpen: boolean; banner: Banner | null }>({
-    isOpen: false,
-    banner: null,
-  });
-  const [deleteBannerModal, setDeleteBannerModal] = useState<{ isOpen: boolean; banner: Banner | null }>({
-    isOpen: false,
-    banner: null,
-  });
 
   // Coupon functions
   const handleAddCoupon = (e: React.FormEvent<HTMLFormElement>) => {
@@ -309,79 +306,6 @@ export default function MarketingManagementPage() {
     }
   };
 
-  // Banner functions
-  const handleAddBanner = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    const formData = new FormData(e.currentTarget);
-    const newBanner: Banner = {
-      id: Date.now(),
-      title: formData.get("title") as string,
-      subtitle: (formData.get("subtitle") as string) || undefined,
-      image: (formData.get("image") as string) || "",
-      url: formData.get("url") as string,
-      active: formData.get("active") === "true",
-    };
-    const updatedBanners = [...banners, newBanner];
-    setBanners(updatedBanners);
-    // Sync with homepage
-    updateBanners(updatedBanners);
-    showToast("배너가 추가되었습니다. 홈페이지에 반영되었습니다.", "success");
-    setAddBannerModal(false);
-  };
-
-  const handleEditBanner = (banner: Banner) => {
-    setEditBannerModal({ isOpen: true, banner });
-  };
-
-  const handleSaveBanner = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    if (editBannerModal.banner) {
-      const formData = new FormData(e.currentTarget);
-      const updatedBanners = banners.map((b) =>
-        b.id === editBannerModal.banner!.id
-          ? {
-              ...b,
-              title: formData.get("title") as string,
-              subtitle: (formData.get("subtitle") as string) || undefined,
-              image: (formData.get("image") as string) || "",
-              url: formData.get("url") as string,
-              active: formData.get("active") === "true",
-            }
-          : b
-      );
-      setBanners(updatedBanners);
-      // Sync with homepage
-      updateBanners(updatedBanners);
-      showToast("배너가 업데이트되었습니다. 홈페이지에 반영되었습니다.", "success");
-      setEditBannerModal({ isOpen: false, banner: null });
-    }
-  };
-
-  const handleDeleteBanner = (banner: Banner) => {
-    setDeleteBannerModal({ isOpen: true, banner });
-  };
-
-  const confirmDeleteBanner = () => {
-    if (deleteBannerModal.banner) {
-      const updatedBanners = banners.filter((b) => b.id !== deleteBannerModal.banner!.id);
-      setBanners(updatedBanners);
-      // Sync with homepage
-      updateBanners(updatedBanners);
-      showToast("배너가 삭제되었습니다. 홈페이지에 반영되었습니다.", "success");
-      setDeleteBannerModal({ isOpen: false, banner: null });
-    }
-  };
-
-  const handleToggleBannerStatus = (banner: Banner) => {
-    const updatedBanners = banners.map((b) =>
-      b.id === banner.id ? { ...b, active: !b.active } : b
-    );
-    setBanners(updatedBanners);
-    // Sync with homepage
-    updateBanners(updatedBanners);
-    showToast(`배너가 ${banner.active ? "비활성화" : "활성화"}되었습니다.`, "success");
-  };
-
   return (
     <div className="space-y-6">
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
@@ -400,7 +324,6 @@ export default function MarketingManagementPage() {
           {[
             { id: "coupons", label: "쿠폰", icon: Tag },
             { id: "notifications", label: "알림/공지", icon: Bell },
-            { id: "banners", label: "배너", icon: ImageIcon },
             { id: "featured", label: "추천 서비스", icon: Star },
           ].map((tab) => {
             const Icon = tab.icon;
@@ -537,62 +460,6 @@ export default function MarketingManagementPage() {
               <Bell className="size-4 mr-2" />
               알림 전송
             </Button>
-          </div>
-        </div>
-      )}
-
-      {/* Banners Tab */}
-      {activeTab === "banners" && (
-        <div className="bg-white rounded-xl border border-[#E2E8F0] p-6">
-          <div className="flex items-center justify-between mb-6">
-            <h3 className="text-lg font-bold text-[#0F172A]">배너 관리</h3>
-            <Button type="primary" onClick={() => setAddBannerModal(true)}>
-              <Plus className="size-4 mr-2" />
-              배너 추가
-            </Button>
-          </div>
-          <div className="space-y-4">
-            {banners.length === 0 ? (
-              <div className="text-center py-12 text-[#64748B]">
-                등록된 배너가 없습니다.
-              </div>
-            ) : (
-              banners.map((banner) => (
-                <div key={banner.id} className="p-4 rounded-lg border border-[#E2E8F0] flex items-center justify-between">
-                  <div className="flex-1">
-                    <h4 className="font-medium text-[#0F172A]">{banner.title}</h4>
-                    {banner.subtitle && (
-                      <p className="text-sm text-[#64748B] mt-1">{banner.subtitle}</p>
-                    )}
-                    <div className="flex items-center gap-4 mt-2 text-sm text-[#64748B]">
-                      <span>URL: {banner.url}</span>
-                      <span
-                        className={`px-2 py-1 rounded-full text-xs font-medium ${
-                          banner.active ? "bg-green-100 text-green-700" : "bg-gray-100 text-gray-700"
-                        }`}
-                      >
-                        {banner.active ? "활성" : "비활성"}
-                      </span>
-                    </div>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button
-                      size="sm"
-                      type={banner.active ? "default" : "outline"}
-                      onClick={() => handleToggleBannerStatus(banner)}
-                    >
-                      {banner.active ? "비활성화" : "활성화"}
-                    </Button>
-                    <Button size="sm" type="outline" onClick={() => handleEditBanner(banner)}>
-                      <Edit className="size-4" />
-                    </Button>
-                    <Button size="sm" type="outline" onClick={() => handleDeleteBanner(banner)}>
-                      <X className="size-4" />
-                    </Button>
-                  </div>
-                </div>
-              ))
-            )}
           </div>
         </div>
       )}
@@ -888,174 +755,6 @@ export default function MarketingManagementPage() {
           </div>
         </div>
       )}
-
-      {/* Add Banner Modal */}
-      {addBannerModal && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-[#0F172A]">배너 추가</h2>
-              <button
-                onClick={() => setAddBannerModal(false)}
-                className="p-2 rounded-lg hover:bg-[#F8FAFC] text-[#64748B]"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <form onSubmit={handleAddBanner} className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-[#0F172A] mb-2">제목</label>
-                <input
-                  type="text"
-                  name="title"
-                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#0F172A] mb-2">부제목 (선택)</label>
-                <input
-                  type="text"
-                  name="subtitle"
-                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#0F172A] mb-2">이미지 URL</label>
-                <input
-                  type="url"
-                  name="image"
-                  placeholder="https://..."
-                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#0F172A] mb-2">링크 URL</label>
-                <input
-                  type="url"
-                  name="url"
-                  placeholder="https://..."
-                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
-                  required
-                />
-              </div>
-              <div>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="active"
-                    defaultChecked
-                    value="true"
-                    className="rounded"
-                  />
-                  <span className="text-sm text-[#0F172A]">활성화</span>
-                </label>
-              </div>
-              <div className="flex gap-3 pt-4">
-                <Button type="outline" onClick={() => setAddBannerModal(false)} className="flex-1">
-                  취소
-                </Button>
-                <Button type="primary" htmlType="submit" className="flex-1">
-                  추가
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Edit Banner Modal */}
-      {editBannerModal.isOpen && editBannerModal.banner && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
-          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
-            <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-[#0F172A]">배너 수정</h2>
-              <button
-                onClick={() => setEditBannerModal({ isOpen: false, banner: null })}
-                className="p-2 rounded-lg hover:bg-[#F8FAFC] text-[#64748B]"
-              >
-                <X className="size-5" />
-              </button>
-            </div>
-            <form onSubmit={handleSaveBanner} className="space-y-4">
-              <div>
-                <label className="block text-sm font-semibold text-[#0F172A] mb-2">제목</label>
-                <input
-                  type="text"
-                  name="title"
-                  defaultValue={editBannerModal.banner.title}
-                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
-                  required
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#0F172A] mb-2">부제목 (선택)</label>
-                <input
-                  type="text"
-                  name="subtitle"
-                  defaultValue={editBannerModal.banner.subtitle}
-                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#0F172A] mb-2">이미지 URL</label>
-                <input
-                  type="url"
-                  name="image"
-                  defaultValue={editBannerModal.banner.image}
-                  placeholder="https://..."
-                  className="w-full px-4 py-2 rounded-lg border border-[#E2E8F0] focus:border-[#2E5E99] focus:outline-none"
-                />
-              </div>
-              <div>
-                <label className="block text-sm font-semibold text-[#0F172A] mb-2">링크 URL</label>
-                <input
-                  type="url"
-                  name="url"
-                  defaultValue={editBannerModal.banner.url}
-                  placeholder="https://..."
-                  className="w-full px-4 py-2 rounded-lg border border-[#E2E5E99] focus:border-[#2E5E99] focus:outline-none"
-                  required
-                />
-              </div>
-              <div>
-                <label className="flex items-center gap-2">
-                  <input
-                    type="checkbox"
-                    name="active"
-                    defaultChecked={editBannerModal.banner.active}
-                    value="true"
-                    className="rounded"
-                  />
-                  <span className="text-sm text-[#0F172A]">활성화</span>
-                </label>
-              </div>
-              <div className="flex gap-3 pt-4">
-                <Button
-                  type="outline"
-                  onClick={() => setEditBannerModal({ isOpen: false, banner: null })}
-                  className="flex-1"
-                >
-                  취소
-                </Button>
-                <Button type="primary" htmlType="submit" className="flex-1">
-                  저장
-                </Button>
-              </div>
-            </form>
-          </div>
-        </div>
-      )}
-
-      {/* Delete Banner Modal */}
-      <ConfirmModal
-        isOpen={deleteBannerModal.isOpen}
-        onClose={() => setDeleteBannerModal({ isOpen: false, banner: null })}
-        onConfirm={confirmDeleteBanner}
-        title="배너 삭제"
-        message={deleteBannerModal.banner ? `${deleteBannerModal.banner.title} 배너를 삭제하시겠습니까?` : ""}
-        confirmText="삭제"
-      />
 
       {/* Toast */}
       <Toast

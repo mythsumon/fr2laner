@@ -14,6 +14,7 @@ export interface CategoryService {
   thumb: string;
   badge: ServiceBadge;
   sponsored?: boolean;
+  tags?: string[];
 }
 
 export interface KeywordTag {

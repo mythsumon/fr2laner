@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Tag, Gift, Sparkles } from "lucide-react";
 import { CouponCard, type Coupon } from "@/components/shared/CouponCard";
 import { useAuth } from "@/hooks/useAuth";
@@ -10,14 +10,13 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 
 export const CouponsPage = () => {
-  const { user } = useAuth();
+  const { user, isLoading } = useAuth();
   const router = useRouter();
   const { toast, showToast, hideToast } = useToast();
   const [availableCoupons, setAvailableCoupons] = useState<Coupon[]>([]);
   const [claimedCouponIds, setClaimedCouponIds] = useState<Set<number>>(new Set());
 
-  useEffect(() => {
-    // Load available coupons from localStorage
+  const loadCoupons = useCallback(() => {
     if (typeof window !== "undefined") {
       const storedCoupons = localStorage.getItem("marketing_coupons");
       if (storedCoupons) {
@@ -51,7 +50,29 @@ export const CouponsPage = () => {
     }
   }, [user?.id]);
 
+  useEffect(() => {
+    loadCoupons();
+  }, [loadCoupons]);
+
+  // Listen for coupon data changes from admin or other pages
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "marketing_coupons") {
+        loadCoupons();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [loadCoupons]);
+
   const handleClaimCoupon = (coupon: Coupon) => {
+    // Wait for auth to finish loading
+    if (isLoading) {
+      return;
+    }
+    
+    // Only redirect to login if user is definitely not logged in
     if (!user) {
       showToast("로그인이 필요합니다.", "error");
       router.push("/login");

@@ -6,10 +6,10 @@ import { Home, MessageSquare, ListChecks, User } from "lucide-react";
 import { cn } from "@/components/shared/utils";
 
 const navItems = [
-  { href: "/buyer-dashboard", label: "홈", icon: Home },
-  { href: "/buyer-messages", label: "메시지", icon: MessageSquare },
-  { href: "/orders", label: "주문", icon: ListChecks },
-  { href: "/profile", label: "프로필", icon: User },
+  { href: "/client/dashboard", label: "Home", icon: Home },
+  { href: "/client/messages", label: "Messages", icon: MessageSquare },
+  { href: "/client/orders", label: "Orders", icon: ListChecks },
+  { href: "/client/profile", label: "Profile", icon: User },
 ];
 
 export const BuyerBottomNav = () => {

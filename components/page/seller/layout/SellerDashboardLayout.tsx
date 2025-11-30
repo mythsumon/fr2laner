@@ -45,36 +45,36 @@ const mockNotifications: Notification[] = [
   {
     id: "1",
     type: "order",
-    title: "새로운 주문 요청",
-    message: "주문 #8421이 접수되었습니다. 24시간 내 응답해주세요.",
-    time: "10분 전",
+    title: "New Order Request",
+    message: "Order #8421 has been received. Please respond within 24 hours.",
+    time: "10 minutes ago",
     isRead: false,
     link: "/expert/orders/8421",
   },
   {
     id: "2",
     type: "message",
-    title: "클라이언트 메시지",
-    message: "클라이언트가 수정 요청을 남겼습니다.",
-    time: "1시간 전",
+    title: "Client Message",
+    message: "The client has left a revision request.",
+    time: "1 hour ago",
     isRead: false,
     link: "/expert/messages",
   },
   {
     id: "3",
     type: "review",
-    title: "새로운 리뷰",
-    message: "★★★★★ 평점과 함께 리뷰가 도착했습니다.",
-    time: "어제",
+    title: "New Review",
+    message: "A review with ★★★★★ rating has arrived.",
+    time: "Yesterday",
     isRead: true,
     link: "/expert/reviews",
   },
   {
     id: "4",
     type: "system",
-    title: "시스템 알림",
-    message: "이번 주 신규 고객 문의가 15% 증가했습니다.",
-    time: "2일 전",
+    title: "System Notification",
+    message: "New customer inquiries have increased by 15% this week.",
+    time: "2 days ago",
     isRead: true,
     link: "/expert/analytics",
   },
@@ -163,16 +163,15 @@ export const SellerDashboardLayout = ({ children }: SellerDashboardLayoutProps) 
 
   const sellerMenuItems = [
     { href: "/expert/dashboard", label: "Dashboard", icon: LayoutDashboard },
-    { href: "/expert/services", label: "내 서비스", icon: Briefcase },
-    { href: "/expert/services/new", label: "서비스 등록", icon: Plus },
-    { href: "/expert/orders", label: "주문", icon: ShoppingBag },
-    { href: "/expert/messages", label: "메시지", icon: MessageSquare },
-    { href: "/expert/earnings", label: "수익", icon: DollarSign },
-    { href: "/expert/analytics", label: "분석", icon: BarChart3 },
-    { href: "/expert/reviews", label: "리뷰", icon: Star },
-    { href: "/expert/notifications", label: "알림", icon: Bell },
-    { href: "/expert/settings", label: "설정", icon: Settings },
-    { href: "/expert/help", label: "도움말", icon: HelpCircle },
+    { href: "/expert/services", label: "Services", icon: Briefcase },
+    { href: "/expert/services/new", label: "New Service", icon: Plus },
+    { href: "/expert/orders", label: "Orders", icon: ShoppingBag },
+    { href: "/expert/earnings", label: "Earnings", icon: DollarSign },
+    { href: "/expert/analytics", label: "Analytics", icon: BarChart3 },
+    { href: "/expert/reviews", label: "Reviews", icon: Star },
+    { href: "/expert/notifications", label: "Notifications", icon: Bell },
+    { href: "/expert/settings", label: "Settings", icon: Settings },
+    { href: "/expert/help", label: "Help", icon: HelpCircle },
   ];
 
   return (
@@ -199,6 +198,15 @@ export const SellerDashboardLayout = ({ children }: SellerDashboardLayoutProps) 
               title="Go to Homepage"
             >
               <Home className="size-5" />
+            </Link>
+            
+            {/* Message Button */}
+            <Link
+              href="/expert/messages"
+              className="relative p-2 rounded-lg hover:bg-[#F8FAFC] text-[#64748B] hover:text-[#2E5E99] transition-colors"
+              title="Messages"
+            >
+              <MessageSquare className="size-5" />
             </Link>
             
             {/* Notification Button */}
@@ -490,6 +498,16 @@ export const SellerDashboardLayout = ({ children }: SellerDashboardLayoutProps) 
                   >
                     <Home className="size-5" />
                     <span className="text-sm font-medium">Homepage</span>
+                  </Link>
+                  
+                  {/* Message Button */}
+                  <Link
+                    href="/expert/messages"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#2E5E99] transition-colors"
+                    title="Messages"
+                  >
+                    <MessageSquare className="size-5" />
+                    <span className="text-sm font-medium">Messages</span>
                   </Link>
                   
                   {/* Notification Button */}

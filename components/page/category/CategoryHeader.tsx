@@ -1,9 +1,22 @@
 "use client";
 
 import Link from "next/link";
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { useTranslation } from "react-i18next";
 import { cn } from "@/components/shared/utils";
+import { usePathname } from "next/navigation";
+
+interface CategoryBanner {
+  id: number;
+  title: string;
+  description: string;
+  cta: string;
+  badge: string;
+  gradient: string;
+  url?: string;
+  active: boolean;
+  category?: string;
+}
 
 interface CategoryHeaderProps {
   title: string;
@@ -14,8 +27,67 @@ interface CategoryHeaderProps {
 
 export const CategoryHeader = ({ title, description, stats, keywordTags }: CategoryHeaderProps) => {
   const { t } = useTranslation();
-  const promoItems = useMemo(
-    () => [
+  const pathname = usePathname();
+  const [categoryBanners, setCategoryBanners] = useState<CategoryBanner[]>([]);
+  const [activePromo, setActivePromo] = useState(0);
+
+  // Load category banners from localStorage
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("cms_category_banners");
+      if (stored) {
+        try {
+          const banners: CategoryBanner[] = JSON.parse(stored);
+          // Get current category from pathname (e.g., "/design" -> "design")
+          const currentCategory = pathname?.split("/")[1] || "";
+          // Filter banners: active banners that match current category or have no category (all pages)
+          const filteredBanners = banners.filter(
+            (b) => b.active && (!b.category || b.category === currentCategory)
+          );
+          setCategoryBanners(filteredBanners);
+        } catch (e) {
+          console.warn("Failed to parse category banners", e);
+        }
+      }
+    }
+
+    // Listen for storage changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "cms_category_banners") {
+        if (e.newValue) {
+          try {
+            const banners: CategoryBanner[] = JSON.parse(e.newValue);
+            const currentCategory = pathname?.split("/")[1] || "";
+            const filteredBanners = banners.filter(
+              (b) => b.active && (!b.category || b.category === currentCategory)
+            );
+            setCategoryBanners(filteredBanners);
+          } catch (e) {
+            console.warn("Failed to parse category banners", e);
+          }
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [pathname]);
+
+  // Fallback to translation-based promos if no banners from CMS
+  const promoItems = useMemo(() => {
+    if (categoryBanners.length > 0) {
+      return categoryBanners.map((banner) => ({
+        id: `banner-${banner.id}`,
+        title: banner.title,
+        description: banner.description,
+        cta: banner.cta,
+        badge: banner.badge,
+        gradient: banner.gradient,
+        url: banner.url,
+      }));
+    }
+    // Fallback to default translation-based promos
+    return [
       {
         id: "deal",
         title: t("category.design.header.promos.deal.title"),
@@ -23,6 +95,7 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
         cta: t("category.design.header.promos.deal.cta"),
         badge: t("category.design.header.promos.deal.badge"),
         gradient: "from-[#E8F1FF] to-[#D3E3FF]",
+        url: undefined,
       },
       {
         id: "guide",
@@ -31,11 +104,10 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
         cta: t("category.design.header.promos.guide.cta"),
         badge: t("category.design.header.promos.guide.badge"),
         gradient: "from-[#FFE8F1] to-[#FFD6E5]",
+        url: undefined,
       },
-    ],
-    [t]
-  );
-  const [activePromo, setActivePromo] = useState(0);
+    ];
+  }, [categoryBanners, t]);
 
   return (
     <>
@@ -80,9 +152,10 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
             ))}
           </div>
         </div>
-        <aside className="relative" aria-live="polite">
-          <div className="relative h-full overflow-hidden rounded-3xl bg-[#E8F1FF] shadow-[0_16px_40px_rgba(46,94,153,0.15)]">
-            {promoItems.map((item, index) => (
+        {promoItems.length > 0 && (
+          <aside className="relative" aria-live="polite">
+            <div className="relative h-full overflow-hidden rounded-3xl bg-[#E8F1FF] shadow-[0_16px_40px_rgba(46,94,153,0.15)]">
+              {promoItems.map((item, index) => (
               <div
                 key={item.id}
                 className={cn(
@@ -97,33 +170,43 @@ export const CategoryHeader = ({ title, description, stats, keywordTags }: Categ
                   <h3 className="text-2xl font-bold text-[#0F172A]">{item.title}</h3>
                   <p className="text-sm text-[#475569]">{item.description}</p>
                 </div>
-                <button
-                  type="button"
-                  className="inline-flex w-fit items-center justify-center rounded-full border border-[#2E5E99] bg-white px-4 py-2 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
-                >
-                  {item.cta}
-                </button>
+                {item.url ? (
+                  <Link
+                    href={item.url}
+                    className="inline-flex w-fit items-center justify-center rounded-full border border-[#2E5E99] bg-white px-4 py-2 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+                  >
+                    {item.cta}
+                  </Link>
+                ) : (
+                  <button
+                    type="button"
+                    className="inline-flex w-fit items-center justify-center rounded-full border border-[#2E5E99] bg-white px-4 py-2 text-sm font-semibold text-[#2E5E99] transition-colors hover:bg-[#2E5E99] hover:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#2E5E99]"
+                  >
+                    {item.cta}
+                  </button>
+                )}
                 <span className={cn("absolute inset-0 -z-10 bg-gradient-to-br opacity-70", item.gradient)} />
               </div>
-            ))}
-          </div>
-          <div className="mt-4 flex items-center gap-3">
-            <div className="flex items-center gap-2">
-              {promoItems.map((item, index) => (
-                <button
-                  key={item.id}
-                  type="button"
-                  onClick={() => setActivePromo(index)}
-                  className={cn(
-                    "h-2 rounded-full transition-all",
-                    index === activePromo ? "w-6 bg-[#2E5E99]" : "w-3 bg-[#CBD5F5]"
-                  )}
-                  aria-label={t("category.design.header.promos.dotAria", { index: index + 1 }) ?? undefined}
-                />
               ))}
             </div>
-          </div>
-        </aside>
+            <div className="mt-4 flex items-center gap-3">
+              <div className="flex items-center gap-2">
+                {promoItems.map((item, index) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    onClick={() => setActivePromo(index)}
+                    className={cn(
+                      "h-2 rounded-full transition-all",
+                      index === activePromo ? "w-6 bg-[#2E5E99]" : "w-3 bg-[#CBD5F5]"
+                    )}
+                    aria-label={t("category.design.header.promos.dotAria", { index: index + 1 }) ?? undefined}
+                  />
+                ))}
+              </div>
+            </div>
+          </aside>
+        )}
       </div>
     </header>
       <style jsx>{`

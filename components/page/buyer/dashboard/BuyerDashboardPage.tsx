@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -194,7 +194,7 @@ export const BuyerDashboardPage = () => {
   };
 
   // Load my coupons
-  useEffect(() => {
+  const loadCoupons = useCallback(() => {
     if (user?.id && typeof window !== "undefined") {
       const storedClaimed = localStorage.getItem(`user_claimed_coupons_${user.id}`);
       let claimedIds: number[] = [];
@@ -223,6 +223,22 @@ export const BuyerDashboardPage = () => {
       }
     }
   }, [user?.id]);
+
+  useEffect(() => {
+    loadCoupons();
+  }, [loadCoupons]);
+
+  // Listen for coupon data changes from admin or other pages
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "marketing_coupons") {
+        loadCoupons();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [loadCoupons]);
 
   // Mock recent orders and projects
   const recentOrders = [

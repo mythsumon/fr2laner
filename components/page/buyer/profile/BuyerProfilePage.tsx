@@ -18,13 +18,13 @@ const quickLinks = [
     icon: ShoppingBag,
     title: "나의 주문",
     description: "진행중인 프로젝트 확인",
-    href: "/orders",
+    href: "/client/orders",
   },
   {
     icon: FileText,
     title: "커스텀 요청",
     description: "요청서 작성 및 제안 관리",
-    href: "/custom-requests",
+    href: "/client/custom-requests",
   },
   {
     icon: Heart,

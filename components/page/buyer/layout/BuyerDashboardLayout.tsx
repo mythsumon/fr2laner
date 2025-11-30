@@ -45,36 +45,36 @@ const mockNotifications: Notification[] = [
   {
     id: "1",
     type: "order",
-    title: "새로운 주문 업데이트",
-    message: "주문 #5842의 상태가 '진행 중'으로 변경되었습니다.",
-    time: "방금 전",
+    title: "New Order Update",
+    message: "Order #5842 status has been changed to 'In Progress'.",
+    time: "Just now",
     isRead: false,
     link: "/orders/5842",
   },
   {
     id: "2",
     type: "message",
-    title: "판매자로부터 새로운 메시지",
-    message: "디자인 초안에 대한 확인 요청이 도착했습니다.",
-    time: "20분 전",
+    title: "New Message from Seller",
+    message: "A confirmation request for the design draft has arrived.",
+    time: "20 minutes ago",
     isRead: false,
     link: "/client/messages",
   },
   {
     id: "3",
     type: "wishlist",
-    title: "위시리스트 서비스 할인",
-    message: "위시리스트에 저장한 '브랜딩 패키지' 서비스가 20% 할인 중입니다.",
-    time: "1시간 전",
+    title: "Wishlist Service Discount",
+    message: "The 'Branding Package' service in your wishlist is now 20% off.",
+    time: "1 hour ago",
     isRead: true,
     link: "/wishlist",
   },
   {
     id: "4",
     type: "system",
-    title: "시스템 알림",
-    message: "오늘 오후 9시에 짧은 유지보수가 예정되어 있습니다.",
-    time: "어제",
+    title: "System Notification",
+    message: "A brief maintenance is scheduled for 9 PM today.",
+    time: "Yesterday",
     isRead: true,
   },
 ];
@@ -116,7 +116,6 @@ const pageTitles: Record<string, { title: string; description: string }> = {
 
 const buyerMenuItems = [
   { href: "/client/dashboard", label: "Dashboard", icon: Home },
-  { href: "/client/messages", label: "Messages", icon: MessageSquare },
   { href: "/client/orders", label: "Orders", icon: ListChecks },
   { href: "/client/custom-requests", label: "Custom Requests", icon: FileText },
   { href: "/client/wishlist", label: "Saved", icon: Heart },
@@ -233,6 +232,15 @@ export const BuyerDashboardLayout = ({ children }: BuyerDashboardLayoutProps) =>
               title="Go to Homepage"
             >
               <Home className="size-5" />
+            </Link>
+            
+            {/* Message Button */}
+            <Link
+              href="/client/messages"
+              className="relative p-2 rounded-lg hover:bg-[#F8FAFC] text-[#64748B] hover:text-[#2E5E99] transition-colors"
+              title="Messages"
+            >
+              <MessageSquare className="size-5" />
             </Link>
             
             {/* Notification Button */}
@@ -524,6 +532,16 @@ export const BuyerDashboardLayout = ({ children }: BuyerDashboardLayoutProps) =>
                   >
                     <Home className="size-5" />
                     <span className="text-sm font-medium">Homepage</span>
+                  </Link>
+                  
+                  {/* Message Button */}
+                  <Link
+                    href="/client/messages"
+                    className="flex items-center gap-2 px-4 py-2 rounded-lg text-[#64748B] hover:bg-[#F8FAFC] hover:text-[#2E5E99] transition-colors"
+                    title="Messages"
+                  >
+                    <MessageSquare className="size-5" />
+                    <span className="text-sm font-medium">Messages</span>
                   </Link>
                   
                   {/* Notification Button */}

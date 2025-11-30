@@ -18,17 +18,17 @@ import {
 import { cn } from "@/components/shared/utils";
 
 const navItems = [
-  { href: "/dashboard", label: "대시보드", icon: LayoutDashboard },
-  { href: "/dashboard/services", label: "내 서비스", icon: Briefcase },
-  { href: "/dashboard/services/new", label: "서비스 등록", icon: Plus },
-  { href: "/dashboard/orders", label: "주문", icon: ShoppingBag },
-  { href: "/dashboard/messages", label: "메시지", icon: MessageSquare },
-  { href: "/dashboard/earnings", label: "수익", icon: DollarSign },
-  { href: "/dashboard/analytics", label: "분석", icon: BarChart3 },
-  { href: "/dashboard/reviews", label: "리뷰", icon: Star },
-  { href: "/dashboard/notifications", label: "알림", icon: Bell },
-  { href: "/dashboard/settings", label: "설정", icon: Settings },
-  { href: "/dashboard/help", label: "도움말", icon: HelpCircle },
+  { href: "/expert/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/expert/services", label: "Services", icon: Briefcase },
+  { href: "/expert/services/new", label: "New Service", icon: Plus },
+  { href: "/expert/orders", label: "Orders", icon: ShoppingBag },
+  { href: "/expert/messages", label: "Messages", icon: MessageSquare },
+  { href: "/expert/earnings", label: "Earnings", icon: DollarSign },
+  { href: "/expert/analytics", label: "Analytics", icon: BarChart3 },
+  { href: "/expert/reviews", label: "Reviews", icon: Star },
+  { href: "/expert/notifications", label: "Notifications", icon: Bell },
+  { href: "/expert/settings", label: "Settings", icon: Settings },
+  { href: "/expert/help", label: "Help", icon: HelpCircle },
 ];
 
 export const SellerBottomNav = () => {
@@ -41,7 +41,7 @@ export const SellerBottomNav = () => {
           {navItems.map((item) => {
             const Icon = item.icon;
             const isActive =
-              pathname === item.href || (item.href !== "/dashboard" && pathname?.startsWith(item.href));
+              pathname === item.href || (item.href !== "/expert/dashboard" && pathname?.startsWith(item.href));
             return (
               <Link
                 key={item.href}

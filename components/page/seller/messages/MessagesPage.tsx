@@ -3,7 +3,7 @@
 import { useState } from "react";
 import Image from "next/image";
 import Link from "next/link";
-import { MessageSquare, Circle, Send, Paperclip, Mic, Search, MoreVertical, Check, CheckCheck, Clock } from "lucide-react";
+import { MessageSquare, Circle, Send, Paperclip, Mic, Search, MoreVertical, Check, CheckCheck, Clock, Archive, UserX, Trash2, Info, X } from "lucide-react";
 import { Button } from "@/components/shared/common";
 
 interface Chat {
@@ -120,6 +120,8 @@ const mockMessages: Record<string, Message[]> = {
 export const MessagesPage = () => {
   const [selectedChat, setSelectedChat] = useState<string | null>("1");
   const [messageInput, setMessageInput] = useState("");
+  const [showChatMenu, setShowChatMenu] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   const selectedChatData = mockChats.find((chat) => chat.id === selectedChat);
   const messages = selectedChat ? mockMessages[selectedChat] || [] : [];
@@ -128,6 +130,36 @@ export const MessagesPage = () => {
     if (!messageInput.trim() || !selectedChat) return;
     // Add message sending logic here
     setMessageInput("");
+  };
+
+  const handleArchiveChat = () => {
+    if (!selectedChat) return;
+    // Archive chat logic
+    setShowChatMenu(false);
+    alert("대화방이 보관되었습니다.");
+  };
+
+  const handleBlockUser = () => {
+    if (!selectedChat) return;
+    // Block user logic
+    setShowChatMenu(false);
+    alert("사용자가 차단되었습니다.");
+  };
+
+  const handleDeleteChat = () => {
+    if (!selectedChat) return;
+    // Delete chat logic
+    setShowChatMenu(false);
+    setShowDeleteConfirm(false);
+    setSelectedChat(null);
+    alert("대화방이 삭제되었습니다.");
+  };
+
+  const handleViewInfo = () => {
+    if (!selectedChat) return;
+    setShowChatMenu(false);
+    // Show chat info modal or navigate
+    alert("대화방 정보를 표시합니다.");
   };
 
   return (
@@ -243,13 +275,62 @@ export const MessagesPage = () => {
                     주문 보기
                   </Link>
                 )}
-                <button
-                  type="button"
-                  className="rounded-lg p-2 text-[#475569] transition-colors hover:bg-[#F8FAFC]"
-                  aria-label="더보기"
-                >
-                  <MoreVertical className="size-5" />
-                </button>
+                <div className="relative">
+                  <button
+                    type="button"
+                    onClick={() => setShowChatMenu(!showChatMenu)}
+                    className="rounded-lg p-2 text-[#475569] transition-colors hover:bg-[#F8FAFC]"
+                    aria-label="더보기"
+                  >
+                    <MoreVertical className="size-5" />
+                  </button>
+                  
+                  {/* Dropdown Menu */}
+                  {showChatMenu && (
+                    <>
+                      <div
+                        className="fixed inset-0 z-40"
+                        onClick={() => setShowChatMenu(false)}
+                      />
+                      <div className="absolute right-0 top-full mt-2 z-50 w-48 rounded-lg border border-[#E2E8F0] bg-white shadow-xl">
+                        <div className="py-1">
+                          <button
+                            onClick={handleViewInfo}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[#0F172A] transition-colors hover:bg-[#F8FAFC]"
+                          >
+                            <Info className="size-4 text-[#64748B]" />
+                            <span>대화방 정보</span>
+                          </button>
+                          <button
+                            onClick={handleArchiveChat}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[#0F172A] transition-colors hover:bg-[#F8FAFC]"
+                          >
+                            <Archive className="size-4 text-[#64748B]" />
+                            <span>보관하기</span>
+                          </button>
+                          <button
+                            onClick={handleBlockUser}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-[#0F172A] transition-colors hover:bg-[#F8FAFC]"
+                          >
+                            <UserX className="size-4 text-[#64748B]" />
+                            <span>차단하기</span>
+                          </button>
+                          <div className="my-1 border-t border-[#E2E8F0]" />
+                          <button
+                            onClick={() => {
+                              setShowChatMenu(false);
+                              setShowDeleteConfirm(true);
+                            }}
+                            className="flex w-full items-center gap-3 px-4 py-2.5 text-sm text-red-600 transition-colors hover:bg-red-50"
+                          >
+                            <Trash2 className="size-4" />
+                            <span>대화방 삭제</span>
+                          </button>
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
             </div>
 
@@ -356,6 +437,42 @@ export const MessagesPage = () => {
           </div>
         )}
       </div>
+
+      {/* Delete Confirmation Modal */}
+      {showDeleteConfirm && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 p-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-xl">
+            <div className="mb-4 flex items-center justify-between">
+              <h2 className="text-xl font-bold text-[#0F172A]">대화방 삭제</h2>
+              <button
+                onClick={() => setShowDeleteConfirm(false)}
+                className="rounded-lg p-2 hover:bg-[#F8FAFC] text-[#64748B]"
+              >
+                <X className="size-5" />
+              </button>
+            </div>
+            <p className="mb-6 text-sm text-[#64748B]">
+              대화방을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.
+            </p>
+            <div className="flex gap-3">
+              <Button
+                type="outline"
+                onClick={() => setShowDeleteConfirm(false)}
+                className="flex-1"
+              >
+                취소
+              </Button>
+              <Button
+                type="primary"
+                onClick={handleDeleteChat}
+                className="flex-1 bg-red-600 hover:bg-red-700"
+              >
+                삭제
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };

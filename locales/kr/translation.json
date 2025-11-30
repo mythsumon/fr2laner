@@ -646,6 +646,12 @@
         "podcast": "팟캐스트"
       }
     },
+    "promotions": {
+      "title": "프로모션",
+      "items": {
+        "coupons": "쿠폰"
+      }
+    },
     "legal": {
       "terms": "이용약관",
       "privacy": "개인정보 처리방침",

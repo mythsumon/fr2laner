@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Tag, CheckCircle2, X, AlertCircle } from "lucide-react";
@@ -40,7 +40,7 @@ export const CreateOrderPage = () => {
     files: [] as File[],
   });
 
-  useEffect(() => {
+  const loadCoupons = useCallback(() => {
     // Load available coupons from localStorage
     if (typeof window !== "undefined") {
       const storedCoupons = localStorage.getItem("marketing_coupons");
@@ -80,6 +80,22 @@ export const CreateOrderPage = () => {
       }
     }
   }, [user?.id]);
+
+  useEffect(() => {
+    loadCoupons();
+  }, [loadCoupons]);
+
+  // Listen for coupon data changes from admin or other pages
+  useEffect(() => {
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "marketing_coupons") {
+        loadCoupons();
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, [loadCoupons]);
 
   const handleApplyCoupon = () => {
     if (!couponCode.trim()) {

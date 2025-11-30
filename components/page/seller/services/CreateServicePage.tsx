@@ -1,9 +1,11 @@
 ﻿"use client";
 
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { ArrowLeft, ArrowRight, Check, X, Plus } from "lucide-react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Button } from "@/components/shared/common";
+import { useAuth } from "@/hooks/useAuth";
 
 type Step = 1 | 2 | 3 | 4;
 
@@ -17,7 +19,14 @@ interface PackageData {
 }
 
 export const CreateServicePage = () => {
+  const router = useRouter();
+  const { user } = useAuth();
   const [currentStep, setCurrentStep] = useState<Step>(1);
+  const [availableTags, setAvailableTags] = useState<string[]>([]);
+  const [tagInput, setTagInput] = useState("");
+  const [showTagSuggestions, setShowTagSuggestions] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  
   const [formData, setFormData] = useState({
     title: "",
     category: "",
@@ -34,6 +43,44 @@ export const CreateServicePage = () => {
     ] as PackageData[],
     requirements: [] as { type: "text" | "file" | "multiple"; question: string; options?: string[] }[],
   });
+
+  // Load available tags from localStorage (admin managed tags)
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const stored = localStorage.getItem("admin_service_tags");
+      if (stored) {
+        try {
+          const tags: string[] = JSON.parse(stored);
+          setAvailableTags(tags);
+        } catch (e) {
+          console.warn("Failed to parse admin tags", e);
+        }
+      }
+    }
+
+    // Listen for storage changes
+    const handleStorageChange = (e: StorageEvent) => {
+      if (e.key === "admin_service_tags" && e.newValue) {
+        try {
+          const tags: string[] = JSON.parse(e.newValue);
+          setAvailableTags(tags);
+        } catch (e) {
+          console.warn("Failed to parse admin tags", e);
+        }
+      }
+    };
+
+    window.addEventListener("storage", handleStorageChange);
+    return () => window.removeEventListener("storage", handleStorageChange);
+  }, []);
+
+  // Filter available tags based on input
+  const filteredTags = useMemo(() => {
+    if (!tagInput.trim()) return availableTags.filter((tag) => !formData.tags.includes(tag));
+    return availableTags
+      .filter((tag) => tag.toLowerCase().includes(tagInput.toLowerCase()) && !formData.tags.includes(tag))
+      .slice(0, 10);
+  }, [tagInput, availableTags, formData.tags]);
 
   const steps = [
     { number: 1, title: "기본 정보" },
@@ -64,10 +111,118 @@ export const CreateServicePage = () => {
     }
   };
 
-  const handlePublish = () => {
-    console.log("Publishing service:", formData);
-    // Navigate to services page
-    window.location.href = "/dashboard/services";
+  // Convert cover photo to base64
+  const convertFileToBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      if (!file.type.startsWith("image/")) {
+        reject(new Error("이미지 파일만 업로드할 수 있습니다."));
+        return;
+      }
+      if (file.size > 5 * 1024 * 1024) {
+        reject(new Error("파일 크기는 5MB 이하여야 합니다."));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        resolve(e.target?.result as string);
+      };
+      reader.onerror = reject;
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handlePublish = async () => {
+    if (!user) {
+      alert("로그인이 필요합니다.");
+      return;
+    }
+
+    // Validation
+    if (!formData.title.trim()) {
+      alert("서비스 제목을 입력해주세요.");
+      return;
+    }
+    if (!formData.category) {
+      alert("카테고리를 선택해주세요.");
+      return;
+    }
+    if (formData.packages.length === 0 || formData.packages.every((p) => p.price === 0)) {
+      alert("최소 하나의 패키지에 가격을 설정해주세요.");
+      return;
+    }
+    if (!formData.coverPhoto) {
+      alert("커버 사진을 업로드해주세요.");
+      return;
+    }
+
+    setIsSubmitting(true);
+
+    try {
+      // Convert cover photo to base64
+      let imageUrl = "";
+      if (formData.coverPhoto) {
+        imageUrl = await convertFileToBase64(formData.coverPhoto);
+      }
+
+      // Get minimum price from packages
+      const minPrice = Math.min(...formData.packages.map((p) => p.price).filter((p) => p > 0));
+      const priceString = `₩${minPrice.toLocaleString()}${formData.packages.length > 1 ? "부터" : ""}`;
+
+      // Create service object matching admin Service interface
+      const newService = {
+        id: Date.now(), // Generate unique ID
+        title: formData.title,
+        seller: user.name || "Seller",
+        category: formData.category,
+        price: priceString,
+        orders: 0,
+        rating: 0,
+        status: "pending" as const, // New services start as pending
+        featured: false,
+        createdAt: new Date().toISOString().split("T")[0],
+        imageUrl: imageUrl,
+        sellerAvatar: "", // Can be added later from user profile
+        description: formData.description || "",
+        tags: formData.tags || [],
+        // Additional seller-specific data
+        skills: formData.skills || [],
+        packages: formData.packages || [],
+        faqs: formData.faqs || [],
+        requirements: formData.requirements || [],
+        gallery: [] as string[], // Can be converted from gallery files if needed
+      };
+
+      // Save to localStorage for admin services
+      if (typeof window !== "undefined") {
+        const existingServices = localStorage.getItem("admin_services");
+        const services = existingServices ? JSON.parse(existingServices) : [];
+        services.push(newService);
+        localStorage.setItem("admin_services", JSON.stringify(services));
+
+        // Also save to seller's own services list
+        const sellerServices = localStorage.getItem(`seller_services_${user.id}`) || "[]";
+        const myServices = JSON.parse(sellerServices);
+        myServices.push({
+          ...newService,
+          sellerId: user.id,
+        });
+        localStorage.setItem(`seller_services_${user.id}`, JSON.stringify(myServices));
+
+        // Trigger storage event to notify admin page
+        window.dispatchEvent(new StorageEvent("storage", {
+          key: "admin_services",
+          newValue: JSON.stringify(services),
+        }));
+      }
+
+      alert("서비스가 등록되었습니다. 관리자 승인 후 게시됩니다.");
+      router.push("/expert/services");
+    } catch (error) {
+      console.error("Failed to publish service:", error);
+      alert(error instanceof Error ? error.message : "서비스 등록에 실패했습니다.");
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const addSkill = (skill: string) => {
@@ -411,24 +566,64 @@ export const CreateServicePage = () => {
                     </span>
                   ))}
                 </div>
-                <input
-                  type="text"
-                  placeholder="태그 입력 후 Enter"
-                  onKeyDown={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const input = e.currentTarget;
-                      if (input.value.trim() && !formData.tags.includes(input.value.trim())) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          tags: [...prev.tags, input.value.trim()],
-                        }));
-                        input.value = "";
+                <div className="relative">
+                  <input
+                    type="text"
+                    value={tagInput}
+                    onChange={(e) => {
+                      setTagInput(e.target.value);
+                      setShowTagSuggestions(true);
+                    }}
+                    onFocus={() => setShowTagSuggestions(true)}
+                    onBlur={() => {
+                      // Delay to allow click on suggestion
+                      setTimeout(() => setShowTagSuggestions(false), 200);
+                    }}
+                    placeholder="태그 입력 또는 선택 (Enter로 추가)"
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter") {
+                        e.preventDefault();
+                        if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
+                          setFormData((prev) => ({
+                            ...prev,
+                            tags: [...prev.tags, tagInput.trim()],
+                          }));
+                          setTagInput("");
+                          setShowTagSuggestions(false);
+                        }
                       }
-                    }
-                  }}
-                  className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
-                />
+                    }}
+                    className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
+                  />
+                  {showTagSuggestions && filteredTags.length > 0 && (
+                    <div className="absolute z-10 mt-1 w-full rounded-lg border border-[#E2E8F0] bg-white shadow-lg max-h-48 overflow-y-auto">
+                      {filteredTags.map((tag) => (
+                        <button
+                          key={tag}
+                          type="button"
+                          onClick={() => {
+                            if (!formData.tags.includes(tag)) {
+                              setFormData((prev) => ({
+                                ...prev,
+                                tags: [...prev.tags, tag],
+                              }));
+                            }
+                            setTagInput("");
+                            setShowTagSuggestions(false);
+                          }}
+                          className="w-full px-4 py-2 text-left text-sm text-[#0F172A] hover:bg-[#F8FAFC] transition-colors"
+                        >
+                          {tag}
+                        </button>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                {availableTags.length > 0 && (
+                  <p className="mt-2 text-xs text-[#64748B]">
+                    관리자 태그 {availableTags.length}개 중에서 선택하거나 직접 입력할 수 있습니다.
+                  </p>
+                )}
               </div>
             </div>
           )}
@@ -622,12 +817,22 @@ export const CreateServicePage = () => {
               size="large"
               shape="round"
               onClick={handleNext}
-              className="gap-2 bg-[#2E5E99] px-6 text-sm font-semibold text-white hover:bg-[#1d4673]"
+              disabled={isSubmitting}
+              className="gap-2 bg-[#2E5E99] px-6 text-sm font-semibold text-white hover:bg-[#1d4673] disabled:opacity-50"
             >
               {currentStep === 4 ? (
                 <>
-                  <Check className="size-4" />
-                  서비스 등록하기
+                  {isSubmitting ? (
+                    <>
+                      <div className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent" />
+                      등록 중...
+                    </>
+                  ) : (
+                    <>
+                      <Check className="size-4" />
+                      서비스 등록하기
+                    </>
+                  )}
                 </>
               ) : (
                 <>

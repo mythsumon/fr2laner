@@ -644,6 +644,12 @@
         "podcast": "Podcast"
       }
     },
+    "promotions": {
+      "title": "Promotions",
+      "items": {
+        "coupons": "Coupons"
+      }
+    },
     "legal": {
       "terms": "Terms of Service",
       "privacy": "Privacy Policy",
