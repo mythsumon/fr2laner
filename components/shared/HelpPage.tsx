@@ -113,3 +113,4 @@ export const HelpPage = ({ faqs, categories }: HelpPageProps) => {
   );
 };
 
+
