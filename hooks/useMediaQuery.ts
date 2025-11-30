@@ -1,14 +1,12 @@
 import { useEffect, useState } from "react";
 
 export const useMediaQuery = (query: string) => {
-  const [matches, setMatches] = useState(() => {
-    if (typeof window === "undefined") {
-      return false;
-    }
-    return window.matchMedia(query).matches;
-  });
+  // Always start with false on server to match initial client render
+  const [matches, setMatches] = useState(false);
+  const [mounted, setMounted] = useState(false);
 
   useEffect(() => {
+    setMounted(true);
     if (typeof window === "undefined") {
       return;
     }
@@ -16,14 +14,15 @@ export const useMediaQuery = (query: string) => {
     const mediaQuery = window.matchMedia(query);
     const listener = (event: MediaQueryListEvent) => setMatches(event.matches);
 
+    // Set initial value
+    setMatches(mediaQuery.matches);
+
     // Support older browsers
     if (typeof mediaQuery.addEventListener === "function") {
       mediaQuery.addEventListener("change", listener);
     } else {
       mediaQuery.addListener(listener);
     }
-
-    setMatches(mediaQuery.matches);
 
     return () => {
       if (typeof mediaQuery.removeEventListener === "function") {
@@ -33,6 +32,11 @@ export const useMediaQuery = (query: string) => {
       }
     };
   }, [query]);
+
+  // Return false during SSR and initial render to prevent hydration mismatch
+  if (!mounted) {
+    return false;
+  }
 
   return matches;
 };
