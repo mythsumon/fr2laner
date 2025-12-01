@@ -31,7 +31,7 @@ export function getCategoryUrl(categoryName: string): string {
     "글쓰기": { category: "document-writing", subcategory: "copywriting" },
     "문서 · 글쓰기": { category: "document-writing", subcategory: "copywriting" },
     "로고 디자인": { category: "design-branding", subcategory: "logo-design" },
-    "디자인 & 브랜딩": { category: "design-branding", subcategory: "logo-design" },
+    "디자인 & 브랜딩": { category: "design-branding", subcategory: "ai-design" },
     "AI 개발": { category: "it-programming", subcategory: "ai-development" },
     "AI 디자인": { category: "design-branding", subcategory: "ai-design" },
     "UI/UX 디자인": { category: "design-branding", subcategory: "ui-ux-design" },

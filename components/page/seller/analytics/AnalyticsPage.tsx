@@ -15,6 +15,8 @@ const metrics = [
 
 export const AnalyticsPage = () => {
   const [selectedPeriod] = useState<"week" | "month">("week");
+  const [hoveredViewsIndex, setHoveredViewsIndex] = useState<number | null>(null);
+  const [hoveredOrdersIndex, setHoveredOrdersIndex] = useState<number | null>(null);
 
   const viewsData = selectedPeriod === "week" 
     ? [120, 135, 150, 145, 160, 155, 170]
@@ -53,14 +55,21 @@ export const AnalyticsPage = () => {
       {/* Views Chart */}
       <div className="mb-6 rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-[#0F172A]">조회수 추이</h2>
-        <div className="flex h-48 items-end justify-between gap-2 rounded-lg bg-[#F8FAFC] p-4">
+        <div className="relative flex h-48 items-end justify-between gap-2 rounded-lg bg-[#F8FAFC] p-4">
           {viewsData.map((value, index) => (
             <div
               key={index}
-              className="flex-1 rounded-t bg-[#2E5E99]"
+              className="group relative flex-1 rounded-t bg-[#2E5E99] transition-all hover:bg-[#1d4673] cursor-pointer"
               style={{ height: `${(value / Math.max(...viewsData)) * 100}%` }}
-              aria-label={`${index + 1}: ${value}`}
-            />
+              onMouseEnter={() => setHoveredViewsIndex(index)}
+              onMouseLeave={() => setHoveredViewsIndex(null)}
+            >
+              {hoveredViewsIndex === index && (
+                <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                  {selectedPeriod === "week" ? `Day ${index + 1}` : `Month ${index + 1}`}: {value.toLocaleString()} views
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>
@@ -68,14 +77,21 @@ export const AnalyticsPage = () => {
       {/* Orders Chart */}
       <div className="mb-6 rounded-2xl border border-[#E2E8F0] bg-white p-6 shadow-sm">
         <h2 className="mb-4 text-lg font-semibold text-[#0F172A]">주문 추이</h2>
-        <div className="flex h-48 items-end justify-between gap-2 rounded-lg bg-[#F8FAFC] p-4">
+        <div className="relative flex h-48 items-end justify-between gap-2 rounded-lg bg-[#F8FAFC] p-4">
           {ordersData.map((value, index) => (
             <div
               key={index}
-              className="flex-1 rounded-t bg-green-500"
+              className="group relative flex-1 rounded-t bg-green-500 transition-all hover:bg-green-600 cursor-pointer"
               style={{ height: `${(value / Math.max(...ordersData)) * 100}%` }}
-              aria-label={`${index + 1}: ${value} orders`}
-            />
+              onMouseEnter={() => setHoveredOrdersIndex(index)}
+              onMouseLeave={() => setHoveredOrdersIndex(null)}
+            >
+              {hoveredOrdersIndex === index && (
+                <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                  Day {index + 1}: {value} orders
+                </div>
+              )}
+            </div>
           ))}
         </div>
       </div>

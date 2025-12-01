@@ -33,6 +33,7 @@ const stats = {
 
 export const SellerDashboardPage = () => {
   const [earningsData] = useState([45, 52, 48, 61, 55, 58, 62]);
+  const [hoveredEarningsIndex, setHoveredEarningsIndex] = useState<number | null>(null);
 
   return (
     <div className="min-h-screen bg-[#F8FAFC] p-4 pb-24 md:p-6 lg:p-8">
@@ -90,15 +91,25 @@ export const SellerDashboardPage = () => {
           </div>
         </div>
         {/* Mini Graph */}
-        <div className="mt-6 flex items-end justify-between gap-1 rounded-lg bg-[#F8FAFC] p-4">
-          {earningsData.map((value, index) => (
-            <div
-              key={index}
-              className="flex-1 rounded-t bg-[#2E5E99]"
-              style={{ height: `${(value / Math.max(...earningsData)) * 80}%` }}
-              aria-label={`Day ${index + 1}: ₩${value * 1000}`}
-            />
-          ))}
+        <div className="relative mt-6 flex items-end justify-between gap-1 rounded-lg bg-[#F8FAFC] p-4">
+          {earningsData.map((value, index) => {
+            const earningsValue = value * 1000;
+            return (
+              <div
+                key={index}
+                className="group relative flex-1 rounded-t bg-[#2E5E99] transition-all hover:bg-[#1d4673] cursor-pointer"
+                style={{ height: `${(value / Math.max(...earningsData)) * 80}%` }}
+                onMouseEnter={() => setHoveredEarningsIndex(index)}
+                onMouseLeave={() => setHoveredEarningsIndex(null)}
+              >
+                {hoveredEarningsIndex === index && (
+                  <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                    Day {index + 1}: ₩{earningsValue.toLocaleString()}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

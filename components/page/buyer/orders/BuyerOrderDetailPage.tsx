@@ -163,13 +163,13 @@ export const BuyerOrderDetailPage = () => {
               </div>
             </div>
           ) : (
-            <div className="mt-4 flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-200 p-3">
-              <Clock className="size-5 text-blue-500" />
-              <div>
-                <div className="text-sm font-semibold text-blue-700">남은 시간: {mockOrder.daysRemaining}일</div>
-                <div className="text-xs text-blue-600">납품 예정일까지</div>
-              </div>
+          <div className="mt-4 flex items-center gap-2 rounded-lg bg-blue-50 border border-blue-200 p-3">
+            <Clock className="size-5 text-blue-500" />
+            <div>
+              <div className="text-sm font-semibold text-blue-700">남은 시간: {mockOrder.daysRemaining}일</div>
+              <div className="text-xs text-blue-600">납품 예정일까지</div>
             </div>
+          </div>
           )}
         </div>
 
@@ -243,27 +243,27 @@ export const BuyerOrderDetailPage = () => {
               /* Approval/Revision Buttons - Show when order is in progress */
               <div className="mt-4 space-y-3">
                 <div className="flex gap-3">
-                  <Button
-                    type="primary"
-                    size="large"
-                    shape="round"
-                    onClick={handleApproveDelivery}
-                    className="flex-1 gap-2 bg-[#16A34A] text-sm font-semibold text-white hover:bg-[#15803D]"
-                  >
-                    <CheckCircle2 className="size-4" />
-                    납품 승인
-                  </Button>
-                  <Button
-                    type="default"
-                    size="large"
-                    shape="round"
-                    onClick={handleRequestRevision}
-                    className="flex-1 gap-2 border border-[#F59E0B] bg-white text-sm font-semibold text-[#B45309] hover:bg-[#FEF3C7]"
-                  >
-                    <AlertTriangle className="size-4" />
-                    수정 요청
-                  </Button>
-                </div>
+              <Button
+                type="primary"
+                size="large"
+                shape="round"
+                onClick={handleApproveDelivery}
+                className="flex-1 gap-2 bg-[#16A34A] text-sm font-semibold text-white hover:bg-[#15803D]"
+              >
+                <CheckCircle2 className="size-4" />
+                납품 승인
+              </Button>
+              <Button
+                type="default"
+                size="large"
+                shape="round"
+                onClick={handleRequestRevision}
+                className="flex-1 gap-2 border border-[#F59E0B] bg-white text-sm font-semibold text-[#B45309] hover:bg-[#FEF3C7]"
+              >
+                <AlertTriangle className="size-4" />
+                수정 요청
+              </Button>
+            </div>
                 <Button
                   type="default"
                   size="large"

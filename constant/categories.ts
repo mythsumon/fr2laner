@@ -15,7 +15,7 @@ export const CATEGORIES: Category[] = [
   {
     id: "design-branding",
     label: "디자인 & 브랜딩",
-    href: "/category/design-branding",
+    href: "/design?category=design-branding&subcategory=ai-design",
     subcategories: [
       { id: "ai-design", label: "AI 디자인", href: "/category/design-branding/ai-design" },
       { id: "logo-design", label: "로고 디자인", href: "/category/design-branding/logo-design" },

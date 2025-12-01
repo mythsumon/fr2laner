@@ -192,11 +192,57 @@ export const SellerProfilePage = () => {
   const [isCopied, setIsCopied] = useState(false);
 
   const seller = useMemo(() => {
+    // Try to load from localStorage first
+    if (typeof window !== "undefined") {
+      const savedProfile = localStorage.getItem("seller_profile");
+      if (savedProfile) {
+        try {
+          const parsed = JSON.parse(savedProfile);
+          if (parsed && parsed.displayName) {
+            // Create seller object from saved profile
+            return {
+              id: sellerId,
+              name: parsed.displayName,
+              avatar: parsed.profilePhotoUrl || getSellerData(sellerId)?.avatar || "",
+              level: "Pro",
+              rating: 4.9,
+              reviews: 127,
+              orders: 321,
+              specialties: parsed.skills || [],
+              priceRange: "₩100,000 - ₩500,000",
+              responseTime: "1시간 이내",
+              badge: "pro",
+            };
+          }
+        } catch (e) {
+          console.warn("Failed to parse seller profile from localStorage", e);
+        }
+      }
+    }
+    
+    // Fallback to mock data
     return getSellerData(sellerId);
   }, [sellerId]);
 
   const portfolios = useMemo(() => {
     if (!seller) return [];
+    
+    // Try to load from localStorage first (seller's own portfolio)
+    if (typeof window !== "undefined") {
+      const savedPortfolios = localStorage.getItem(`seller_portfolios_${seller.id}`);
+      if (savedPortfolios) {
+        try {
+          const parsed = JSON.parse(savedPortfolios);
+          if (parsed && parsed.length > 0) {
+            return parsed;
+          }
+        } catch (e) {
+          console.warn("Failed to parse seller portfolios from localStorage", e);
+        }
+      }
+    }
+    
+    // Fallback to mock data
     return getSellerPortfolios(seller.id, seller.name, seller.avatar);
   }, [seller]);
 
@@ -592,5 +638,6 @@ export const SellerProfilePage = () => {
     </main>
   );
 };
+
 
 

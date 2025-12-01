@@ -34,6 +34,7 @@ export const EarningsPage = () => {
   const [selectedPeriod, setSelectedPeriod] = useState<"week" | "month">("week");
   const [payoutRequests, setPayoutRequests] = useState<PayoutRequest[]>([]);
   const [commissionRate, setCommissionRate] = useState(15); // Default commission rate
+  const [hoveredEarningsIndex, setHoveredEarningsIndex] = useState<number | null>(null);
   const availableBalance = 2800000;
   const pendingClearance = 300000;
 
@@ -140,15 +141,25 @@ export const EarningsPage = () => {
             </button>
           </div>
         </div>
-        <div className="flex h-48 items-end justify-between gap-2 rounded-lg bg-[#F8FAFC] p-4">
-          {earningsData.map((value, index) => (
-            <div
-              key={index}
-              className="flex-1 rounded-t bg-[#2E5E99]"
-              style={{ height: `${(value / Math.max(...earningsData)) * 100}%` }}
-              aria-label={`${selectedPeriod === "week" ? `Day ${index + 1}` : `Month ${index + 1}`}: ₩${value * 1000}`}
-            />
-          ))}
+        <div className="relative flex h-48 items-end justify-between gap-2 rounded-lg bg-[#F8FAFC] p-4">
+          {earningsData.map((value, index) => {
+            const earningsValue = value * 1000;
+            return (
+              <div
+                key={index}
+                className="group relative flex-1 rounded-t bg-[#2E5E99] transition-all hover:bg-[#1d4673] cursor-pointer"
+                style={{ height: `${(value / Math.max(...earningsData)) * 100}%` }}
+                onMouseEnter={() => setHoveredEarningsIndex(index)}
+                onMouseLeave={() => setHoveredEarningsIndex(null)}
+              >
+                {hoveredEarningsIndex === index && (
+                  <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                    {selectedPeriod === "week" ? `Day ${index + 1}` : `Month ${index + 1}`}: ₩{earningsValue.toLocaleString()}
+                  </div>
+                )}
+              </div>
+            );
+          })}
         </div>
       </div>
 

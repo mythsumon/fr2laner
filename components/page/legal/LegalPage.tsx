@@ -115,3 +115,4 @@ export const LegalPage = ({ type }: LegalPageProps) => {
 };
 
 
+

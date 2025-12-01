@@ -9,6 +9,6 @@ type SignupModeSelectorProps = {
 };
 
 export const SignupModeSelector = ({ onSelect }: SignupModeSelectorProps) => {
-  return <RoleSelector onSelect={onSelect} />;
+  return <RoleSelector onSelect={onSelect} showQuickLogin={false} />;
 };
 

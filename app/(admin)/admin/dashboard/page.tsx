@@ -87,6 +87,11 @@ const quickActions = [
 
 export default function AdminDashboardPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("month");
+  const [hoveredRevenueIndex, setHoveredRevenueIndex] = useState<number | null>(null);
+  const [hoveredUsersIndex, setHoveredUsersIndex] = useState<number | null>(null);
+  
+  const revenueData = [65, 80, 45, 90, 75, 95];
+  const usersData = [50, 70, 55, 85, 60, 90];
 
   return (
     <div className="space-y-6">
@@ -161,16 +166,27 @@ export default function AdminDashboardPage() {
               View Details
             </Button>
           </div>
-          <div className="h-64 flex items-end justify-between gap-2">
-            {[65, 80, 45, 90, 75, 95].map((height, index) => (
-              <div key={index} className="flex-1 flex flex-col items-center">
-                <div
-                  className="w-full bg-gradient-to-t from-[#2E5E99] to-[#4A90E2] rounded-t-lg mb-2"
-                  style={{ height: `${height}%` }}
-                />
-                <span className="text-xs text-[#64748B]">Month {index + 1}</span>
-              </div>
-            ))}
+          <div className="relative h-64 flex items-end justify-between gap-2">
+            {revenueData.map((height, index) => {
+              const revenueValue = Math.round(height * 50000000); // Convert to actual revenue
+              return (
+                <div key={index} className="relative flex-1 flex flex-col items-center">
+                  <div
+                    className="w-full bg-gradient-to-t from-[#2E5E99] to-[#4A90E2] rounded-t-lg mb-2 transition-all hover:from-[#1d4673] hover:to-[#2E5E99] cursor-pointer"
+                    style={{ height: `${height}%` }}
+                    onMouseEnter={() => setHoveredRevenueIndex(index)}
+                    onMouseLeave={() => setHoveredRevenueIndex(null)}
+                  >
+                    {hoveredRevenueIndex === index && (
+                      <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg z-10 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                        Month {index + 1}: ₩{revenueValue.toLocaleString()}
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-xs text-[#64748B]">Month {index + 1}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
 
@@ -186,16 +202,27 @@ export default function AdminDashboardPage() {
               View Details
             </Button>
           </div>
-          <div className="h-64 flex items-end justify-between gap-2">
-            {[50, 70, 55, 85, 60, 90].map((height, index) => (
-              <div key={index} className="flex-1 flex flex-col items-center">
-                <div
-                  className="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-lg mb-2"
-                  style={{ height: `${height}%` }}
-                />
-                <span className="text-xs text-[#64748B]">Month {index + 1}</span>
-              </div>
-            ))}
+          <div className="relative h-64 flex items-end justify-between gap-2">
+            {usersData.map((height, index) => {
+              const usersValue = Math.round(height * 200);
+              return (
+                <div key={index} className="relative flex-1 flex flex-col items-center">
+                  <div
+                    className="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-lg mb-2 transition-all hover:from-green-600 hover:to-emerald-500 cursor-pointer"
+                    style={{ height: `${height}%` }}
+                    onMouseEnter={() => setHoveredUsersIndex(index)}
+                    onMouseLeave={() => setHoveredUsersIndex(null)}
+                  >
+                    {hoveredUsersIndex === index && (
+                      <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg z-10 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                        Month {index + 1}: {usersValue} new users
+                      </div>
+                    )}
+                  </div>
+                  <span className="text-xs text-[#64748B]">Month {index + 1}</span>
+                </div>
+              );
+            })}
           </div>
         </div>
       </div>

@@ -33,6 +33,7 @@ export const RoleSelector = ({
   title,
   subtitle,
   label,
+  showQuickLogin = true,
 }: RoleSelectorProps) => {
   const [clickedCard, setClickedCard] = useState<string | null>(null);
   const [quickLoginLoading, setQuickLoginLoading] = useState<RoleMode | null>(null);
@@ -185,36 +186,55 @@ export const RoleSelector = ({
                 <p className="mt-2 text-sm leading-relaxed text-slate-500">{card.description}</p>
               </button>
               
-              {/* Quick Login Button */}
-              <button
-                type="button"
-                onClick={(e) => handleQuickLogin(card.mode, e)}
-                disabled={quickLoginLoading !== null}
-                className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border-2 border-sky-400 bg-gradient-to-r from-sky-500 to-blue-500 px-4 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:from-sky-600 hover:to-blue-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {quickLoginLoading === card.mode ? (
-                  <>
-                    <span className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
-                    <span>로그인 중...</span>
-                  </>
-                ) : (
-                  <>
-                    <Zap className="size-4" />
-                    <span>원클릭 로그인</span>
-                  </>
-                )}
-              </button>
-              
-              {/* Test Account Info */}
-              <div className="mt-3 rounded-lg bg-white/60 p-2 text-center">
-                <p className="text-[10px] font-medium text-slate-600">
-                  테스트 계정: <span className="font-mono text-sky-600">{sampleAccounts[card.mode].email}</span>
-                </p>
-              </div>
+              {/* Quick Login Button - Only show for login */}
+              {showQuickLogin && (
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => handleQuickLogin(card.mode, e)}
+                    disabled={quickLoginLoading !== null}
+                    className="mt-4 flex w-full items-center justify-center gap-2 rounded-lg border-2 border-sky-400 bg-gradient-to-r from-sky-500 to-blue-500 px-4 py-2.5 text-sm font-bold text-white shadow-md transition-all hover:from-sky-600 hover:to-blue-600 hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed"
+                  >
+                    {quickLoginLoading === card.mode ? (
+                      <>
+                        <span className="size-4 animate-spin rounded-full border-2 border-white border-t-transparent"></span>
+                        <span>로그인 중...</span>
+                      </>
+                    ) : (
+                      <>
+                        <Zap className="size-4" />
+                        <span>원클릭 로그인</span>
+                      </>
+                    )}
+                  </button>
+                  
+                  {/* Test Account Info */}
+                  <div className="mt-3 rounded-lg bg-white/60 p-2 text-center">
+                    <p className="text-[10px] font-medium text-slate-600">
+                      테스트 계정: <span className="font-mono text-sky-600">{sampleAccounts[card.mode].email}</span>
+                    </p>
+                  </div>
+                </>
+              )}
             </div>
           );
         })}
       </div>
+
+      {/* Sign Up Link - Only show for login */}
+      {showQuickLogin && (
+        <div className="mt-6 rounded-xl border-2 border-slate-200 bg-gradient-to-r from-slate-50 to-slate-100 p-4 text-center">
+          <p className="mb-3 text-sm font-medium text-slate-700">
+            계정이 없으신가요?
+          </p>
+          <Link
+            href="/signup"
+            className="inline-flex items-center justify-center gap-2 rounded-lg bg-slate-900 px-6 py-2.5 text-sm font-semibold text-white transition-all hover:bg-slate-800 hover:shadow-md"
+          >
+            회원가입하기
+          </Link>
+        </div>
+      )}
 
       {/* Footer Text */}
       <p className="mt-6 text-center text-[11px] text-slate-400">{t("auth.roleSelector.footer")}</p>

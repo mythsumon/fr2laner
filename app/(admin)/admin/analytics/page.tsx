@@ -14,6 +14,13 @@ import { BackToHomeButton } from "@/components/page/admin/shared/BackToHomeButto
 
 export default function AnalyticsPage() {
   const [selectedPeriod, setSelectedPeriod] = useState("month");
+  const [hoveredRevenueIndex, setHoveredRevenueIndex] = useState<number | null>(null);
+  const [hoveredBuyersIndex, setHoveredBuyersIndex] = useState<number | null>(null);
+  const [hoveredSellersIndex, setHoveredSellersIndex] = useState<number | null>(null);
+  
+  const revenueData = [65, 80, 45, 90, 75, 95, 85];
+  const buyersData = [40, 55, 35, 60, 45, 70, 50];
+  const sellersData = [30, 45, 25, 50, 35, 55, 40];
 
   return (
     <div className="space-y-6">
@@ -50,16 +57,27 @@ export default function AnalyticsPage() {
             <p className="text-sm text-[#64748B] mt-1">일별/월별 수익 추이</p>
           </div>
         </div>
-        <div className="h-64 flex items-end justify-between gap-2">
-          {[65, 80, 45, 90, 75, 95, 85].map((height, index) => (
-            <div key={index} className="flex-1 flex flex-col items-center">
-              <div
-                className="w-full bg-gradient-to-t from-[#2E5E99] to-[#4A90E2] rounded-t-lg mb-2"
-                style={{ height: `${height}%` }}
-              />
-              <span className="text-xs text-[#64748B]">일 {index + 1}</span>
-            </div>
-          ))}
+        <div className="relative h-64 flex items-end justify-between gap-2">
+          {revenueData.map((height, index) => {
+            const revenueValue = Math.round(height * 1000000); // Convert to actual revenue
+            return (
+              <div key={index} className="relative flex-1 flex flex-col items-center">
+                <div
+                  className="w-full bg-gradient-to-t from-[#2E5E99] to-[#4A90E2] rounded-t-lg mb-2 transition-all hover:from-[#1d4673] hover:to-[#2E5E99] cursor-pointer"
+                  style={{ height: `${height}%` }}
+                  onMouseEnter={() => setHoveredRevenueIndex(index)}
+                  onMouseLeave={() => setHoveredRevenueIndex(null)}
+                >
+                  {hoveredRevenueIndex === index && (
+                    <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg z-10 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                      Day {index + 1}: ₩{revenueValue.toLocaleString()}
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs text-[#64748B]">일 {index + 1}</span>
+              </div>
+            );
+          })}
         </div>
         <div className="mt-6 grid grid-cols-1 md:grid-cols-3 gap-4">
           <div className="p-4 rounded-lg bg-[#F8FAFC]">
@@ -86,28 +104,50 @@ export default function AnalyticsPage() {
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div>
             <h4 className="text-sm font-semibold text-[#0F172A] mb-4">활성 구매자</h4>
-            <div className="h-48 flex items-end justify-between gap-2">
-              {[40, 55, 35, 60, 45, 70, 50].map((height, index) => (
-                <div key={index} className="flex-1 flex flex-col items-center">
-                  <div
-                    className="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-lg mb-2"
-                    style={{ height: `${height}%` }}
-                  />
-                </div>
-              ))}
+            <div className="relative h-48 flex items-end justify-between gap-2">
+              {buyersData.map((height, index) => {
+                const buyersValue = Math.round(height * 100);
+                return (
+                  <div key={index} className="relative flex-1 flex flex-col items-center">
+                    <div
+                      className="w-full bg-gradient-to-t from-green-500 to-emerald-400 rounded-t-lg mb-2 transition-all hover:from-green-600 hover:to-emerald-500 cursor-pointer"
+                      style={{ height: `${height}%` }}
+                      onMouseEnter={() => setHoveredBuyersIndex(index)}
+                      onMouseLeave={() => setHoveredBuyersIndex(null)}
+                    >
+                      {hoveredBuyersIndex === index && (
+                        <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg z-10 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                          Day {index + 1}: {buyersValue} active buyers
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
           <div>
             <h4 className="text-sm font-semibold text-[#0F172A] mb-4">활성 판매자</h4>
-            <div className="h-48 flex items-end justify-between gap-2">
-              {[30, 45, 25, 50, 35, 55, 40].map((height, index) => (
-                <div key={index} className="flex-1 flex flex-col items-center">
-                  <div
-                    className="w-full bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-lg mb-2"
-                    style={{ height: `${height}%` }}
-                  />
-                </div>
-              ))}
+            <div className="relative h-48 flex items-end justify-between gap-2">
+              {sellersData.map((height, index) => {
+                const sellersValue = Math.round(height * 50);
+                return (
+                  <div key={index} className="relative flex-1 flex flex-col items-center">
+                    <div
+                      className="w-full bg-gradient-to-t from-blue-500 to-cyan-400 rounded-t-lg mb-2 transition-all hover:from-blue-600 hover:to-cyan-500 cursor-pointer"
+                      style={{ height: `${height}%` }}
+                      onMouseEnter={() => setHoveredSellersIndex(index)}
+                      onMouseLeave={() => setHoveredSellersIndex(null)}
+                    >
+                      {hoveredSellersIndex === index && (
+                        <div className="absolute bottom-full left-1/2 mb-2 -translate-x-1/2 whitespace-nowrap rounded-lg bg-[#0F172A] px-3 py-2 text-xs font-semibold text-white shadow-lg z-10 before:absolute before:left-1/2 before:top-full before:-translate-x-1/2 before:border-4 before:border-transparent before:border-t-[#0F172A]">
+                          Day {index + 1}: {sellersValue} active sellers
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
             </div>
           </div>
         </div>

@@ -170,6 +170,7 @@ export const SellerDashboardLayout = ({ children }: SellerDashboardLayoutProps) 
     { href: "/expert/analytics", label: "Analytics", icon: BarChart3 },
     { href: "/expert/reviews", label: "Reviews", icon: Star },
     { href: "/expert/notifications", label: "Notifications", icon: Bell },
+    { href: "/expert/profile", label: "Profile & Portfolio", icon: User },
     { href: "/expert/settings", label: "Settings", icon: Settings },
     { href: "/expert/help", label: "Help", icon: HelpCircle },
   ];

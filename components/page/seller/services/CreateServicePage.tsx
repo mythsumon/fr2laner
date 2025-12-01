@@ -567,8 +567,8 @@ export const CreateServicePage = () => {
                   ))}
                 </div>
                 <div className="relative">
-                  <input
-                    type="text"
+                <input
+                  type="text"
                     value={tagInput}
                     onChange={(e) => {
                       setTagInput(e.target.value);
@@ -580,21 +580,21 @@ export const CreateServicePage = () => {
                       setTimeout(() => setShowTagSuggestions(false), 200);
                     }}
                     placeholder="태그 입력 또는 선택 (Enter로 추가)"
-                    onKeyDown={(e) => {
-                      if (e.key === "Enter") {
-                        e.preventDefault();
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
                         if (tagInput.trim() && !formData.tags.includes(tagInput.trim())) {
-                          setFormData((prev) => ({
-                            ...prev,
+                        setFormData((prev) => ({
+                          ...prev,
                             tags: [...prev.tags, tagInput.trim()],
-                          }));
+                        }));
                           setTagInput("");
                           setShowTagSuggestions(false);
-                        }
                       }
-                    }}
-                    className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
-                  />
+                    }
+                  }}
+                  className="w-full rounded-lg border border-[#E2E8F0] px-4 py-3 text-sm text-[#0F172A] placeholder:text-[#94A3B8] focus:border-[#2E5E99] focus:outline-none focus:ring-2 focus:ring-[#2E5E99]/20"
+                />
                   {showTagSuggestions && filteredTags.length > 0 && (
                     <div className="absolute z-10 mt-1 w-full rounded-lg border border-[#E2E8F0] bg-white shadow-lg max-h-48 overflow-y-auto">
                       {filteredTags.map((tag) => (
@@ -828,9 +828,9 @@ export const CreateServicePage = () => {
                       등록 중...
                     </>
                   ) : (
-                    <>
-                      <Check className="size-4" />
-                      서비스 등록하기
+                <>
+                  <Check className="size-4" />
+                  서비스 등록하기
                     </>
                   )}
                 </>
